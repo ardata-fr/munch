@@ -1,0 +1,260 @@
+test_that("md_grob creates mdGrob object", {
+  gr <- md_grob("Hello **world**")
+
+  expect_s3_class(gr, "mdGrob")
+  expect_s3_class(gr, "gTree")
+})
+
+test_that("md_grob stores chunks", {
+  gr <- md_grob("**bold** text")
+
+  expect_true("chunks" %in% names(gr))
+  # After splitting into words, we have: "bold", " ", "text"
+  expect_gte(nrow(gr$chunks), 2)
+})
+
+test_that("dim.mdGrob returns dimensions", {
+  gr <- md_grob("Hello")
+  dims <- dim(gr)
+
+  expect_type(dims, "list")
+  expect_true("width" %in% names(dims))
+  expect_true("height" %in% names(dims))
+  expect_gt(dims$width, 0)
+  expect_gt(dims$height, 0)
+})
+
+test_that("chunks_grob creates mdGrob from flextable chunks", {
+  chunks <- flextable::as_paragraph(
+    flextable::as_chunk("E = mc"),
+    flextable::as_sup("2")
+  )
+  gr <- chunks_grob(chunks)
+
+  expect_s3_class(gr, "mdGrob")
+  expect_gte(nrow(gr$chunks), 2)
+})
+
+test_that("md_grob handles empty text", {
+  gr <- md_grob("")
+  dims <- dim(gr)
+
+  expect_s3_class(gr, "mdGrob")
+})
+
+# --- md_grob text_props ---
+
+test_that("md_grob with custom text_props", {
+  props <- default_text_props(
+    font_size = 20,
+    font_family = "Liberation Sans",
+    line_spacing = 1.5
+  )
+  gr <- md_grob("Hello", text_props = props)
+
+  expect_s3_class(gr, "mdGrob")
+  expect_equal(gr$line_spacing, 1.5)
+})
+
+test_that("md_grob rejects invalid text_props", {
+  expect_error(
+    md_grob("Hello", text_props = list(a = 1)),
+    "text_props"
+  )
+})
+
+# --- md_grob with width (wrapping) ---
+
+test_that("md_grob with max_width wraps text", {
+  gr_nowrap <- md_grob("Hello world this is a long sentence")
+  gr_wrap <- md_grob("Hello world this is a long sentence", width = 0.5)
+
+  dims_nowrap <- dim(gr_nowrap)
+  dims_wrap <- dim(gr_wrap)
+
+  expect_s3_class(gr_wrap, "mdGrob")
+  # Wrapped should be narrower than unwrapped
+  expect_lt(dims_wrap$width, dims_nowrap$width)
+  # Wrapped should be taller (more lines)
+  expect_gt(dims_wrap$height, dims_nowrap$height)
+})
+
+# --- dim.mdGrob empty ---
+
+test_that("dim.mdGrob returns zero for empty grob", {
+  gr <- md_grob("test")
+  gr$chunks <- gr$chunks[0, ]
+  dims <- dim(gr)
+
+  expect_equal(dims$width, 0)
+  expect_equal(dims$height, 0)
+})
+
+# --- print.mdGrob ---
+
+test_that("print.mdGrob produces output", {
+  gr <- md_grob("Hello **world**")
+  output <- capture.output(print(gr))
+
+  expect_true(any(grepl("mdGrob", output)))
+  expect_true(any(grepl("Chunks", output)))
+  expect_true(any(grepl("Dimensions", output)))
+})
+
+test_that("print.mdGrob returns invisibly", {
+  gr <- md_grob("Hello")
+
+  capture.output(expect_invisible(print(gr)))
+  capture.output(result <- print(gr))
+  expect_s3_class(result, "mdGrob")
+})
+
+test_that("print.mdGrob truncates long text", {
+  long_text <- paste(rep("word", 30), collapse = " ")
+  gr <- md_grob(long_text)
+  output <- capture.output(print(gr))
+
+  expect_true(any(grepl("\\.\\.\\.", output)))
+})
+
+# --- widthDetails / heightDetails ---
+
+test_that("widthDetails.mdGrob returns unit", {
+  gr <- md_grob("Hello")
+  w <- grid::widthDetails(gr)
+
+  expect_s3_class(w, "unit")
+})
+
+test_that("heightDetails.mdGrob returns unit", {
+  gr <- md_grob("Hello")
+  h <- grid::heightDetails(gr)
+
+  expect_s3_class(h, "unit")
+})
+
+# --- arrange_chunks_into_lines ---
+
+test_that("arrange_chunks_into_lines handles newlines", {
+  chunks <- md_to_chunks("line1\n\nline2")
+  chunks <- munch:::split_chunks_into_words(chunks)
+  chunks <- munch:::calc_chunk_metrics(chunks)
+  chunks$.chunk_index <- seq_len(nrow(chunks))
+
+  lines <- munch:::arrange_chunks_into_lines(chunks)
+
+  expect_gte(length(lines), 2)
+})
+
+test_that("arrange_chunks_into_lines wraps at max_width", {
+  chunks <- md_to_chunks("word1 word2 word3 word4 word5")
+  chunks <- munch:::split_chunks_into_words(chunks)
+  chunks <- munch:::calc_chunk_metrics(chunks)
+  chunks$.chunk_index <- seq_len(nrow(chunks))
+
+  lines_unwrapped <- munch:::arrange_chunks_into_lines(chunks)
+  lines_wrapped <- munch:::arrange_chunks_into_lines(chunks, max_width = 0.5)
+
+  expect_gt(length(lines_wrapped), length(lines_unwrapped))
+})
+
+test_that("arrange_chunks_into_lines empty input", {
+  chunks <- md_to_chunks("test")
+  chunks <- chunks[0, ]
+
+  lines <- munch:::arrange_chunks_into_lines(chunks)
+
+  expect_length(lines, 1)
+  expect_equal(lines[[1]]$width, 0)
+  expect_gt(lines[[1]]$height, 0)
+})
+
+# --- chunks_grob ---
+
+test_that("chunks_grob accepts paragraph object", {
+  para <- flextable::as_paragraph(
+    flextable::as_chunk("hello "),
+    flextable::as_b("world")
+  )
+  gr <- chunks_grob(para)
+
+  expect_s3_class(gr, "mdGrob")
+})
+
+test_that("chunks_grob accepts chunk data.frame", {
+  chunk_df <- flextable::as_paragraph(
+    flextable::as_chunk("test")
+  )[[1]]
+  gr <- chunks_grob(chunk_df)
+
+  expect_s3_class(gr, "mdGrob")
+})
+
+# --- image_utils ---
+
+test_that("get_image_info warns on NA path", {
+  expect_warning(
+    result <- munch:::get_image_info(NA_character_),
+    "not found"
+  )
+  expect_null(result)
+})
+
+test_that("get_image_info warns on missing file", {
+  expect_warning(
+    result <- munch:::get_image_info("/nonexistent/file.png"),
+    "not found"
+  )
+  expect_null(result)
+})
+
+test_that("get_image_info reads valid image", {
+  skip_if_not_installed("magick")
+  r_logo <- file.path(R.home("doc"), "html", "logo.jpg")
+  skip_if_not(file.exists(r_logo), "R logo not found")
+
+  result <- munch:::get_image_info(r_logo)
+
+  expect_type(result, "list")
+  expect_true("width" %in% names(result))
+  expect_true("height" %in% names(result))
+  expect_gt(result$width, 0)
+  expect_gt(result$height, 0)
+})
+
+test_that("read_image_raster returns NULL on NA path", {
+  result <- munch:::read_image_raster(NA_character_)
+
+  expect_null(result)
+})
+
+test_that("read_image_raster returns NULL on missing file", {
+  result <- munch:::read_image_raster("/nonexistent/file.png")
+
+  expect_null(result)
+})
+
+test_that("read_image_raster reads valid image", {
+  skip_if_not_installed("magick")
+  r_logo <- file.path(R.home("doc"), "html", "logo.jpg")
+  skip_if_not(file.exists(r_logo), "R logo not found")
+
+  result <- munch:::read_image_raster(r_logo)
+
+  expect_true(inherits(result, "raster"))
+})
+
+test_that("has_magick returns logical", {
+  result <- munch:::has_magick()
+
+  expect_type(result, "logical")
+})
+
+# --- check_device_compatibility ---
+
+test_that("check_device_compatibility skips when option set", {
+  skip_if_not_installed("withr")
+  withr::with_options(list(munch.skip_device_check = TRUE), {
+    expect_invisible(munch:::check_device_compatibility())
+  })
+})

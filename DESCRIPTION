@@ -1,0 +1,45 @@
+Package: munch
+Title: Rich Inline Text for Grid Graphics and Flextable
+Version: 0.0.1
+Authors@R: c(
+    person("David", "Gohel", , "david.gohel@ardata.fr", role = c("aut", "cre")),
+    person("ArData", role = "cph")
+  )
+Description: Renders rich inline text (bold, italic, code, links, images)
+    in grid graphics and 'ggplot2', from markdown or 'flextable' chunks.
+    Provides grobs, theme elements, and geoms for styled text rendering.
+    Only works with graphics devices that support 'systemfonts', such as
+    those provided by 'ragg', 'svglite', or 'ggiraph'. The 'cairo_pdf'
+    device is also supported when fonts are installed at the system level.
+License: MIT + file LICENSE
+URL: https://ardata-fr.github.io/munch/,
+    https://github.com/ardata-fr/munch
+BugReports: https://github.com/ardata-fr/munch/issues
+Imports:
+    cli,
+    commonmark,
+    flextable,
+    gdtools,
+    ggplot2,
+    grid,
+    methods,
+    systemfonts,
+    xml2
+Suggests:
+    doconv,
+    ggiraph,
+    knitr,
+    magick,
+    ragg,
+    rmarkdown,
+    rsvg,
+    svglite,
+    testthat (>= 3.0.0),
+    withr
+VignetteBuilder: 
+    knitr,
+    rmarkdown
+Config/testthat/edition: 3
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3

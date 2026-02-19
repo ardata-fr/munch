@@ -1,0 +1,73 @@
+url: https://ardata-fr.github.io/munch/
+
+development:
+  mode: auto
+
+template:
+  bootstrap: 5
+  theme: breeze-light
+  bootswatch: simplex
+  bslib:
+    pkgdown-nav-height: 100px
+    base_font:
+      google: "Open Sans"
+
+navbar:
+  structure:
+    left: [intro, reference, articles]
+    right: [search, github]
+  components:
+    articles:
+      text: Articles
+      menu:
+      - text: Using with ggplot2
+      - text: Theming ggplot2 with munch
+        href: articles/ggplot2-theming.html
+      - text: "---"
+      - text: Advanced topics
+      - text: Advanced usage
+        href: articles/advanced-usage.html
+      - text: "---"
+      - text: Fonts and devices
+      - text: Font recipes
+        href: articles/font-recipes.html
+
+articles:
+  - title: Using with ggplot2
+    contents:
+    - ggplot2-theming
+  - title: Advanced topics
+    contents:
+    - advanced-usage
+  - title: Fonts and devices
+    contents:
+    - font-recipes
+
+
+reference:
+  - title: package description
+    contents:
+    - munch-package
+  - title: Create grobs
+    desc: Convert markdown or 'flextable' chunks to grid graphics objects
+    contents:
+    - md_grob
+    - chunks_grob
+  - title: "'ggplot2' theme elements"
+    desc: Use markdown or chunks in plot titles, captions, and axis labels
+    contents:
+    - element_md
+    - element_chunks
+  - title: "'ggplot2' geoms"
+    desc: Add markdown-formatted text annotations to plots
+    contents:
+    - geom_text_md
+    - geom_label_md
+  - title: "'flextable' integration"
+    desc: Use markdown in 'flextable' table cells
+    contents:
+    - as_paragraph_md
+  - title: Text properties
+    desc: Configure default text styling
+    contents:
+    - default_text_props

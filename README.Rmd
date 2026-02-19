@@ -1,0 +1,243 @@
+---
+output: github_document
+title: munch
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  dev = "ragg_png",
+  dpi = 300,
+  fig.width = 5,
+  fig.height = 1,
+  out.width = "100%"
+)
+library(munch)
+library(flextable)
+set_flextable_defaults(font.family = "Liberation Sans")
+```
+
+
+> 'munch' crunches markdown text and 'flextable' paragraphs into grid graphics.
+
+'munch' started as internal code in 'flextable' for rendering rich text with
+'grid'. It was extracted into its own package to also serve 'ggiraph' and to 
+provide unified formatting between 'ggplot2' graphics and 'flextable' tables.
+
+'munch' lets you produce this annotated graphic:
+
+```{r echo=FALSE, message=FALSE, fig.height=6, fig.width=7}
+library(ggplot2)
+library(officer)
+library(flextable)
+library(munch)
+library(gdtools)
+
+fset <- font_set_liberation()
+set_flextable_defaults(
+  font.family = "Liberation Sans",
+  font.size = 19
+)
+r_logo <- file.path(R.home("doc"), "html", "logo.jpg")
+set_theme(theme_minimal(base_family = "Liberation Sans", base_size = 11))
+dat <- subset(diamonds, cut %in% c("Premium", "Ideal"))
+
+# Title: image + bold + italic
+title_chunks <- as_paragraph(
+  as_image(src = r_logo, width = 0.25, height = 0.2),
+  as_chunk(" "),
+  as_b("Diamond"),
+  as_chunk(" pricing - "),
+  as_i("Premium"),
+  as_chunk(" vs "),
+  as_i("Ideal")
+)
+set_flextable_defaults(
+  font.size = 11
+)
+# Subtitle: colorize + highlight
+subtitle_chunks <- as_paragraph(
+  colorize("Premium", color = "#C36A1C"),
+  as_chunk(" (n = "),
+  as_highlight(as.character(sum(dat$cut == "Premium")), color = "#FDDBC7"),
+  as_chunk(") and "),
+  colorize("Ideal", color = "#1F78B4"),
+  as_chunk(" (n = "),
+  as_highlight(as.character(sum(dat$cut == "Ideal")), color = "#D1E5F0"),
+  as_chunk(")")
+)
+set_flextable_defaults(
+  font.size = 9
+)
+# Caption: superscript + subscript + strikethrough
+caption_chunks <- as_paragraph(
+  as_chunk("R"),
+  as_sup("2"),
+  as_chunk(" = 0.85 · "),
+  as_i("no effect"),
+  as_chunk(" · "),
+  colorize("H", "#E31A1C"),
+  colorize(as_sub("0"), "#E31A1C"),
+  colorize(as_chunk(" rejected"), "#E31A1C"),
+  "\n",
+  as_i("Lorem ipsum dolor sit amet, ut platea nullam odio dui in. Placerat gravida. Pretium phasellus non, dolor suscipit at aliquet, mollis venenatis per. Mus leo ante ligula. Mattis neque etiam sagittis risus facilisis vel ut, non quis eu. Iaculis, mauris porta orci et natoque nisl habitant ac eget.")
+)
+
+set_flextable_defaults(
+  font.size = 10
+)
+# Axis labels: bold + color via fp_text_lite
+ylab_chunks <- as_paragraph(
+  as_chunk("Price", props = fp_text_lite(bold = TRUE, color = "#2C3E50")),
+  as_chunk(" (USD)")
+)
+xlab_chunks <- as_paragraph(
+  as_chunk("Carat", props = fp_text_lite(bold = TRUE, color = "#2C3E50")),
+  as_chunk(" weight")
+)
+
+ggplot(dat, aes(carat, price, color = cut)) +
+  geom_point(alpha = .1, show.legend = FALSE) +
+  scale_color_manual(values = c(Premium = "#C36A1C", Ideal = "#1F78B4")) +
+  theme(
+    plot.background = element_rect(fill = "#EFEFEF", colour = "transparent"),
+    panel.background = element_rect(fill = "#EFEFEF", colour = "transparent"),
+    plot.title = element_chunks(title_chunks, hjust = .5),
+    plot.subtitle = element_chunks(subtitle_chunks, hjust = .5),
+    plot.caption = element_chunks(caption_chunks, lineheight = 1.5, hjust = 0),
+    plot.caption.position = "plot",
+    axis.title.x = element_chunks(xlab_chunks, hjust = 1),
+    axis.title.y = element_chunks(ylab_chunks, hjust = 1)
+  )
+```
+
+The title, subtitle, caption and axis labels above are all built with
+`element_chunks()` and 'flextable' paragraph objects, bold, italic,
+colors, highlights, superscripts, subscripts, strikethrough and an
+embedded image.
+
+| Function | Purpose | Input |
+|----------|---------|-------|
+| `element_md()` | Markdown in theme elements | Character string |
+| `element_chunks()` | Advanced formatting in theme elements | `as_paragraph()` object |
+| `geom_text_md()` | Markdown text annotations | `label` aesthetic |
+| `geom_label_md()` | Markdown labels with background | `label` aesthetic |
+
+## Installation
+
+```r
+# install.packages("pak")
+pak::pak("ardata-fr/munch")
+```
+
+## Supported graphics devices
+
+'munch' requires graphics devices that support 'systemfonts':
+['ragg'](https://ragg.r-lib.org/), ['svglite'](https://svglite.r-lib.org/), or
+['ggiraph'](https://ardata-fr.github.io/ggiraph/).
+'cairo' devices is also supported when fonts are installed at the system level.
+See `vignette("font-recipes")` for font configuration, alternative devices,
+and troubleshooting.
+
+## Quick start
+
+### ggplot2
+
+Use `element_md()` for markdown in theme elements, and `geom_text_md()` or
+`geom_label_md()` for annotations:
+
+```{r ggplot-example, fig.height=3.5, message=FALSE}
+library(ggplot2)
+
+ggplot(mtcars, aes(mpg, wt)) +
+ geom_point() +
+ labs(title = "**Fuel consumption** vs *Weight*") +
+ theme(plot.title = element_md(size = 16))
+```
+
+For advanced formatting (superscripts, subscripts, colors), use `element_chunks()`
+with 'flextable' paragraph objects:
+
+```{r element-chunks-example, fig.height=3.5, message=FALSE}
+title_chunks <- as_paragraph(
+ as_chunk("Model: R"), as_sup("2"), as_chunk(" = 0.75")
+)
+
+ggplot(mtcars, aes(mpg, wt)) +
+ geom_point() +
+ theme(plot.title = element_chunks(title_chunks))
+```
+
+#### Syntax comparison
+
+| Syntax | `element_md()` | `element_chunks()` |
+|--------|----------------|-------------------|
+| Bold / Italic | `**text**` / `*text*` | `as_b()` / `as_i()` |
+| Inline code | `` `code` `` | x |
+| Strikethrough | `~~text~~` | `as_strike()` |
+| Superscript | x | `as_sup()` |
+| Subscript | x | `as_sub()` |
+| Custom colors | x | `colorize()` |
+| Highlighting | x | `as_highlight()` |
+
+### flextable
+
+Use `as_paragraph_md()` for markdown in table cells:
+
+```{r flextable-example, message=FALSE}
+ft <- flextable(head(iris, 3))
+ft <- mk_par(ft, j = 1, part = "header",
+ value = as_paragraph_md("*Sepal* **Length**"))
+autofit(ft)
+```
+
+### Markdown to grob
+
+```{r md-grob-basic}
+library(munch)
+library(grid)
+
+gr <- md_grob("This is **bold** and *italic* text.")
+grid.newpage()
+grid.draw(gr)
+```
+
+For superscripts, subscripts, or colors not available in markdown, use 'flextable'
+chunks with `chunks_grob()`:
+
+```{r chunks-formula, fig.width=2, out.width="200px"}
+library(flextable)
+
+chunks <- as_paragraph(as_chunk("E = mc"), as_sup("2"))
+gr <- chunks_grob(chunks)
+grid.newpage()
+grid.draw(gr)
+```
+
+
+
+## Learn more
+
+- [Theming ggplot2 with munch](https://ardata-fr.github.io/munch/articles/ggplot2-theming.html) -
+  `element_md()`, `element_chunks()`, `geom_text_md()`, `geom_label_md()`
+- [Advanced usage](https://ardata-fr.github.io/munch/articles/advanced-usage.html) -
+  `md_grob()`, `chunks_grob()`, text properties, images
+- [Font recipes](https://ardata-fr.github.io/munch/articles/font-recipes.html) -
+  font configuration, device compatibility, troubleshooting
+
+## Comparison with 'marquee'
+
+['marquee'](https://marquee.r-lib.org/) by Thomas Lin Pedersen offers more
+markdown features (headings, lists, code blocks, custom spans). 'munch' focuses
+first on integration with 'flextable' chunks and advanced
+formatting not available in markdown.
+
+- 'munch' works with 'ragg', 'svglite', 'ggiraph', `cairo_pdf()`, `png(type = "cairo")`, eventually `pdf()` with
+few cautions.
+- 'marquee' works on a wide range of R devices but not yet with 'svglite' or 'ggiraph'.
+- If working with markdown, 'munch' expect only a single paragraph, 'marquee' 
+can handle many markdown blocks in one call.
