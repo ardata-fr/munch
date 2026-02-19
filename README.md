@@ -3,6 +3,8 @@ munch
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+[![R-CMD-check](https://github.com/ardata-fr/munch/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ardata-fr/munch/actions/workflows/R-CMD-check.yaml)
+
 > ‘munch’ crunches markdown text and ‘flextable’ paragraphs into grid
 > graphics.
 
