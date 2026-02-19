@@ -248,14 +248,82 @@
 </ul>
 </div>
 <div class="section level2">
-<h2 id="comparison-with-marquee">Comparison with ‘marquee’<a class="anchor" aria-label="anchor" href="#comparison-with-marquee"></a>
+<h2 id="comparisons">Comparisons<a class="anchor" aria-label="anchor" href="#comparisons"></a>
 </h2>
+<div class="section level3">
+<h3 id="gridtext">‘gridtext’<a class="anchor" aria-label="anchor" href="#gridtext"></a>
+</h3>
+<p><a href="https://wilkelab.org/gridtext/" class="external-link">‘gridtext’</a> by Claus O. Wilke (used by <a href="https://wilkelab.org/ggtext/" class="external-link">‘ggtext’</a>) renders formatted text via a subset of HTML/CSS. ‘munch’ takes a different approach: it uses markdown or ‘flextable’ chunks as input and relies on ‘systemfonts’ for text measurement.</p>
+<table class="table">
+<colgroup>
+<col width="33%">
+<col width="33%">
+<col width="33%">
+</colgroup>
+<thead><tr class="header">
+<th></th>
+<th>munch</th>
+<th>gridtext</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>Input format</td>
+<td>Markdown, flextable chunks</td>
+<td>HTML / CSS subset</td>
+</tr>
+<tr class="even">
+<td>Superscript / subscript</td>
+<td>Yes (<code><a href="https://davidgohel.github.io/flextable/reference/as_sup.html" class="external-link">as_sup()</a></code>, <code><a href="https://davidgohel.github.io/flextable/reference/as_sub.html" class="external-link">as_sub()</a></code>)</td>
+<td>Yes (<code>&lt;sup&gt;</code>, <code>&lt;sub&gt;</code>)</td>
+</tr>
+<tr class="odd">
+<td>Custom colors / highlight</td>
+<td>Yes (via <code><a href="https://davidgohel.github.io/flextable/reference/colorize.html" class="external-link">colorize()</a></code>, <code><a href="https://davidgohel.github.io/flextable/reference/as_highlight.html" class="external-link">as_highlight()</a></code>)</td>
+<td>Yes (via inline CSS)</td>
+</tr>
+<tr class="even">
+<td>Inline images</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr class="odd">
+<td>Text wrapping</td>
+<td>Yes</td>
+<td>Yes (<code>textbox_grob()</code>)</td>
+</tr>
+<tr class="even">
+<td>Text measurement</td>
+<td>TBD</td>
+<td>TBD</td>
+</tr>
+<tr class="odd">
+<td>Integration with ‘flextable’</td>
+<td>Yes (shared chunk model)</td>
+<td>No</td>
+</tr>
+<tr class="even">
+<td>Supported devices</td>
+<td>‘ragg’, ‘svglite’, ‘ggiraph’, cairo</td>
+<td>Most R graphic devices</td>
+</tr>
+<tr class="odd">
+<td>Compiled code</td>
+<td>No (pure R)</td>
+<td>Yes (C++ via ‘Rcpp’)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section level3">
+<h3 id="with-marquee">with ‘marquee’<a class="anchor" aria-label="anchor" href="#with-marquee"></a>
+</h3>
 <p><a href="https://marquee.r-lib.org/" class="external-link">‘marquee’</a> by Thomas Lin Pedersen offers more markdown features (headings, lists, code blocks, custom spans). ‘munch’ focuses first on integration with ‘flextable’ chunks and advanced formatting not available in markdown.</p>
 <ul>
 <li>‘munch’ works with ‘ragg’, ‘svglite’, ‘ggiraph’, <code><a href="https://rdrr.io/r/grDevices/cairo.html" class="external-link">cairo_pdf()</a></code>, <code>png(type = "cairo")</code>, eventually <code><a href="https://rdrr.io/r/grDevices/pdf.html" class="external-link">pdf()</a></code> with few cautions.</li>
 <li>‘marquee’ works on a wide range of R devices but not yet with ‘svglite’ or ‘ggiraph’.</li>
 <li>If working with markdown, ‘munch’ expect only a single paragraph, ‘marquee’ can handle many markdown blocks in one call.</li>
 </ul>
+</div>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">

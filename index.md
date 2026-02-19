@@ -154,7 +154,29 @@ grid.draw(gr)
   recipes](https://ardata-fr.github.io/munch/articles/font-recipes.html) -
   font configuration, device compatibility, troubleshooting
 
-## Comparison with ‘marquee’
+## Comparisons
+
+### ‘gridtext’
+
+[‘gridtext’](https://wilkelab.org/gridtext/) by Claus O. Wilke (used by
+[‘ggtext’](https://wilkelab.org/ggtext/)) renders formatted text via a
+subset of HTML/CSS. ‘munch’ takes a different approach: it uses markdown
+or ‘flextable’ chunks as input and relies on ‘systemfonts’ for text
+measurement.
+
+|                              | munch                                                                                                                                                                            | gridtext               |
+|------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------|
+| Input format                 | Markdown, flextable chunks                                                                                                                                                       | HTML / CSS subset      |
+| Superscript / subscript      | Yes ([`as_sup()`](https://davidgohel.github.io/flextable/reference/as_sup.html), [`as_sub()`](https://davidgohel.github.io/flextable/reference/as_sub.html))                     | Yes (`<sup>`, `<sub>`) |
+| Custom colors / highlight    | Yes (via [`colorize()`](https://davidgohel.github.io/flextable/reference/colorize.html), [`as_highlight()`](https://davidgohel.github.io/flextable/reference/as_highlight.html)) | Yes (via inline CSS)   |
+| Inline images                | Yes                                                                                                                                                                              | Yes                    |
+| Text wrapping                | Yes                                                                                                                                                                              | Yes (`textbox_grob()`) |
+| Text measurement             | TBD                                                                                                                                                                              | TBD                    |
+| Integration with ‘flextable’ | Yes (shared chunk model)                                                                                                                                                         | No                     |
+| Supported devices            | ‘ragg’, ‘svglite’, ‘ggiraph’, cairo                                                                                                                                              | Most R graphic devices |
+| Compiled code                | No (pure R)                                                                                                                                                                      | Yes (C++ via ‘Rcpp’)   |
+
+### with ‘marquee’
 
 [‘marquee’](https://marquee.r-lib.org/) by Thomas Lin Pedersen offers
 more markdown features (headings, lists, code blocks, custom spans).
