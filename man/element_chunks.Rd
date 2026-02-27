@@ -10,6 +10,7 @@ element_chunks(
   vjust = NULL,
   angle = NULL,
   lineheight = NULL,
+  size = NULL,
   margin = NULL,
   debug = FALSE,
   inherit.blank = FALSE

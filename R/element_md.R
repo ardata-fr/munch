@@ -504,6 +504,7 @@ element_chunks <- function(
   vjust = NULL,
   angle = NULL,
   lineheight = NULL,
+  size = NULL,
   margin = NULL,
   debug = FALSE,
   inherit.blank = FALSE
@@ -521,6 +522,7 @@ element_chunks <- function(
       vjust = vjust,
       angle = angle,
       lineheight = lineheight,
+      size = size,
       margin = margin,
       debug = debug,
       inherit.blank = inherit.blank
@@ -567,9 +569,11 @@ element_grob.element_chunks <- function(
     chunks_df <- chunks
   }
 
-  # Get base defaults from text_props
-
-  base_props <- default_text_props()
+  # Get base defaults from text_props.
+  # Size resolution order: ggplot2 theme-resolved size (passed by calc_element)
+  # > element$size (explicitly set by user) > flextable defaults.
+  resolved_size <- size %||% element$size
+  base_props <- default_text_props(font_size = resolved_size)
 
   # Resolve properties (parameter > element > text_props defaults)
   hj <- hjust %||% element$hjust %||% 0.5
@@ -821,6 +825,7 @@ merge_element.element_chunks <- function(new, old) {
     "vjust",
     "angle",
     "lineheight",
+    "size",
     "margin",
     "debug",
     "inherit.blank"

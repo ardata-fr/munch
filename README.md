@@ -93,9 +93,10 @@ ggplot(mtcars, aes(mpg, wt)) +
 
 ### Patchwork integration
 
-Use `munch_annotation()` in place of `patchwork::plot_annotation()` to
-add rich-text titles, subtitles, and captions — including auto-wrapping
-— to combined plots:
+Use `munch_annotation()` as a drop in replacement for
+`patchwork::plot_annotation()` which accepts `element_chunk()` and
+`element_md()` to add rich-text titles, subtitles, and captions —
+including auto-wrapping — to combined plots:
 
 ``` r
 library(ggplot2)
@@ -129,11 +130,28 @@ wrap_plots(p1, p2) +
 
 <img src="man/figures/README-patchwork-example-1.png" alt="" width="100%" />
 
+For plain markdown text, pass the content as a string and use
+`element_md()` in the `theme` argument — the same pattern as regular
+ggplot2 theming:
+
+``` r
+wrap_plots(p1, p2) +
+  munch_annotation(
+    title   = "**Motor Trend** — engine performance, 1974",
+    caption = "R^2^ = 0.75 · *Lorem ipsum dolor sit amet, ut platea nullam odio dui in. Placerat gravida pretium phasellus non, dolor suscipit at aliquet.*",
+    theme   = theme(
+      plot.title   = element_md(),
+      plot.caption = element_md(lineheight = 1.5, hjust = 0)
+    )
+  )
+```
+
+<img src="man/figures/README-patchwork-example-md-1.png" alt="" width="100%" />
+
 The caption auto-wraps to the full figure width at render time, so it
 works correctly regardless of output size. `title`, `subtitle`, and
-`caption` each accept an `element_chunks()` or `element_md()` object
-(all formatting options live inside the element call), a bare
-`as_paragraph()` object, or a plain character string.
+`caption` each accept an `element_chunks()` or `element_md()` object, a
+bare `as_paragraph()` object, or a plain character string.
 
 ### flextable
 
