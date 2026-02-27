@@ -91,6 +91,68 @@ ggplot(mtcars, aes(mpg, wt)) +
 | Custom colors | x                     | `colorize()`        |
 | Highlighting  | x                     | `as_highlight()`    |
 
+### Patchwork integration
+
+Use `munch_annotation()` as a drop in replacement for
+`patchwork::plot_annotation()` which accepts `element_chunk()` and
+`element_md()` to add rich-text titles, subtitles, and captions —
+including auto-wrapping — to combined plots:
+
+``` r
+library(ggplot2)
+library(patchwork)
+
+p1 <- ggplot(mtcars, aes(mpg, wt)) +
+  geom_point() +
+  labs(x = "MPG", y = "Weight")
+
+p2 <- ggplot(mtcars, aes(hp, wt)) +
+  geom_point() +
+  labs(x = "Horsepower", y = "Weight")
+
+title_chunks <- as_paragraph(
+  as_b("Motor Trend"), as_chunk(" — engine performance, 1974")
+)
+
+caption_chunks <- as_paragraph(
+  as_chunk("R"), as_sup("2"), as_chunk(" = 0.75 · "),
+  as_i("Lorem ipsum dolor sit amet, ut platea nullam odio dui in. "),
+  as_i("Placerat gravida. Pretium phasellus non, dolor suscipit at aliquet, "),
+  as_i("mollis venenatis per. Mus leo ante ligula.")
+)
+
+wrap_plots(p1, p2) +
+  munch_annotation(
+    title   = element_chunks(title_chunks),
+    caption = element_chunks(caption_chunks, lineheight = 1.5, hjust = 0)
+  )
+```
+
+<img src="man/figures/README-patchwork-example-1.png" alt="" width="100%" />
+
+For plain markdown text, pass the content as a string and use
+`element_md()` in the `theme` argument — the same pattern as regular
+ggplot2 theming:
+
+``` r
+wrap_plots(p1, p2) +
+  munch_annotation(
+    title   = "**Motor Trend** — engine performance, 1974",
+    caption = "R^2^ = 0.75 · *Lorem ipsum dolor sit amet, ut platea nullam odio dui in. Placerat gravida pretium phasellus non, dolor suscipit at aliquet.*",
+    theme   = theme(
+      plot.title   = element_md(),
+      plot.caption = element_md(lineheight = 1.5, hjust = 0)
+    )
+  )
+```
+
+<img src="man/figures/README-patchwork-example-md-1.png" alt="" width="100%" />
+
+The caption auto-wraps to the full figure width at render time, so it
+works correctly regardless of output size. `title`, `subtitle`, and
+`caption` each accept an `element_chunks()` or `element_md()` object, a
+bare `as_paragraph()` object, or a plain character string.
+
 ### flextable
 
 Use `as_paragraph_md()` for markdown in table cells:

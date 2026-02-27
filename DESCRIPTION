@@ -1,6 +1,6 @@
 Package: munch
 Title: Rich Inline Text for 'Grid' Graphics and 'Flextable'
-Version: 0.0.1
+Version: 0.0.2.001
 Authors@R: c(
     person("David", "Gohel", , "david.gohel@ardata.fr", role = c("aut", "cre")),
     person("ArData", role = "cph")
