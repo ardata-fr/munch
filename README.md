@@ -91,6 +91,50 @@ ggplot(mtcars, aes(mpg, wt)) +
 | Custom colors | x                     | `colorize()`        |
 | Highlighting  | x                     | `as_highlight()`    |
 
+### Patchwork integration
+
+Use `munch_annotation()` in place of `patchwork::plot_annotation()` to
+add rich-text titles, subtitles, and captions — including auto-wrapping
+— to combined plots:
+
+``` r
+library(ggplot2)
+library(patchwork)
+
+p1 <- ggplot(mtcars, aes(mpg, wt)) +
+  geom_point() +
+  labs(x = "MPG", y = "Weight")
+
+p2 <- ggplot(mtcars, aes(hp, wt)) +
+  geom_point() +
+  labs(x = "Horsepower", y = "Weight")
+
+title_chunks <- as_paragraph(
+  as_b("Motor Trend"), as_chunk(" — engine performance, 1974")
+)
+
+caption_chunks <- as_paragraph(
+  as_chunk("R"), as_sup("2"), as_chunk(" = 0.75 · "),
+  as_i("Lorem ipsum dolor sit amet, ut platea nullam odio dui in. "),
+  as_i("Placerat gravida. Pretium phasellus non, dolor suscipit at aliquet, "),
+  as_i("mollis venenatis per. Mus leo ante ligula.")
+)
+
+wrap_plots(p1, p2) +
+  munch_annotation(
+    title   = element_chunks(title_chunks),
+    caption = element_chunks(caption_chunks, lineheight = 1.5, hjust = 0)
+  )
+```
+
+<img src="man/figures/README-patchwork-example-1.png" alt="" width="100%" />
+
+The caption auto-wraps to the full figure width at render time, so it
+works correctly regardless of output size. `title`, `subtitle`, and
+`caption` each accept an `element_chunks()` or `element_md()` object
+(all formatting options live inside the element call), a bare
+`as_paragraph()` object, or a plain character string.
+
 ### flextable
 
 Use `as_paragraph_md()` for markdown in table cells:
