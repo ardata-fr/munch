@@ -183,7 +183,7 @@ element_grob.element_md <- function(
     ncol_layout <- 3L
     content_col <- 2L
   } else {
-    widths <- unit(1, "null")
+    widths <- layout_w
     ncol_layout <- 1L
     content_col <- 1L
   }
@@ -198,7 +198,7 @@ element_grob.element_md <- function(
     nrow_layout <- 3L
     content_row <- 2L
   } else {
-    heights <- unit(1, "null")
+    heights <- layout_h
     nrow_layout <- 1L
     content_row <- 1L
   }
@@ -279,6 +279,8 @@ element_grob.element_md <- function(
     children = gList(md_gr),
     widths = widths,
     heights = heights,
+    content_w = unit(dims$width, "inches"),
+    content_h = unit(dims$height, "inches"),
     margin = margin,
     auto_wrap = auto_wrap,
     cl = "mdTitleGrob"
@@ -287,11 +289,11 @@ element_grob.element_md <- function(
 
 #' @export
 widthDetails.mdTitleGrob <- function(x) {
-  if (isTRUE(x$auto_wrap)) {
-    unit(1, "npc")
-  } else {
-    sum(x$widths)
-  }
+  # Always report the natural content width. auto_wrap only affects rendering
+  # (makeContent rewraps text to the available width); returning unit(1, "npc")
+  # here causes ggplot2 to allocate the full plot width for legend label
+  # columns, collapsing the plot panel.
+  x$content_w %||% sum(x$widths)
 }
 
 #' @export
@@ -436,6 +438,7 @@ merge_element.element_md <- function(new, old) {
 #' @param margin Margins around the text (use [ggplot2::margin()]).
 #' @param debug Show debug rectangles.
 #' @param inherit.blank Should this element inherit blank elements.
+#' @param size font size
 #'
 #' @return An element of class `c("element_chunks", "element_text", "element")`.
 #' @export
@@ -621,7 +624,7 @@ element_grob.element_chunks <- function(
     ncol_layout <- 3L
     content_col <- 2L
   } else {
-    widths <- unit(1, "null")
+    widths <- layout_w
     ncol_layout <- 1L
     content_col <- 1L
   }
@@ -635,7 +638,7 @@ element_grob.element_chunks <- function(
     nrow_layout <- 3L
     content_row <- 2L
   } else {
-    heights <- unit(1, "null")
+    heights <- layout_h
     nrow_layout <- 1L
     content_row <- 1L
   }
@@ -716,6 +719,8 @@ element_grob.element_chunks <- function(
     children = gList(md_gr),
     widths = widths,
     heights = heights,
+    content_w = unit(dims$width, "inches"),
+    content_h = unit(dims$height, "inches"),
     margin = margin,
     auto_wrap = auto_wrap,
     cl = "chunksGrob"
@@ -724,11 +729,8 @@ element_grob.element_chunks <- function(
 
 #' @export
 widthDetails.chunksGrob <- function(x) {
-  if (isTRUE(x$auto_wrap)) {
-    unit(1, "npc")
-  } else {
-    sum(x$widths)
-  }
+  # Always report the natural content width. See widthDetails.mdTitleGrob.
+  x$content_w %||% sum(x$widths)
 }
 
 #' @export
