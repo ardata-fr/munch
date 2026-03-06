@@ -110,7 +110,7 @@ makeContent.mdGrob <- function(x) {
   total_width <- max(sapply(lines, function(l) l$width))
 
   # Container width for horizontal alignment
-  container_w <- if (!is.null(max_width) && max_width > 0) {
+  container_w <- if (!is.null(max_width) && is.numeric(max_width) && max_width > 0) {
     max_width
   } else {
     total_width

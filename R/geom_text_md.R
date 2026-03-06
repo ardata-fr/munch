@@ -6,7 +6,9 @@
 #'
 #' @inheritParams ggplot2::geom_text
 #' @param width Maximum width for text wrapping in inches. `NA` (default)
-#'   means no wrapping.
+#'   means no wrapping. Use `"auto"` to wrap at the plot panel edge: the wrap
+#'   width is computed from each label's `x` position and `hjust` so that text
+#'   stays within the panel.
 #' @param code_font_family Font family for inline code (backticks).
 #'   Defaults to `"mono"` when `NULL`.
 #' @param size.unit How the `size` aesthetic is interpreted: as millimetres
@@ -344,6 +346,17 @@ GeomTextMd <- ggplot2::ggproto(
       ggplot2::alpha(data$colour, data$alpha)
     }
 
+    # Auto-wrap: defer rendering to makeContent where panel dimensions are known
+    if (is.character(width) && identical(width, "auto")) {
+      return(gTree(
+        data = data,
+        fontsize = fontsize,
+        colour = colour,
+        code_font_family = code_font_family,
+        cl = "MdTextAutoWrapGrob"
+      ))
+    }
+
     # Create grobs for each label
     grobs <- lapply(seq_len(nrow(data)), function(i) {
       row <- data[i, ]
@@ -390,6 +403,72 @@ GeomTextMd <- ggplot2::ggproto(
 
   draw_key = ggplot2::draw_key_text
 )
+
+#' @export
+#' @importFrom grid makeContent setChildren gList
+makeContent.MdTextAutoWrapGrob <- function(x) {
+  check_device_compatibility()
+
+  panel_w <- tryCatch(
+    convertWidth(unit(1, "npc"), "inches", valueOnly = TRUE),
+    error = function(e) NA_real_
+  )
+
+  if (is.na(panel_w) || panel_w <= 0) {
+    return(setChildren(x, gList(nullGrob())))
+  }
+
+  data <- x$data
+
+  grobs <- lapply(seq_len(nrow(data)), function(i) {
+    row <- data[i, ]
+    hj <- max(0, min(1, row$hjust))
+    # Clamp x to [0, 1] before computing available inches
+    xc <- max(0, min(1, row$x))
+
+    # Max width before text overflows the panel edge, given hjust
+    avail_w <- if (hj <= 0) {
+      (1 - xc) * panel_w
+    } else if (hj >= 1) {
+      xc * panel_w
+    } else {
+      min(xc / hj, (1 - xc) / (1 - hj)) * panel_w
+    }
+    wrap_width <- max(avail_w, 0.1)
+
+    props <- default_text_props(
+      font_size = x$fontsize[i],
+      font_family = if (nzchar(row$family)) row$family else "sans",
+      font_color = x$colour[i],
+      code_font_family = x$code_font_family,
+      line_spacing = row$lineheight
+    )
+
+    gr <- md_grob(
+      md_text = as.character(row$label),
+      x = row$x,
+      y = row$y,
+      hjust = row$hjust,
+      vjust = row$vjust,
+      width = wrap_width,
+      line_spacing = row$lineheight,
+      text_props = props
+    )
+
+    if (row$angle != 0) {
+      gr$vp <- grid::viewport(
+        x = unit(row$x, "npc"),
+        y = unit(row$y, "npc"),
+        angle = row$angle,
+        just = c(row$hjust, row$vjust)
+      )
+    }
+
+    gr
+  })
+
+  setChildren(x, do.call(gList, grobs))
+}
 
 #' @title Draw Markdown Text with a Background Box in ggplot2
 #' @description
