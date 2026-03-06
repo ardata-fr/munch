@@ -332,7 +332,7 @@ test_that("widthDetails.mdTitleGrob no auto_wrap", {
   })
 })
 
-test_that("widthDetails.mdTitleGrob auto_wrap returns npc", {
+test_that("widthDetails.mdTitleGrob auto_wrap returns natural content width in inches", {
   with_ragg({
     el <- element_md(
       size = 12,
@@ -348,6 +348,10 @@ test_that("widthDetails.mdTitleGrob auto_wrap returns npc", {
     expect_true(gr$auto_wrap)
     w <- grid::widthDetails(gr)
     expect_s3_class(w, "unit")
+    # Must be absolute inches so legend columns are sized correctly,
+    # not unit(1, "npc") which would collapse the plot panel.
+    expect_equal(grid::unitType(w), "inches")
+    expect_gt(grid::convertWidth(w, "inches", valueOnly = TRUE), 0)
   })
 })
 
@@ -410,7 +414,7 @@ test_that("heightDetails.chunksGrob no auto_wrap", {
   })
 })
 
-test_that("widthDetails.chunksGrob auto_wrap returns npc", {
+test_that("widthDetails.chunksGrob auto_wrap returns natural content width in inches", {
   with_ragg({
     chunks <- flextable::as_paragraph(
       flextable::as_chunk("Hello")
@@ -429,6 +433,8 @@ test_that("widthDetails.chunksGrob auto_wrap returns npc", {
     expect_true(gr$auto_wrap)
     w <- grid::widthDetails(gr)
     expect_s3_class(w, "unit")
+    expect_equal(grid::unitType(w), "inches")
+    expect_gt(grid::convertWidth(w, "inches", valueOnly = TRUE), 0)
   })
 })
 

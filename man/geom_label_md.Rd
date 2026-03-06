@@ -99,7 +99,9 @@ lists which parameters it can accept.
 }}
 
 \item{width}{Maximum width for text wrapping in inches. \code{NA} (default)
-means no wrapping.}
+means no wrapping. Use \code{"auto"} to wrap at the plot panel edge: the wrap
+width is computed from each label's \code{x} position and \code{hjust} so that text
+stays within the panel.}
 
 \item{code_font_family}{Font family for inline code (backticks).
 Defaults to \code{"mono"} when \code{NULL}.}
