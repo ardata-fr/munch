@@ -143,7 +143,7 @@ munch_annotation <- function(
 
 #' @importFrom ggplot2 ggplot_add
 #' @exportS3Method ggplot2::ggplot_add
-ggplot_add.munch_annotation <- function(object, plot, object_name) {
+ggplot_add.munch_annotation <- function(object, plot, ...) {
   cap  <- .resolve_annotation(object$caption)
   ttl  <- .resolve_annotation(object$title)
   sub  <- .resolve_annotation(object$subtitle)

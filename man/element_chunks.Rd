@@ -29,6 +29,8 @@ containing chunks such as \code{\link[flextable:as_chunk]{flextable::as_chunk()}
 
 \item{lineheight}{Line height multiplier.}
 
+\item{size}{font size}
+
 \item{margin}{Margins around the text (use \code{\link[ggplot2:element]{ggplot2::margin()}}).}
 
 \item{debug}{Show debug rectangles.}
