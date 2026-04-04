@@ -146,6 +146,9 @@ element_grob.element_md <- function(
     line_spacing = lineheight
   )
 
+  # Detect explicit positioning (e.g. plot.tag with location = "plot"/"panel")
+  has_position <- !is.null(x) || !is.null(y)
+
   # Create the mdGrob with explicit text_props
   md_gr <- md_grob(
     label,
@@ -170,7 +173,8 @@ element_grob.element_md <- function(
   }
 
   # Auto-wrap for horizontal text with margin_x (titles, captions, etc.)
-  auto_wrap <- (angle == 0) && margin_x
+  # Disabled when explicit position is given (tags don't wrap)
+  auto_wrap <- (angle == 0) && margin_x && !has_position
 
   # Build layout dimensions with margins
   if (margin_x) {
@@ -203,84 +207,142 @@ element_grob.element_md <- function(
     content_row <- 1L
   }
 
-  # Build viewport stack
-  layout_vp <- viewport(
-    layout = grid.layout(
-      nrow = nrow_layout,
-      ncol = ncol_layout,
-      widths = widths,
-      heights = heights
-    )
-  )
-  cell_vp <- viewport(
-    layout.pos.row = content_row,
-    layout.pos.col = content_col
-  )
-
-  if (angle != 0) {
-    # Transform justification for rotated text (follows ggplot2 rotate_just)
-    angle_mod <- angle %% 360
-    if (angle_mod >= 270) {
-      pos_hj <- vj
-      pos_vj <- 1 - hj
-    } else if (angle_mod >= 180) {
-      pos_hj <- 1 - hj
-      pos_vj <- 1 - vj
-    } else if (angle_mod >= 90) {
-      pos_hj <- 1 - vj
-      pos_vj <- hj
-    } else {
-      pos_hj <- hj
-      pos_vj <- vj
-    }
-
-    # Container sized for the rotated bounding box
-    if (angle_mod == 90 || angle_mod == 270) {
-      container_w <- unit(dims$height, "inches")
-      container_h <- unit(dims$width, "inches")
-    } else {
-      container_w <- unit(dims$width, "inches")
-      container_h <- unit(dims$height, "inches")
-    }
-
-    md_gr$vp <- vpStack(
-      layout_vp,
-      cell_vp,
-      viewport(
-        x = unit(pos_hj, "npc"),
-        y = unit(pos_vj, "npc"),
-        width = container_w,
-        height = container_h,
-        just = c(pos_hj, pos_vj)
-      ),
-      viewport(
-        angle = angle,
-        width = unit(dims$width, "inches"),
-        height = unit(dims$height, "inches")
+  if (has_position) {
+    # Explicit x/y positioning (e.g. plot.tag with location = "plot"/"panel").
+    # Position the grob directly at x/y, like ggplot2's titleGrob.
+    pos_x <- x %||% unit(hj, "npc")
+    pos_y <- y %||% unit(vj, "npc")
+    if (angle != 0) {
+      angle_mod <- angle %% 360
+      if (angle_mod >= 270) {
+        rot_hj <- vj
+        rot_vj <- 1 - hj
+      } else if (angle_mod >= 180) {
+        rot_hj <- 1 - hj
+        rot_vj <- 1 - vj
+      } else if (angle_mod >= 90) {
+        rot_hj <- 1 - vj
+        rot_vj <- hj
+      } else {
+        rot_hj <- hj
+        rot_vj <- vj
+      }
+      if (angle_mod == 90 || angle_mod == 270) {
+        container_w <- unit(dims$height, "inches")
+        container_h <- unit(dims$width, "inches")
+      } else {
+        container_w <- unit(dims$width, "inches")
+        container_h <- unit(dims$height, "inches")
+      }
+      md_gr$vp <- vpStack(
+        viewport(
+          x = pos_x, y = pos_y,
+          width = container_w, height = container_h,
+          just = c(rot_hj, rot_vj)
+        ),
+        viewport(
+          angle = angle,
+          width = unit(dims$width, "inches"),
+          height = unit(dims$height, "inches")
+        )
       )
-    )
-  } else if (!auto_wrap) {
-    md_gr$vp <- vpStack(
-      layout_vp,
-      cell_vp,
-      viewport(
-        x = unit(hj, "npc"),
-        y = unit(vj, "npc"),
+    } else {
+      md_gr$vp <- viewport(
+        x = pos_x, y = pos_y,
         width = unit(dims$width, "inches"),
         height = unit(dims$height, "inches"),
         just = c(hj, vj)
       )
-    )
+    }
   } else {
-    md_gr$vp <- vpStack(layout_vp, cell_vp)
+    # No explicit position: use layout viewports (titles, captions, axes)
+    layout_vp <- viewport(
+      layout = grid.layout(
+        nrow = nrow_layout,
+        ncol = ncol_layout,
+        widths = widths,
+        heights = heights
+      )
+    )
+    cell_vp <- viewport(
+      layout.pos.row = content_row,
+      layout.pos.col = content_col
+    )
+
+    if (angle != 0) {
+      # Transform justification for rotated text (follows ggplot2 rotate_just)
+      angle_mod <- angle %% 360
+      if (angle_mod >= 270) {
+        pos_hj <- vj
+        pos_vj <- 1 - hj
+      } else if (angle_mod >= 180) {
+        pos_hj <- 1 - hj
+        pos_vj <- 1 - vj
+      } else if (angle_mod >= 90) {
+        pos_hj <- 1 - vj
+        pos_vj <- hj
+      } else {
+        pos_hj <- hj
+        pos_vj <- vj
+      }
+
+      # Container sized for the rotated bounding box
+      if (angle_mod == 90 || angle_mod == 270) {
+        container_w <- unit(dims$height, "inches")
+        container_h <- unit(dims$width, "inches")
+      } else {
+        container_w <- unit(dims$width, "inches")
+        container_h <- unit(dims$height, "inches")
+      }
+
+      md_gr$vp <- vpStack(
+        layout_vp,
+        cell_vp,
+        viewport(
+          x = unit(pos_hj, "npc"),
+          y = unit(pos_vj, "npc"),
+          width = container_w,
+          height = container_h,
+          just = c(pos_hj, pos_vj)
+        ),
+        viewport(
+          angle = angle,
+          width = unit(dims$width, "inches"),
+          height = unit(dims$height, "inches")
+        )
+      )
+    } else if (!auto_wrap) {
+      md_gr$vp <- vpStack(
+        layout_vp,
+        cell_vp,
+        viewport(
+          x = unit(hj, "npc"),
+          y = unit(vj, "npc"),
+          width = unit(dims$width, "inches"),
+          height = unit(dims$height, "inches"),
+          just = c(hj, vj)
+        )
+      )
+    } else {
+      md_gr$vp <- vpStack(layout_vp, cell_vp)
+    }
+  }
+
+  # For sizing, report rotated dimensions so grobWidth/grobHeight are correct
+  if (angle == 90 || angle == 270) {
+    report_w <- content_h
+    report_h <- content_w
+  } else {
+    report_w <- content_w
+    report_h <- content_h
   }
 
   gTree(
     children = gList(md_gr),
     widths = widths,
     heights = heights,
-    content_w = unit(dims$width, "inches"),
-    content_h = unit(dims$height, "inches"),
+    content_w = report_w,
+    content_h = report_h,
     margin = margin,
     auto_wrap = auto_wrap,
     cl = "mdTitleGrob"
@@ -588,6 +650,9 @@ element_grob.element_chunks <- function(
 
   angle <- angle %||% element$angle %||% 0
 
+  # Detect explicit positioning (e.g. plot.tag with location = "plot"/"panel")
+  has_position <- !is.null(x) || !is.null(y)
+
   # Create the mdGrob using chunks_grob
   md_gr <- chunks_grob(
     chunks_df,
@@ -612,7 +677,8 @@ element_grob.element_chunks <- function(
   }
 
   # Auto-wrap for horizontal text with margin_x (titles, captions, etc.)
-  auto_wrap <- (angle == 0) && margin_x
+  # Disabled when explicit position is given (tags don't wrap)
+  auto_wrap <- (angle == 0) && margin_x && !has_position
 
   # Build layout dimensions with margins
   if (margin_x) {
@@ -643,84 +709,142 @@ element_grob.element_chunks <- function(
     content_row <- 1L
   }
 
-  # Build viewport stack
-  layout_vp <- viewport(
-    layout = grid.layout(
-      nrow = nrow_layout,
-      ncol = ncol_layout,
-      widths = widths,
-      heights = heights
-    )
-  )
-  cell_vp <- viewport(
-    layout.pos.row = content_row,
-    layout.pos.col = content_col
-  )
-
-  if (angle != 0) {
-    # Transform justification for rotated text (follows ggplot2 rotate_just)
-    angle_mod <- angle %% 360
-    if (angle_mod >= 270) {
-      pos_hj <- vj
-      pos_vj <- 1 - hj
-    } else if (angle_mod >= 180) {
-      pos_hj <- 1 - hj
-      pos_vj <- 1 - vj
-    } else if (angle_mod >= 90) {
-      pos_hj <- 1 - vj
-      pos_vj <- hj
-    } else {
-      pos_hj <- hj
-      pos_vj <- vj
-    }
-
-    # Container sized for the rotated bounding box
-    if (angle_mod == 90 || angle_mod == 270) {
-      container_w <- unit(dims$height, "inches")
-      container_h <- unit(dims$width, "inches")
-    } else {
-      container_w <- unit(dims$width, "inches")
-      container_h <- unit(dims$height, "inches")
-    }
-
-    md_gr$vp <- vpStack(
-      layout_vp,
-      cell_vp,
-      viewport(
-        x = unit(pos_hj, "npc"),
-        y = unit(pos_vj, "npc"),
-        width = container_w,
-        height = container_h,
-        just = c(pos_hj, pos_vj)
-      ),
-      viewport(
-        angle = angle,
-        width = unit(dims$width, "inches"),
-        height = unit(dims$height, "inches")
+  if (has_position) {
+    # Explicit x/y positioning (e.g. plot.tag with location = "plot"/"panel").
+    # Position the grob directly at x/y, like ggplot2's titleGrob.
+    pos_x <- x %||% unit(hj, "npc")
+    pos_y <- y %||% unit(vj, "npc")
+    if (angle != 0) {
+      angle_mod <- angle %% 360
+      if (angle_mod >= 270) {
+        rot_hj <- vj
+        rot_vj <- 1 - hj
+      } else if (angle_mod >= 180) {
+        rot_hj <- 1 - hj
+        rot_vj <- 1 - vj
+      } else if (angle_mod >= 90) {
+        rot_hj <- 1 - vj
+        rot_vj <- hj
+      } else {
+        rot_hj <- hj
+        rot_vj <- vj
+      }
+      if (angle_mod == 90 || angle_mod == 270) {
+        container_w <- unit(dims$height, "inches")
+        container_h <- unit(dims$width, "inches")
+      } else {
+        container_w <- unit(dims$width, "inches")
+        container_h <- unit(dims$height, "inches")
+      }
+      md_gr$vp <- vpStack(
+        viewport(
+          x = pos_x, y = pos_y,
+          width = container_w, height = container_h,
+          just = c(rot_hj, rot_vj)
+        ),
+        viewport(
+          angle = angle,
+          width = unit(dims$width, "inches"),
+          height = unit(dims$height, "inches")
+        )
       )
-    )
-  } else if (!auto_wrap) {
-    md_gr$vp <- vpStack(
-      layout_vp,
-      cell_vp,
-      viewport(
-        x = unit(hj, "npc"),
-        y = unit(vj, "npc"),
+    } else {
+      md_gr$vp <- viewport(
+        x = pos_x, y = pos_y,
         width = unit(dims$width, "inches"),
         height = unit(dims$height, "inches"),
         just = c(hj, vj)
       )
-    )
+    }
   } else {
-    md_gr$vp <- vpStack(layout_vp, cell_vp)
+    # No explicit position: use layout viewports (titles, captions, axes)
+    layout_vp <- viewport(
+      layout = grid.layout(
+        nrow = nrow_layout,
+        ncol = ncol_layout,
+        widths = widths,
+        heights = heights
+      )
+    )
+    cell_vp <- viewport(
+      layout.pos.row = content_row,
+      layout.pos.col = content_col
+    )
+
+    if (angle != 0) {
+      # Transform justification for rotated text (follows ggplot2 rotate_just)
+      angle_mod <- angle %% 360
+      if (angle_mod >= 270) {
+        pos_hj <- vj
+        pos_vj <- 1 - hj
+      } else if (angle_mod >= 180) {
+        pos_hj <- 1 - hj
+        pos_vj <- 1 - vj
+      } else if (angle_mod >= 90) {
+        pos_hj <- 1 - vj
+        pos_vj <- hj
+      } else {
+        pos_hj <- hj
+        pos_vj <- vj
+      }
+
+      # Container sized for the rotated bounding box
+      if (angle_mod == 90 || angle_mod == 270) {
+        container_w <- unit(dims$height, "inches")
+        container_h <- unit(dims$width, "inches")
+      } else {
+        container_w <- unit(dims$width, "inches")
+        container_h <- unit(dims$height, "inches")
+      }
+
+      md_gr$vp <- vpStack(
+        layout_vp,
+        cell_vp,
+        viewport(
+          x = unit(pos_hj, "npc"),
+          y = unit(pos_vj, "npc"),
+          width = container_w,
+          height = container_h,
+          just = c(pos_hj, pos_vj)
+        ),
+        viewport(
+          angle = angle,
+          width = unit(dims$width, "inches"),
+          height = unit(dims$height, "inches")
+        )
+      )
+    } else if (!auto_wrap) {
+      md_gr$vp <- vpStack(
+        layout_vp,
+        cell_vp,
+        viewport(
+          x = unit(hj, "npc"),
+          y = unit(vj, "npc"),
+          width = unit(dims$width, "inches"),
+          height = unit(dims$height, "inches"),
+          just = c(hj, vj)
+        )
+      )
+    } else {
+      md_gr$vp <- vpStack(layout_vp, cell_vp)
+    }
+  }
+
+  # For sizing, report rotated dimensions so grobWidth/grobHeight are correct
+  if (angle == 90 || angle == 270) {
+    report_w <- content_h
+    report_h <- content_w
+  } else {
+    report_w <- content_w
+    report_h <- content_h
   }
 
   gTree(
     children = gList(md_gr),
     widths = widths,
     heights = heights,
-    content_w = unit(dims$width, "inches"),
-    content_h = unit(dims$height, "inches"),
+    content_w = report_w,
+    content_h = report_h,
     margin = margin,
     auto_wrap = auto_wrap,
     cl = "chunksGrob"
