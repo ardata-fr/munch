@@ -38,7 +38,7 @@ pak::pak("ardata-fr/munch")
 ‘munch’ requires graphics devices that support ‘systemfonts’:
 [‘ragg’](https://ragg.r-lib.org/),
 [‘svglite’](https://svglite.r-lib.org/), or
-[‘ggiraph’](https://ardata-fr.github.io/ggiraph/). ‘cairo’ devices is
+[‘ggiraph’](https://davidgohel.github.io/ggiraph/). ‘cairo’ devices is
 also supported when fonts are installed at the system level. See
 [`vignette("font-recipes")`](https://ardata-fr.github.io/munch/dev/articles/font-recipes.md)
 for font configuration, alternative devices, and troubleshooting.
