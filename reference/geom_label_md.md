@@ -136,7 +136,9 @@ geom_label_md(
 - width:
 
   Maximum width for text wrapping in inches. `NA` (default) means no
-  wrapping.
+  wrapping. Use `"auto"` to wrap at the plot panel edge: the wrap width
+  is computed from each label's `x` position and `hjust` so that text
+  stays within the panel.
 
 - code_font_family:
 

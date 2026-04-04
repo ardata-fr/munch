@@ -11,7 +11,7 @@ formatting (bold, italic, code, strikethrough, links, images)."><meta property="
 
     <a class="navbar-brand me-2" href="../index.html">munch</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.0.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.0.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -153,7 +153,9 @@ lists which parameters it can accept.</p></li>
 
 <dt id="arg-width">width<a class="anchor" aria-label="anchor" href="#arg-width"></a></dt>
 <dd><p>Maximum width for text wrapping in inches. <code>NA</code> (default)
-means no wrapping.</p></dd>
+means no wrapping. Use <code>"auto"</code> to wrap at the plot panel edge: the wrap
+width is computed from each label's <code>x</code> position and <code>hjust</code> so that text
+stays within the panel.</p></dd>
 
 
 <dt id="arg-code-font-family">code_font_family<a class="anchor" aria-label="anchor" href="#arg-code-font-family"></a></dt>

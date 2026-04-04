@@ -23,6 +23,8 @@ Use markdown or chunks in plot titles, captions, and axis labels
   : Markdown Theme Element for ggplot2
 - [`element_chunks()`](https://ardata-fr.github.io/munch/reference/element_chunks.md)
   : Chunks Theme Element for 'ggplot2'
+- [`munch_annotation()`](https://ardata-fr.github.io/munch/reference/munch_annotation.md)
+  : Patchwork Annotation with Rich Text
 
 ## ‘ggplot2’ geoms
 
