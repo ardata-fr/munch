@@ -7,7 +7,7 @@ Authors@R: c(
   )
 Description: Renders rich inline text (bold, italic, code, links, images)
     in grid graphics and 'ggplot2', from markdown or 'flextable' chunks.
-    Provides grobs, theme elements, and geoms for styled text rendering.
+    Provides grobs, theme elements, and geometry layers for styled text rendering.
     Only works with graphics devices that support 'systemfonts', such as
     those provided by 'ragg', 'svglite', or 'ggiraph'. The 'cairo_pdf'
     device is also supported when fonts are installed at the system level.

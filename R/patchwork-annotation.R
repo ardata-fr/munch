@@ -31,12 +31,18 @@
 #' @return An object of class `c("munch_annotation", "gg")` that can be added
 #'   to a patchwork object with `+`.
 #' @export
-#' @examples
-#' \dontrun{
+#' @examplesIf require("patchwork", quietly = TRUE) && require("ggiraph", quietly = TRUE)
 #' library(ggplot2)
 #' library(patchwork)
 #' library(flextable)
 #'
+#' library(gdtools)
+#' font_set_liberation()
+#' set_flextable_defaults(
+#'   font.size = 12,
+#'   font.family = "Liberation Sans"
+#' )
+
 #' p1 <- ggplot(mtcars, aes(mpg, wt)) + geom_point()
 #' p2 <- ggplot(mtcars, aes(hp, wt)) + geom_point()
 #'
@@ -44,12 +50,19 @@
 #'   as_chunk("R"), as_sup("2"), as_chunk(" = 0.75")
 #' )
 #'
-#' wrap_plots(p1, p2) +
+#' plot_obj <- wrap_plots(p1, p2) +
 #'   munch_annotation(
 #'     title   = "A plain string title",
 #'     caption = element_chunks(caption_chunks, lineheight = 1.5, hjust = 0)
 #'   )
-#' }
+#' x <- girafe(
+#'   plot_obj,
+#'   options = list(opts_sizing(rescale = FALSE)),
+#'   dependencies = list(
+#'     liberationsansHtmlDependency()
+#'   )
+#' )
+#' x
 munch_annotation <- function(
   caption = NULL,
   title = NULL,
