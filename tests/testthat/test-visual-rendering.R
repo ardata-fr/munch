@@ -1,3 +1,6 @@
+skip_on_cran()
+skip_if_not(Sys.info()[["sysname"]] == "Darwin")
+
 plot_files <- sort(list.files(
   testthat::test_path("plots"),
   pattern = "\\.R$",
