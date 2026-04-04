@@ -58,6 +58,7 @@ reference:
     contents:
     - element_md
     - element_chunks
+    - munch_annotation
   - title: "'ggplot2' geoms"
     desc: Add markdown-formatted text annotations to plots
     contents:
