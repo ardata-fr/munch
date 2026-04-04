@@ -141,6 +141,7 @@ munch_annotation <- function(
 # visible in the output.
 # -----------------------------------------------------------------------------
 
+#' @importFrom patchwork plot_annotation
 #' @importFrom ggplot2 ggplot_add
 #' @exportS3Method ggplot2::ggplot_add
 ggplot_add.munch_annotation <- function(object, plot, ...) {
@@ -174,5 +175,5 @@ ggplot_add.munch_annotation <- function(object, plot, ...) {
   if (!is.null(object$tag_suffix)) pa_args$tag_suffix <- object$tag_suffix
   if (!is.null(object$tag_sep)) pa_args$tag_sep <- object$tag_sep
 
-  plot + do.call(patchwork::plot_annotation, pa_args)
+  plot + do.call(plot_annotation, pa_args)
 }
