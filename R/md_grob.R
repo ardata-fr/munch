@@ -461,6 +461,7 @@ heightDetails.mdGrob <- function(x) {
 #' Prints summary information for an mdGrob object.
 #' @param x A mdGrob object.
 #' @param ... Additional arguments (ignored).
+#' @return A grid grob object of class "mdGrob" representing rich text content (invisibly).
 #' @export
 #' @method print mdGrob
 #' @keywords internal
@@ -489,6 +490,7 @@ print.mdGrob <- function(x, ...) {
 #' Draws an mdGrob object to the current graphics device.
 #' @param x A mdGrob object.
 #' @param ... Additional arguments (ignored).
+#' @return A grid grob object of class "mdGrob" representing rich text content (invisibly).
 #' @export
 #' @method plot mdGrob
 #' @importFrom grid grid.newpage grid.draw pushViewport popViewport

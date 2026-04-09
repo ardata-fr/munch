@@ -11,6 +11,9 @@
 
 \item{...}{Additional arguments (ignored).}
 }
+\value{
+A grid grob object of class "mdGrob" representing rich text content (invisibly).
+}
 \description{
 Draws an mdGrob object to the current graphics device.
 }

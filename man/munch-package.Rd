@@ -56,7 +56,6 @@ Set with \code{options(munch.skip_device_check = TRUE)}.}
 Useful links:
 \itemize{
   \item \url{https://ardata-fr.github.io/munch/}
-  \item \url{https://github.com/ardata-fr/munch}
   \item Report bugs at \url{https://github.com/ardata-fr/munch/issues}
 }
 

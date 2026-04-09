@@ -11,6 +11,9 @@
 
 \item{...}{Additional arguments (ignored).}
 }
+\value{
+A grid grob object of class "mdGrob" representing rich text content (invisibly).
+}
 \description{
 Prints summary information for an mdGrob object.
 }
