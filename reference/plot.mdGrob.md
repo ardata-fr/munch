@@ -18,3 +18,8 @@ plot(x, ...)
 - ...:
 
   Additional arguments (ignored).
+
+## Value
+
+A grid grob object of class "mdGrob" representing rich text content
+(invisibly).
