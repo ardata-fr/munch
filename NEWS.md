@@ -1,3 +1,9 @@
+# munch (development version)
+
+- Lines are now arranged by `flextable::layout_lines()`, as in 'flextable', and
+faster. Consecutive line breaks give empty lines, and spaces written after a line
+break are kept. It needs 'flextable' >= 0.10.4.
+
 # munch 0.0.2
 
 - Fixed `element_md()` and `element_chunks()` ignoring `plot.tag.position` and `plot.tag.location` (#1).

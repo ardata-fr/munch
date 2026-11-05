@@ -258,3 +258,54 @@ test_that("check_device_compatibility skips when option set", {
     expect_invisible(munch:::check_device_compatibility())
   })
 })
+
+test_that("lines follow the rules of flextable::layout_lines()", {
+  make_chunks <- function(txt, width) {
+    data.frame(
+      txt = txt,
+      width = width,
+      height = 0.2,
+      ascent = 0.15,
+      descent = 0.05,
+      max_ascend = 0.16,
+      max_descend = 0.06,
+      is_newline = txt == "\n",
+      is_space = txt == " "
+    )
+  }
+  line_text <- function(lines) {
+    vapply(
+      lines,
+      function(line) paste(vapply(line$chunks, `[[`, "", "txt"), collapse = ""),
+      character(1)
+    )
+  }
+
+  chunks <- make_chunks(c("ab", " ", "cd"), c(1, .2, 1))
+  expect_equal(line_text(arrange_chunks_into_lines(chunks, 3)), "ab cd")
+  # the space that does not fit is dropped
+  expect_equal(
+    line_text(arrange_chunks_into_lines(chunks, 1.1)),
+    c("ab", "cd")
+  )
+
+  # consecutive line breaks give an empty line, with a height
+  chunks <- make_chunks(c("a", "\n", "\n", "b"), c(1, 0, 0, 1))
+  lines <- arrange_chunks_into_lines(chunks, NULL)
+  expect_equal(line_text(lines), c("a", "", "b"))
+  expect_equal(lines[[2]]$height, 0.2)
+  expect_equal(lines[[2]]$width, 0)
+
+  # spaces written after a line break are kept
+  chunks <- make_chunks(c("a", "\n", " ", "b"), c(1, 0, .2, 1))
+  expect_equal(
+    line_text(arrange_chunks_into_lines(chunks, NULL)),
+    c("a", " b")
+  )
+
+  # no text
+  lines <- arrange_chunks_into_lines(chunks[0, ], 3)
+  expect_length(lines, 1L)
+  expect_length(lines[[1]]$chunks, 0L)
+})
+

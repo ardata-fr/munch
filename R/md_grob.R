@@ -329,94 +329,43 @@ makeContent.mdGrob <- function(x) {
 #' @return List of lines, each with chunks, width, height, ascent, descent.
 #' @noRd
 arrange_chunks_into_lines <- function(chunks, max_width = NULL) {
-  lines <- list()
-  current_line <- list(
-    chunks = list(),
-    width = 0,
-    height = 0,
-    ascent = 0,
-    descent = 0,
-    max_ascend = 0,
-    max_descend = 0
-  )
-
-  for (i in seq_len(nrow(chunks))) {
-    chunk <- as.list(chunks[i, ])
-
-    # Check for newline
-    if (isTRUE(chunk$is_newline)) {
-      # Finish current line
-      if (length(current_line$chunks) > 0 || length(lines) == 0) {
-        if (current_line$height == 0) {
-          # Empty line - use chunk height
-          current_line$height <- chunk$height
-          current_line$ascent <- chunk$ascent
-          current_line$descent <- chunk$descent
-          current_line$max_ascend <- chunk$max_ascend
-          current_line$max_descend <- chunk$max_descend
-        }
-        lines <- c(lines, list(current_line))
-      }
-      # Start new line
-      current_line <- list(
-        chunks = list(),
-        width = 0,
-        height = 0,
-        ascent = 0,
-        descent = 0
-      )
-      next
-    }
-
-    # Check for wrapping
-    if (!is.null(max_width) && max_width > 0) {
-      if (
-        current_line$width + chunk$width > max_width &&
-          length(current_line$chunks) > 0
-      ) {
-        # Wrap to new line
-        lines <- c(lines, list(current_line))
-        current_line <- list(
-          chunks = list(),
-          width = 0,
-          height = 0,
-          ascent = 0,
-          descent = 0
-        )
-        # Skip leading spaces on new line
-        if (isTRUE(chunk$is_space)) {
-          next
-        }
-      }
-    }
-
-    # Add chunk to current line
-    current_line$chunks <- c(current_line$chunks, list(chunk))
-    current_line$width <- current_line$width + chunk$width
-    current_line$ascent <- max(current_line$ascent, chunk$ascent)
-    current_line$descent <- max(current_line$descent, chunk$descent)
-    current_line$height <- current_line$ascent + current_line$descent
-    current_line$max_ascend <- max(current_line$max_ascend, chunk$max_ascend)
-    current_line$max_descend <- max(current_line$max_descend, chunk$max_descend)
-  }
-
-  # Don't forget the last line
-  if (length(current_line$chunks) > 0) {
-    lines <- c(lines, list(current_line))
-  }
-
-  # Handle empty input
-  if (length(lines) == 0) {
-    lines <- list(list(
+  n <- nrow(chunks)
+  if (n == 0L) {
+    return(list(list(
       chunks = list(),
       width = 0,
       height = 0.2,
       ascent = 0.15,
       descent = 0.05
-    ))
+    )))
   }
 
-  lines
+  is_newline <- chunks$is_newline %in% TRUE
+  line_index <- flextable::layout_lines(
+    width = chunks$width,
+    newline = is_newline,
+    space = chunks$is_space %in% TRUE,
+    max_width = if (!is.null(max_width) && max_width > 0) max_width else Inf
+  )
+
+  columns <- as.list(unclass(chunks))
+  attr(columns, "row.names") <- NULL
+  chunk_at <- function(i) lapply(columns, `[`, i)
+
+  kept <- which(line_index > 0L)
+  lapply(unname(split(kept, line_index[kept])), function(index) {
+    # a line with only a line break is an empty line: it gives the height
+    drawn <- index[!is_newline[index]]
+    list(
+      chunks = lapply(drawn, chunk_at),
+      width = sum(chunks$width[drawn]),
+      height = max(chunks$ascent[index]) + max(chunks$descent[index]),
+      ascent = max(chunks$ascent[index]),
+      descent = max(chunks$descent[index]),
+      max_ascend = max(chunks$max_ascend[index]),
+      max_descend = max(chunks$max_descend[index])
+    )
+  })
 }
 
 #' @title Get Dimensions of a mdGrob
