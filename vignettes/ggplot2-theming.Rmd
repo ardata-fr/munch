@@ -67,6 +67,36 @@ ggplot(mtcars, aes(hp, mpg)) +
 > For advanced markdown rendering (images, spans, custom CSS), see also
 > `marquee::element_marquee()`.
 
+### Long titles
+
+Titles, subtitles and captions wrap to the width of their column, and the plot
+keeps the space they need:
+
+```{r long-title, message=FALSE, fig.height=3}
+long_title <- paste(
+  "A **long title** that needs several lines, because it is wider",
+  "than the *panel* of the plot"
+)
+
+p <- ggplot(mtcars, aes(mpg, wt)) +
+  geom_point() +
+  labs(title = long_title) +
+  theme(plot.title = element_md())
+p
+```
+
+With 'patchwork', or with a fixed aspect ratio such as `coord_fixed()`, this width
+is not known when the height of the title is computed. The text may need more lines
+than the space kept for it, and its first lines are cut. Set the maximum width of
+the text with `width`, in inches:
+
+```{r long-title-patchwork, message=FALSE, fig.height=3}
+library(patchwork)
+
+p <- p + theme(plot.title = element_md(width = 2.5))
+p | p
+```
+
 ## Advanced formatting with element_chunks()
 
 `element_chunks()` uses 'flextable' formatting functions (`as_paragraph()`,
@@ -204,6 +234,7 @@ ggplot(mtcars, aes(mpg, wt)) +
 | `angle` | Text rotation angle |
 | `lineheight` | Line height multiplier |
 | `margin` | Margins around text |
+| `width` | Maximum width of the text, in inches |
 
 ```{r layout-chunks, message=FALSE}
 chunks <- as_paragraph(
