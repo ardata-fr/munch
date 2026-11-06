@@ -17,7 +17,8 @@ element_chunks(
   size = NULL,
   margin = NULL,
   debug = FALSE,
-  inherit.blank = FALSE
+  inherit.blank = FALSE,
+  width = NULL
 )
 ```
 
@@ -65,6 +66,15 @@ element_chunks(
 - inherit.blank:
 
   Should this element inherit blank elements.
+
+- width:
+
+  Maximum width of the text in inches, for titles, subtitles and
+  captions, which wrap to their available width by default. With
+  'patchwork' or a fixed aspect ratio, the available width is not known
+  when the height of the title is computed: the text may need more lines
+  than the space kept for it, and setting `width` solves this. It is
+  ignored for rotated text and for text with an explicit position.
 
 ## Value
 

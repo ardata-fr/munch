@@ -63,6 +63,43 @@ ggplot(mtcars, aes(hp, mpg)) +
 > For advanced markdown rendering (images, spans, custom CSS), see also
 > `marquee::element_marquee()`.
 
+### Long titles
+
+Titles, subtitles and captions wrap to the width of their column, and
+the plot keeps the space they need:
+
+``` r
+
+long_title <- paste(
+  "A **long title** that needs several lines, because it is wider",
+  "than the *panel* of the plot"
+)
+
+p <- ggplot(mtcars, aes(mpg, wt)) +
+  geom_point() +
+  labs(title = long_title) +
+  theme(plot.title = element_md())
+p
+```
+
+![](ggplot2-theming_files/figure-html/long-title-1.png)
+
+With ‘patchwork’, or with a fixed aspect ratio such as
+[`coord_fixed()`](https://ggplot2.tidyverse.org/reference/coord_fixed.html),
+this width is not known when the height of the title is computed. The
+text may need more lines than the space kept for it, and its first lines
+are cut. Set the maximum width of the text with `width`, in inches:
+
+``` r
+
+library(patchwork)
+
+p <- p + theme(plot.title = element_md(width = 2.5))
+p | p
+```
+
+![](ggplot2-theming_files/figure-html/long-title-patchwork-1.png)
+
 ## Advanced formatting with element_chunks()
 
 [`element_chunks()`](https://ardata-fr.github.io/munch/dev/reference/element_chunks.md)
@@ -223,13 +260,14 @@ ggplot(mtcars, aes(mpg, wt)) +
 accepts the same layout parameters as
 [`element_md()`](https://ardata-fr.github.io/munch/dev/reference/element_md.md):
 
-| Parameter    | Description                    |
-|--------------|--------------------------------|
-| `hjust`      | Horizontal justification (0-1) |
-| `vjust`      | Vertical justification (0-1)   |
-| `angle`      | Text rotation angle            |
-| `lineheight` | Line height multiplier         |
-| `margin`     | Margins around text            |
+| Parameter    | Description                          |
+|--------------|--------------------------------------|
+| `hjust`      | Horizontal justification (0-1)       |
+| `vjust`      | Vertical justification (0-1)         |
+| `angle`      | Text rotation angle                  |
+| `lineheight` | Line height multiplier               |
+| `margin`     | Margins around text                  |
+| `width`      | Maximum width of the text, in inches |
 
 ``` r
 

@@ -122,6 +122,35 @@ render markdown in titles, subtitles, captions, and axis labels.</p>
 <p>For advanced markdown rendering (images, spans, custom CSS), see also
 <code>marquee::element_marquee()</code>.</p>
 </blockquote>
+<div class="section level3">
+<h3 id="long-titles">Long titles<a class="anchor" aria-label="anchor" href="#long-titles"></a>
+</h3>
+<p>Titles, subtitles and captions wrap to the width of their column, and
+the plot keeps the space they need:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">long_title</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span>
+<span>  <span class="st">"A **long title** that needs several lines, because it is wider"</span>,</span>
+<span>  <span class="st">"than the *panel* of the plot"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">mtcars</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="va">wt</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="va">long_title</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>plot.title <span class="op">=</span> <span class="fu"><a href="../reference/element_md.html">element_md</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">p</span></span></code></pre></div>
+<p><img src="ggplot2-theming_files/figure-html/long-title-1.png" class="r-plt" alt="" width="100%"></p>
+<p>With ‘patchwork’, or with a fixed aspect ratio such as
+<code><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html" class="external-link">coord_fixed()</a></code>, this width is not known when the height of
+the title is computed. The text may need more lines than the space kept
+for it, and its first lines are cut. Set the maximum width of the text
+with <code>width</code>, in inches:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://patchwork.data-imaginist.com" class="external-link">patchwork</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">p</span> <span class="op">&lt;-</span> <span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>plot.title <span class="op">=</span> <span class="fu"><a href="../reference/element_md.html">element_md</a></span><span class="op">(</span>width <span class="op">=</span> <span class="fl">2.5</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">p</span> <span class="op">|</span> <span class="va">p</span></span></code></pre></div>
+<p><img src="ggplot2-theming_files/figure-html/long-title-patchwork-1.png" class="r-plt" alt="" width="100%"></p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="advanced-formatting-with-element_chunks">Advanced formatting with element_chunks()<a class="anchor" aria-label="anchor" href="#advanced-formatting-with-element_chunks"></a>
@@ -184,7 +213,7 @@ features that markdown does not support.</p>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">chunks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/as_paragraph.html" class="external-link">as_paragraph</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/as_b.html" class="external-link">as_b</a></span><span class="op">(</span><span class="st">"Bold"</span><span class="op">)</span>, <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/as_chunk.html" class="external-link">as_chunk</a></span><span class="op">(</span><span class="st">", "</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/as_i.html" class="external-link">as_i</a></span><span class="op">(</span><span class="st">"italic"</span><span class="op">)</span>, <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/as_chunk.html" class="external-link">as_chunk</a></span><span class="op">(</span><span class="st">", "</span><span class="op">)</span>,</span>
@@ -202,7 +231,7 @@ features that markdown does not support.</p>
 </h3>
 <p>Superscripts and subscripts are essential for scientific text.
 <code><a href="../reference/element_chunks.html">element_chunks()</a></code> makes them straightforward:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">title_chunks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/as_paragraph.html" class="external-link">as_paragraph</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/as_chunk.html" class="external-link">as_chunk</a></span><span class="op">(</span><span class="st">"Analysis: "</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/as_b.html" class="external-link">as_b</a></span><span class="op">(</span><span class="st">"R"</span><span class="op">)</span>, <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/as_sup.html" class="external-link">as_sup</a></span><span class="op">(</span><span class="st">"2"</span><span class="op">)</span>,</span>
@@ -216,7 +245,7 @@ features that markdown does not support.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>plot.title <span class="op">=</span> <span class="fu"><a href="../reference/element_chunks.html">element_chunks</a></span><span class="op">(</span><span class="va">title_chunks</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="ggplot2-theming_files/figure-html/stats-chunks-1.png" class="r-plt" alt="" width="100%"></p>
 <p>Chemical formulas:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">subtitle_chunks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/as_paragraph.html" class="external-link">as_paragraph</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/as_chunk.html" class="external-link">as_chunk</a></span><span class="op">(</span><span class="st">"Concentration of "</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/as_b.html" class="external-link">as_b</a></span><span class="op">(</span><span class="st">"H"</span><span class="op">)</span>, <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/as_sub.html" class="external-link">as_sub</a></span><span class="op">(</span><span class="st">"2"</span><span class="op">)</span>,</span>
@@ -229,7 +258,7 @@ features that markdown does not support.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>plot.subtitle <span class="op">=</span> <span class="fu"><a href="../reference/element_chunks.html">element_chunks</a></span><span class="op">(</span><span class="va">subtitle_chunks</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="ggplot2-theming_files/figure-html/chemical-chunks-1.png" class="r-plt" alt="" width="100%"></p>
 <p>Units with exponents:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">caption_chunks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/as_paragraph.html" class="external-link">as_paragraph</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/as_chunk.html" class="external-link">as_chunk</a></span><span class="op">(</span><span class="st">"Units: mol\u00B7L"</span><span class="op">)</span>, <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/as_sup.html" class="external-link">as_sup</a></span><span class="op">(</span><span class="st">"-1"</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/as_chunk.html" class="external-link">as_chunk</a></span><span class="op">(</span><span class="st">" | Speed: m\u00B7s"</span><span class="op">)</span>, <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/as_sup.html" class="external-link">as_sup</a></span><span class="op">(</span><span class="st">"-2"</span><span class="op">)</span></span>
@@ -245,7 +274,7 @@ features that markdown does not support.</p>
 </h3>
 <p><code><a href="https://davidgohel.github.io/flextable/reference/colorize.html" class="external-link">colorize()</a></code> and <code><a href="https://davidgohel.github.io/flextable/reference/as_highlight.html" class="external-link">as_highlight()</a></code> add color and
 background highlighting:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">title_chunks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/as_paragraph.html" class="external-link">as_paragraph</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/as_chunk.html" class="external-link">as_chunk</a></span><span class="op">(</span><span class="st">"Results: "</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/colorize.html" class="external-link">colorize</a></span><span class="op">(</span><span class="fu"><a href="https://davidgohel.github.io/flextable/reference/as_chunk.html" class="external-link">as_chunk</a></span><span class="op">(</span><span class="st">"significant"</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"#E63946"</span><span class="op">)</span>,</span>
@@ -273,7 +302,7 @@ background highlighting:</p>
 <p><code><a href="https://davidgohel.github.io/flextable/reference/as_image.html" class="external-link">as_image()</a></code> embeds images inside
 <code><a href="../reference/element_chunks.html">element_chunks()</a></code>. This is useful for logos or icons in
 titles:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">r_logo</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Rhome.html" class="external-link">R.home</a></span><span class="op">(</span><span class="st">"doc"</span><span class="op">)</span>, <span class="st">"html"</span>, <span class="st">"logo.jpg"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">title_chunks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/as_paragraph.html" class="external-link">as_paragraph</a></span><span class="op">(</span></span>
@@ -319,9 +348,13 @@ titles:</p>
 <td><code>margin</code></td>
 <td>Margins around text</td>
 </tr>
+<tr class="even">
+<td><code>width</code></td>
+<td>Maximum width of the text, in inches</td>
+</tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">chunks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/as_paragraph.html" class="external-link">as_paragraph</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/as_chunk.html" class="external-link">as_chunk</a></span><span class="op">(</span><span class="st">"Centered: R"</span><span class="op">)</span>, <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/as_sup.html" class="external-link">as_sup</a></span><span class="op">(</span><span class="st">"2"</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/as_chunk.html" class="external-link">as_chunk</a></span><span class="op">(</span><span class="st">" = 0.75"</span><span class="op">)</span></span>
@@ -339,7 +372,7 @@ titles:</p>
 <p><code><a href="../reference/geom_text_md.html">geom_text_md()</a></code> and <code><a href="../reference/geom_label_md.html">geom_label_md()</a></code> render
 markdown-formatted labels directly on the plot, similar to
 <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_text()</a></code> and <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label()</a></code>.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">annotations</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">15</span>, <span class="fl">25</span>, <span class="fl">30</span><span class="op">)</span>,</span>
 <span>  y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">3</span>, <span class="fl">2</span><span class="op">)</span>,</span>
@@ -356,7 +389,7 @@ markdown-formatted labels directly on the plot, similar to
 <p><img src="ggplot2-theming_files/figure-html/geom-text-basic-1.png" class="r-plt" alt="" width="100%"></p>
 <p><code><a href="../reference/geom_label_md.html">geom_label_md()</a></code> adds a background rectangle for better
 readability:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">mtcars</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="va">wt</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html" class="external-link">geom_smooth</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"lm"</span>, se <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span></span>
@@ -374,7 +407,7 @@ readability:</p>
 <p><code><a href="../reference/geom_text_md.html">geom_text_md()</a></code> and <code><a href="../reference/geom_label_md.html">geom_label_md()</a></code> support
 the <code>width</code> parameter (in inches) for automatic line
 wrapping:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">15</span>, <span class="fl">30</span><span class="op">)</span>,</span>
 <span>  y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">2.5</span><span class="op">)</span>,</span>
@@ -398,7 +431,7 @@ wrapping:</p>
 </h3>
 <p>Use markdown image syntax <code>![](path)</code> to embed images in
 <code><a href="../reference/geom_label_md.html">geom_label_md()</a></code>:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">r_logo</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Rhome.html" class="external-link">R.home</a></span><span class="op">(</span><span class="st">"doc"</span><span class="op">)</span>, <span class="st">"html"</span>, <span class="st">"logo.jpg"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
