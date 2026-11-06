@@ -58,7 +58,12 @@ xlab_chunks <- flextable::as_paragraph(
 list(
   plot = ggplot2::ggplot(dat, ggplot2::aes(carat, price, color = cut)) +
     ggplot2::geom_point(alpha = 0.05, size = 0.5) +
-    ggplot2::geom_smooth(method = "lm", formula = y ~ x, se = FALSE, linewidth = 1.2) +
+    ggplot2::geom_smooth(
+      method = "lm",
+      formula = y ~ x,
+      se = FALSE,
+      linewidth = 1.2
+    ) +
     ggplot2::scale_color_manual(
       values = c(Premium = "#E31A1C", Ideal = "#1F78B4")
     ) +

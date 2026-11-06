@@ -260,9 +260,13 @@ test_that("element_grob.element_chunks returns zeroGrob for NULL chunks", {
     el <- structure(
       list(
         chunks = NULL,
-        hjust = NULL, vjust = NULL, angle = NULL,
-        lineheight = NULL, margin = NULL,
-        debug = FALSE, inherit.blank = FALSE
+        hjust = NULL,
+        vjust = NULL,
+        angle = NULL,
+        lineheight = NULL,
+        margin = NULL,
+        debug = FALSE,
+        inherit.blank = FALSE
       ),
       class = c("element_chunks", "element_text", "element")
     )

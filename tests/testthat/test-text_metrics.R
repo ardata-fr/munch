@@ -1,16 +1,17 @@
 # helper: minimal text chunk data.frame
 make_chunks <- function(
-    txt = "hello",
-    font.family = "Liberation Sans",
-    font.size = 12,
-    font.color = "black",
-    bold = FALSE,
-    italic = FALSE,
-    vertical.align = "baseline",
-    img_data = list(NULL),
-    img_path = NA_character_,
-    img_width = NA_real_,
-    img_height = NA_real_) {
+  txt = "hello",
+  font.family = "Liberation Sans",
+  font.size = 12,
+  font.color = "black",
+  bold = FALSE,
+  italic = FALSE,
+  vertical.align = "baseline",
+  img_data = list(NULL),
+  img_path = NA_character_,
+  img_width = NA_real_,
+  img_height = NA_real_
+) {
   n <- length(txt)
   data.frame(
     txt = txt,

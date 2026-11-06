@@ -236,8 +236,10 @@ element_grob.element_md <- function(
       }
       md_gr$vp <- vpStack(
         viewport(
-          x = pos_x, y = pos_y,
-          width = container_w, height = container_h,
+          x = pos_x,
+          y = pos_y,
+          width = container_w,
+          height = container_h,
           just = c(rot_hj, rot_vj)
         ),
         viewport(
@@ -248,7 +250,8 @@ element_grob.element_md <- function(
       )
     } else {
       md_gr$vp <- viewport(
-        x = pos_x, y = pos_y,
+        x = pos_x,
+        y = pos_y,
         width = unit(dims$width, "inches"),
         height = unit(dims$height, "inches"),
         just = c(hj, vj)
@@ -738,8 +741,10 @@ element_grob.element_chunks <- function(
       }
       md_gr$vp <- vpStack(
         viewport(
-          x = pos_x, y = pos_y,
-          width = container_w, height = container_h,
+          x = pos_x,
+          y = pos_y,
+          width = container_w,
+          height = container_h,
           just = c(rot_hj, rot_vj)
         ),
         viewport(
@@ -750,7 +755,8 @@ element_grob.element_chunks <- function(
       )
     } else {
       md_gr$vp <- viewport(
-        x = pos_x, y = pos_y,
+        x = pos_x,
+        y = pos_y,
         width = unit(dims$width, "inches"),
         height = unit(dims$height, "inches"),
         just = c(hj, vj)

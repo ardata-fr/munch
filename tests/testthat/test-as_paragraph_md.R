@@ -38,9 +38,12 @@ test_that("as_paragraph_md handles strikethrough", {
   result <- as_paragraph_md("~~deleted~~ text")
   chunk_df <- result[[1]]
 
-  expect_true("vertical.align" %in% names(chunk_df) ||
-    "strike" %in% names(chunk_df) ||
-    nrow(chunk_df) >= 2)
+  expect_true(
+    "vertical.align" %in%
+      names(chunk_df) ||
+      "strike" %in% names(chunk_df) ||
+      nrow(chunk_df) >= 2
+  )
 })
 
 test_that("as_paragraph_md uses custom mono font", {

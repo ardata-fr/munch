@@ -87,20 +87,20 @@ munch_annotation <- function(
       ))
     }
   }
-  .check_annotation_arg(caption,  "caption")
-  .check_annotation_arg(title,    "title")
+  .check_annotation_arg(caption, "caption")
+  .check_annotation_arg(title, "title")
   .check_annotation_arg(subtitle, "subtitle")
 
   structure(
     list(
-      caption    = caption,
-      title      = title,
-      subtitle   = subtitle,
+      caption = caption,
+      title = title,
+      subtitle = subtitle,
       tag_levels = tag_levels,
       tag_prefix = tag_prefix,
       tag_suffix = tag_suffix,
-      tag_sep    = tag_sep,
-      theme      = theme
+      tag_sep = tag_sep,
+      theme = theme
     ),
     class = c("munch_annotation", "gg")
   )
@@ -158,17 +158,25 @@ munch_annotation <- function(
 #' @importFrom ggplot2 ggplot_add
 #' @exportS3Method ggplot2::ggplot_add
 ggplot_add.munch_annotation <- function(object, plot, ...) {
-  cap  <- .resolve_annotation(object$caption)
-  ttl  <- .resolve_annotation(object$title)
-  sub  <- .resolve_annotation(object$subtitle)
+  cap <- .resolve_annotation(object$caption)
+  ttl <- .resolve_annotation(object$title)
+  sub <- .resolve_annotation(object$subtitle)
 
   # Build theme entries for any munch elements
   theme_parts <- list()
-  if (!is.null(cap$element)) theme_parts$plot.caption <- cap$element
-  if (!is.null(ttl$element)) theme_parts$plot.title <- ttl$element
-  if (!is.null(sub$element)) theme_parts$plot.subtitle <- sub$element
+  if (!is.null(cap$element)) {
+    theme_parts$plot.caption <- cap$element
+  }
+  if (!is.null(ttl$element)) {
+    theme_parts$plot.title <- ttl$element
+  }
+  if (!is.null(sub$element)) {
+    theme_parts$plot.subtitle <- sub$element
+  }
 
-  munch_theme <- if (length(theme_parts) > 0) do.call(ggplot2::theme, theme_parts)
+  munch_theme <- if (length(theme_parts) > 0) {
+    do.call(ggplot2::theme, theme_parts)
+  }
 
   merged_theme <- if (!is.null(munch_theme) && !is.null(object$theme)) {
     munch_theme + object$theme
@@ -183,10 +191,18 @@ ggplot_add.munch_annotation <- function(object, plot, ...) {
     theme = merged_theme
   )
 
-  if (!is.null(object$tag_levels)) pa_args$tag_levels <- object$tag_levels
-  if (!is.null(object$tag_prefix)) pa_args$tag_prefix <- object$tag_prefix
-  if (!is.null(object$tag_suffix)) pa_args$tag_suffix <- object$tag_suffix
-  if (!is.null(object$tag_sep)) pa_args$tag_sep <- object$tag_sep
+  if (!is.null(object$tag_levels)) {
+    pa_args$tag_levels <- object$tag_levels
+  }
+  if (!is.null(object$tag_prefix)) {
+    pa_args$tag_prefix <- object$tag_prefix
+  }
+  if (!is.null(object$tag_suffix)) {
+    pa_args$tag_suffix <- object$tag_suffix
+  }
+  if (!is.null(object$tag_sep)) {
+    pa_args$tag_sep <- object$tag_sep
+  }
 
   plot + do.call(plot_annotation, pa_args)
 }

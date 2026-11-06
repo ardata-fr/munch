@@ -45,7 +45,7 @@ visual_renderers <- list(
       testthat::skip_if_not_installed("ragg")
     },
     tolerance = 0.001
-  )#,
+  ) #,
   # cairo_pdf = list(
   #   render = function(p, width, height, res) {
   #     gdtools::font_set(sans = "Arial", mono = "Courier New")
