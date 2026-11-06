@@ -356,3 +356,118 @@ test_that("lines follow the rules of flextable::layout_lines()", {
   expect_length(lines[[1]]$chunks, 0L)
 })
 
+# --- words wider than a line ---
+
+word_lines <- function(text, width, ...) {
+  chunks <- munch:::split_chunks_into_words(md_to_chunks(text, ...))
+  chunks <- munch:::calc_chunk_metrics(chunks)
+  chunks$.chunk_index <- seq_len(nrow(chunks))
+  munch:::arrange_chunks_into_lines(chunks, width)
+}
+word_line_text <- function(lines) {
+  vapply(
+    lines,
+    function(line) paste(vapply(line$chunks, `[[`, "", "txt"), collapse = ""),
+    character(1)
+  )
+}
+
+test_that("a word wider than a line is split, without hyphen", {
+  word <- strrep("abcdefghij", 5)
+  lines <- word_lines(word, 1)
+
+  expect_gt(length(lines), 1L)
+  expect_identical(paste(word_line_text(lines), collapse = ""), word)
+  widths <- vapply(lines, `[[`, numeric(1), "width")
+  expect_true(all(widths <= 1))
+})
+
+test_that("a word wider than a line starts on a new line", {
+  word <- strrep("b", 50)
+  lines <- word_line_text(word_lines(paste("a", word, "c"), 1))
+
+  expect_identical(lines[1], "a ")
+  expect_gt(nchar(lines[2]), 1L)
+  expect_identical(paste(lines[-1], collapse = ""), paste(word, "c"))
+})
+
+test_that("a word wider than a line gives no empty line when it comes first", {
+  word <- strrep("b", 50)
+
+  expect_gt(nchar(word_line_text(word_lines(word, 1))[1]), 1L)
+  lines <- word_line_text(word_lines(paste0("a  \n", word), 1))
+  expect_identical(lines[1], "a")
+  expect_gt(nchar(lines[2]), 1L)
+})
+
+test_that("a word that fits is not split", {
+  lines <- word_lines("short words stay as they are", 1)
+
+  texts <- unlist(strsplit(word_line_text(lines), " "))
+  expect_setequal(texts, c("short", "words", "stay", "as", "they", "are"))
+})
+
+test_that("a word is not split without maximum width", {
+  word <- strrep("a", 100)
+
+  expect_identical(word_line_text(word_lines(word, NULL)), word)
+})
+
+test_that("a character is not split from its combining mark", {
+  word <- strrep("e\u0301", 60)
+  lines <- word_lines(word, 1)
+
+  expect_gt(length(lines), 1L)
+  expect_identical(paste(word_line_text(lines), collapse = ""), word)
+  expect_true(all(startsWith(word_line_text(lines), "e\u0301")))
+})
+
+test_that("a character wider than a line stays on its own line", {
+  expect_identical(
+    word_line_text(word_lines("abc", 0.01)),
+    c("a", "b", "c")
+  )
+})
+
+test_that("a split word gives one text grob per line, with its properties", {
+  word <- strrep("abcdefghij", 5)
+  gr <- md_grob(paste0("**", word, "**"), width = 1)
+  children <- grid::makeContent(gr)$children
+  is_text <- vapply(children, inherits, logical(1), "text")
+  labels <- vapply(children[is_text], function(z) z$label, character(1))
+
+  expect_identical(paste(labels, collapse = ""), word)
+  expect_identical(
+    sum(is_text),
+    length(word_lines(paste0("**", word, "**"), 1))
+  )
+  # all children are kept: their names are unique
+  expect_equal(anyDuplicated(names(children)), 0L)
+  faces <- vapply(children[is_text], function(z) z$gp$font, numeric(1))
+  expect_true(all(faces == 2))
+  expect_lte(dim(gr)$width, 1)
+})
+
+test_that("a superscript and an image are not split", {
+  chunks <- flextable::as_paragraph(flextable::as_sup(strrep("a", 100)))[[1]]
+  gr <- chunks_grob(chunks, width = 0.5)
+  expect_gt(dim(gr)$width, 0.5)
+
+  skip_if_not_installed("magick")
+  path <- withr::local_tempfile(fileext = ".png")
+  magick::image_write(magick::image_blank(20, 10, "red"), path, format = "png")
+  gr <- md_grob(paste0("![](", path, ")"), width = 0.01)
+  children <- grid::makeContent(gr)$children
+  expect_length(children, 1L)
+  expect_s3_class(children[[1]], "rastergrob")
+})
+
+test_that("the split follows a width changed after the creation", {
+  gr <- md_grob(strrep("a", 200), width = 4)
+  height_large <- dim(gr)$height
+
+  gr$max_width <- 1
+
+  expect_gt(dim(gr)$height, height_large)
+  expect_lte(dim(gr)$width, 1)
+})

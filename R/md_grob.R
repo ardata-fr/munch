@@ -344,13 +344,18 @@ arrange_chunks_into_lines <- function(chunks, max_width = NULL) {
     )))
   }
 
-  is_newline <- chunks$is_newline %in% TRUE
-  line_index <- flextable::layout_lines(
+  limit <- if (!is.null(max_width) && max_width > 0) max_width else Inf
+  chunks <- split_too_wide_words(chunks, limit)
+  chunks$.line <- flextable::layout_lines(
     width = chunks$width,
-    newline = is_newline,
+    newline = chunks$is_newline %in% TRUE,
     space = chunks$is_space %in% TRUE,
-    max_width = if (!is.null(max_width) && max_width > 0) max_width else Inf
+    max_width = limit,
+    break_before = chunks$.break_before %||% FALSE
   )
+  chunks <- merge_word_pieces(chunks)
+  is_newline <- chunks$is_newline %in% TRUE
+  line_index <- chunks$.line
 
   columns <- as.list(unclass(chunks))
   attr(columns, "row.names") <- NULL
@@ -370,6 +375,86 @@ arrange_chunks_into_lines <- function(chunks, max_width = NULL) {
       max_descend = max(chunks$max_descend[index])
     )
   })
+}
+
+#' Split the words wider than a line into characters
+#'
+#' As in flextable, there is no hyphen and the word starts on a new line. Images,
+#' superscripts and subscripts are not split. The result has a column `.word` that
+#' gives the word of each piece, and `.break_before` for the first piece of a word.
+#'
+#' @param chunks Chunks data.frame with metrics.
+#' @param max_width Maximum line width in inches.
+#' @return The chunks data.frame.
+#' @noRd
+split_too_wide_words <- function(chunks, max_width) {
+  too_wide <- which(
+    chunks$width > max_width &
+      !chunks$is_newline %in% TRUE &
+      !chunks$is_space %in% TRUE &
+      is.na(chunks$img_path) &
+      !is.na(chunks$txt) &
+      !chunks$vertical.align %in% c("superscript", "subscript")
+  )
+  if (length(too_wide) == 0L) {
+    return(chunks)
+  }
+
+  txt <- chunks$txt[too_wide]
+  # a character and its combining marks must stay together
+  pieces <- regmatches(txt, gregexpr("\\X", txt, perl = TRUE))
+  times <- rep(1L, nrow(chunks))
+  times[too_wide] <- lengths(pieces)
+  word <- rep(seq_len(nrow(chunks)), times)
+
+  chunks <- chunks[word, , drop = FALSE]
+  rownames(chunks) <- NULL
+  chunks$.word <- word
+
+  is_piece <- word %in% too_wide
+  chunks$.break_before <- is_piece & !duplicated(word)
+  chunks$txt[is_piece] <- unlist(pieces)
+  chunks$width[is_piece] <- gdtools::strings_sizes(
+    x = chunks$txt[is_piece],
+    fontname = chunks$font.family[is_piece],
+    fontsize = chunks$font.size[is_piece],
+    bold = chunks$bold[is_piece],
+    italic = chunks$italic[is_piece]
+  )$width
+  chunks
+}
+
+#' Merge the pieces of a word that are on the same line
+#'
+#' They are drawn as one text, not as one text per character.
+#'
+#' @param chunks Chunks data.frame with columns `.word` and `.line`.
+#' @return The chunks data.frame, without the columns of the split.
+#' @noRd
+merge_word_pieces <- function(chunks) {
+  n <- nrow(chunks)
+  if (is.null(chunks$.word)) {
+    return(chunks)
+  }
+
+  follows <- c(
+    FALSE,
+    chunks$.word[-1L] == chunks$.word[-n] &
+      chunks$.line[-1L] == chunks$.line[-n]
+  )
+  groups <- split(seq_len(n), cumsum(!follows))
+  for (index in groups[lengths(groups) > 1L]) {
+    chunks$txt[index[1L]] <- paste(chunks$txt[index], collapse = "")
+    chunks$width[index[1L]] <- sum(chunks$width[index])
+  }
+
+  chunks <- chunks[!follows, , drop = FALSE]
+  rownames(chunks) <- NULL
+  chunks$.word <- NULL
+  chunks$.break_before <- NULL
+  # used to name the grobs, it must stay unique
+  chunks$.chunk_index <- seq_len(nrow(chunks))
+  chunks
 }
 
 #' @title Get Dimensions of a mdGrob
