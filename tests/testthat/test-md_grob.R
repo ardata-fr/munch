@@ -241,7 +241,54 @@ test_that("read_image_raster reads valid image", {
 
   result <- munch:::read_image_raster(r_logo)
 
-  expect_true(inherits(result, "raster"))
+  expect_s3_class(result, "nativeRaster")
+})
+
+test_that("read_image_raster warns on an unreadable file", {
+  skip_if_not_installed("magick")
+  bad <- withr::local_tempfile(fileext = ".png")
+  writeLines("not an image", bad)
+
+  expect_warning(result <- munch:::read_image_raster(bad), "Failed to read")
+  expect_null(result)
+})
+
+test_that("an image is not decoded again when a grob is drawn again", {
+  skip_if_not_installed("magick")
+  path <- withr::local_tempfile(fileext = ".png")
+  magick::image_write(magick::image_blank(20, 10, "red"), path, format = "png")
+  gr <- md_grob(paste0("a ![](", path, ") b"))
+
+  find_raster <- function(x) {
+    Filter(function(z) inherits(z, "rastergrob"), grid::makeContent(x)$children)
+  }
+  first <- find_raster(gr)[[1]]$raster
+  second <- find_raster(gr)[[1]]$raster
+
+  expect_s3_class(first, "nativeRaster")
+  # tracemem() returns the address: same address, same raster
+  address <- function(x) {
+    res <- tracemem(x)
+    untracemem(x)
+    res
+  }
+  expect_identical(address(second), address(first))
+})
+
+test_that("an SVG image is rendered at the size it is drawn", {
+  skip_if_not_installed("magick")
+  skip_if_not_installed("rsvg")
+  path <- withr::local_tempfile(fileext = ".svg")
+  writeLines(
+    paste0(
+      '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10">',
+      '<rect width="10" height="10" fill="red"/></svg>'
+    ),
+    path
+  )
+  raster <- munch:::read_image_raster(path, width = 1, height = 1)
+
+  expect_equal(dim(raster), c(72L, 72L))
 })
 
 test_that("has_magick returns logical", {

@@ -3,6 +3,8 @@
 - Lines are now arranged by `flextable::layout_lines()`, as in 'flextable', and
 faster. Consecutive line breaks give empty lines, and spaces written after a line
 break are kept. It needs 'flextable' >= 0.10.4.
+- Images are decoded once in a session with `flextable::image_raster()`, and drawn
+faster. SVG images are rendered at the size they are drawn.
 
 # munch 0.0.2
 

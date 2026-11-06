@@ -50,14 +50,15 @@ get_image_info <- function(path) {
 
 #' Read image as raster
 #'
-#' Reads an image file and returns a raster suitable
-#' for use with grid::rasterGrob().
+#' Returns a native raster suitable for use with grid::rasterGrob(). It comes
+#' from the cache of flextable, an image is only decoded once in a session.
 #' Requires the 'magick' package.
 #'
 #' @param path Path to image file.
-#' @return A raster object, or NULL if unreadable.
+#' @param width,height Size in inches at which an SVG file is rendered.
+#' @return A native raster, or NULL if unreadable.
 #' @noRd
-read_image_raster <- function(path) {
+read_image_raster <- function(path, width = NULL, height = NULL) {
   if (is.na(path) || !file.exists(path)) {
     return(NULL)
   }
@@ -67,10 +68,7 @@ read_image_raster <- function(path) {
   }
 
   tryCatch(
-    {
-      img <- magick::image_read(path)
-      grDevices::as.raster(img)
-    },
+    flextable::image_raster(path, width = width, height = height),
     error = function(e) {
       cli::cli_warn(c(
         "Failed to read image.",

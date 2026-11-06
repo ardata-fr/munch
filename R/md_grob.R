@@ -136,7 +136,11 @@ makeContent.mdGrob <- function(x) {
 
       # Render image chunks
       if (!is.null(chunk$img_path) && !is.na(chunk$img_path)) {
-        img_raster <- read_image_raster(chunk$img_path)
+        img_raster <- read_image_raster(
+          chunk$img_path,
+          width = chunk$img_width,
+          height = chunk$img_height
+        )
         if (!is.null(img_raster)) {
           # Position image with its bottom at (line_y - descent)
           # This accounts for the image descent defined in metrics
