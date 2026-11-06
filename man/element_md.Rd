@@ -17,7 +17,8 @@ element_md(
   color = NULL,
   margin = NULL,
   debug = FALSE,
-  inherit.blank = FALSE
+  inherit.blank = FALSE,
+  width = NULL
 )
 }
 \arguments{
@@ -44,6 +45,13 @@ element_md(
 \item{debug}{Show debug rectangles.}
 
 \item{inherit.blank}{Should this element inherit blank elements.}
+
+\item{width}{Maximum width of the text in inches, for titles, subtitles and
+captions, which wrap to their available width by default. With 'patchwork' or a
+fixed aspect ratio, the available width is not known when the height of the
+title is computed: the text may need more lines than the space kept for it,
+and setting \code{width} solves this. It is ignored for rotated text and for text
+with an explicit position.}
 }
 \value{
 An element of class \code{c("element_md", "element_text", "element")}.

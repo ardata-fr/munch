@@ -14,6 +14,12 @@
 #' @param angle Text rotation angle in degrees.
 #' @param lineheight Line height multiplier.
 #' @param margin Margins around the text (use [ggplot2::margin()]).
+#' @param width Maximum width of the text in inches, for titles, subtitles and
+#'   captions, which wrap to their available width by default. With 'patchwork' or a
+#'   fixed aspect ratio, the available width is not known when the height of the
+#'   title is computed: the text may need more lines than the space kept for it,
+#'   and setting `width` solves this. It is ignored for rotated text and for text
+#'   with an explicit position.
 #' @param debug Show debug rectangles.
 #' @param inherit.blank Should this element inherit blank elements.
 #'
@@ -68,11 +74,13 @@ element_md <- function(
   color = NULL,
   margin = NULL,
   debug = FALSE,
-  inherit.blank = FALSE
+  inherit.blank = FALSE,
+  width = NULL
 ) {
   if (!is.null(color)) {
     colour <- color
   }
+  check_title_width(width)
   structure(
     list(
       family = family,
@@ -86,7 +94,8 @@ element_md <- function(
       lineheight = lineheight,
       margin = margin,
       debug = debug,
-      inherit.blank = inherit.blank
+      inherit.blank = inherit.blank,
+      width = width
     ),
     class = c("element_md", "element_text", "element")
   )
@@ -348,6 +357,7 @@ element_grob.element_md <- function(
     content_h = report_h,
     margin = margin,
     auto_wrap = auto_wrap,
+    wrap_width = element$width,
     cl = "mdTitleGrob"
   )
 }
@@ -363,21 +373,85 @@ widthDetails.mdTitleGrob <- function(x) {
 
 #' @export
 heightDetails.mdTitleGrob <- function(x) {
-  if (!isTRUE(x$auto_wrap)) {
-    return(sum(x$heights))
-  }
+  title_height(x)
+}
 
-  # Resolve available width for wrapping
-  avail_w <- tryCatch(
-    convertWidth(unit(1, "npc"), "inches", valueOnly = TRUE),
-    error = function(e) NA_real_
+#' @export
+makeContent.mdTitleGrob <- function(x) {
+  check_device_compatibility()
+  title_set_wrap_width(x)
+}
+
+#' Width of the column of a title in the gtable being drawn
+#'
+#' A row of a gtable is sized before its columns are known: when 'ggplot2' asks
+#' for the height of a title, the only available width is the one of the whole
+#' plot, which is wider than the panel. No function gives this width, so that it
+#' is computed from the gtable found in the calls of `grid::drawGTree()`.
+#'
+#' The result is too large with fixed aspect ratios, as the columns also depend on
+#' the rows.
+#'
+#' @param x A title grob.
+#' @return Width in inches, or NULL if the title is not being drawn in a gtable,
+#'   which is the case when 'patchwork' asks for its height.
+#' @noRd
+gtable_column_width <- function(x) {
+  is_draw <- vapply(
+    sys.calls(),
+    function(call) identical(call[[1]], quote(drawGTree)),
+    logical(1)
   )
+  # only these frames are read: their `x` has already been evaluated
+  for (frame in rev(sys.frames()[is_draw])) {
+    tree <- frame$x
+    if (!inherits(tree, "gtable")) {
+      next
+    }
+    is_title <- vapply(
+      tree$grobs,
+      function(grob) identical(grob$name, x$name),
+      logical(1)
+    )
+    if (!any(is_title)) {
+      next
+    }
 
-  if (is.na(avail_w) || !is.finite(avail_w) || avail_w <= 0) {
-    return(sum(x$heights))
+    widths <- tree$widths
+    is_null <- unitType(widths) == "null"
+    inches <- numeric(length(widths))
+    inches[!is_null] <- vapply(
+      which(!is_null),
+      function(i) convertWidth(widths[i], "inches", valueOnly = TRUE),
+      numeric(1)
+    )
+    # null columns share what the others leave
+    free <- convertWidth(unit(1, "npc"), "inches", valueOnly = TRUE) -
+      sum(inches)
+    weights <- as.numeric(widths[is_null])
+    inches[is_null] <- max(free, 0) * weights / sum(weights)
+
+    layout <- tree$layout[which(is_title)[1], ]
+    return(sum(inches[layout$l:layout$r]))
+  }
+  NULL
+}
+
+#' Maximum width of the text of a title
+#'
+#' @param x A title grob.
+#' @param available Width available for the title and its margins, in inches.
+#' @return Width in inches: the `width` of the element if there is one, else the
+#'   available width without margins. NULL if there is no usable width.
+#' @noRd
+title_wrap_width <- function(x, available) {
+  if (!is.null(x$wrap_width)) {
+    return(x$wrap_width)
+  }
+  if (is.na(available) || !is.finite(available) || available <= 0) {
+    return(NULL)
   }
 
-  # Subtract horizontal margins to get wrap width
   margin <- x$margin
   if (!is.null(margin)) {
     margin_l <- tryCatch(
@@ -388,17 +462,38 @@ heightDetails.mdTitleGrob <- function(x) {
       convertWidth(margin[2], "inches", valueOnly = TRUE),
       error = function(e) 0
     )
-    wrap_w <- avail_w - margin_l - margin_r
-  } else {
-    wrap_w <- avail_w
+    available <- available - margin_l - margin_r
+  }
+  max(available, 0.1)
+}
+
+viewport_width <- function() {
+  tryCatch(
+    convertWidth(unit(1, "npc"), "inches", valueOnly = TRUE),
+    error = function(e) NA_real_
+  )
+}
+
+#' Height of a title, computed for the width it will be drawn with
+#' @param x A title grob.
+#' @return A unit.
+#' @noRd
+title_height <- function(x) {
+  if (!isTRUE(x$auto_wrap)) {
+    return(sum(x$heights))
   }
 
-  # Compute wrapped height
-  md_gr <- x$children[[1]]
-  md_gr$max_width <- max(wrap_w, 0.1)
-  dims <- dim(md_gr)
-  content_h <- unit(dims$height, "inches")
+  available <- tryCatch(gtable_column_width(x), error = function(e) NULL)
+  wrap_width <- title_wrap_width(x, available %||% viewport_width())
+  if (is.null(wrap_width)) {
+    return(sum(x$heights))
+  }
 
+  md_gr <- x$children[[1]]
+  md_gr$max_width <- wrap_width
+  content_h <- unit(dim(md_gr)$height, "inches")
+
+  margin <- x$margin
   if (!is.null(margin)) {
     margin[1] + content_h + margin[3]
   } else {
@@ -406,43 +501,36 @@ heightDetails.mdTitleGrob <- function(x) {
   }
 }
 
-#' @export
-makeContent.mdTitleGrob <- function(x) {
-  check_device_compatibility()
-
+#' Set the width at which the text of a title wraps, when it is drawn
+#' @param x A title grob.
+#' @return The title grob.
+#' @noRd
+title_set_wrap_width <- function(x) {
   if (!isTRUE(x$auto_wrap)) {
     return(x)
   }
 
-  avail_w <- tryCatch(
-    convertWidth(unit(1, "npc"), "inches", valueOnly = TRUE),
-    error = function(e) NA_real_
-  )
-
-  if (is.na(avail_w) || !is.finite(avail_w) || avail_w <= 0) {
+  wrap_width <- title_wrap_width(x, viewport_width())
+  if (is.null(wrap_width)) {
     return(x)
   }
 
-  margin <- x$margin
-  if (!is.null(margin)) {
-    margin_l <- tryCatch(
-      convertWidth(margin[4], "inches", valueOnly = TRUE),
-      error = function(e) 0
-    )
-    margin_r <- tryCatch(
-      convertWidth(margin[2], "inches", valueOnly = TRUE),
-      error = function(e) 0
-    )
-    wrap_w <- avail_w - margin_l - margin_r
-  } else {
-    wrap_w <- avail_w
-  }
-
   md_gr <- x$children[[1]]
-  md_gr$max_width <- max(wrap_w, 0.1)
-  x <- setChildren(x, gList(md_gr))
+  md_gr$max_width <- wrap_width
+  setChildren(x, gList(md_gr))
+}
 
-  x
+#' @noRd
+check_title_width <- function(width) {
+  if (is.null(width)) {
+    return(invisible(NULL))
+  }
+  if (
+    !is.numeric(width) || length(width) != 1L || is.na(width) || width <= 0
+  ) {
+    cli::cli_abort("{.arg width} must be a positive number, in inches.")
+  }
+  invisible(NULL)
 }
 
 #' @title Merge element_md with Another Element
@@ -466,7 +554,8 @@ merge_element.element_md <- function(new, old) {
     "lineheight",
     "margin",
     "debug",
-    "inherit.blank"
+    "inherit.blank",
+    "width"
   )
   for (nm in props_names) {
     if (is.null(new[[nm]])) {
@@ -501,6 +590,12 @@ merge_element.element_md <- function(new, old) {
 #' @param angle Text rotation angle in degrees.
 #' @param lineheight Line height multiplier.
 #' @param margin Margins around the text (use [ggplot2::margin()]).
+#' @param width Maximum width of the text in inches, for titles, subtitles and
+#'   captions, which wrap to their available width by default. With 'patchwork' or a
+#'   fixed aspect ratio, the available width is not known when the height of the
+#'   title is computed: the text may need more lines than the space kept for it,
+#'   and setting `width` solves this. It is ignored for rotated text and for text
+#'   with an explicit position.
 #' @param debug Show debug rectangles.
 #' @param inherit.blank Should this element inherit blank elements.
 #' @param size font size
@@ -575,8 +670,10 @@ element_chunks <- function(
   size = NULL,
   margin = NULL,
   debug = FALSE,
-  inherit.blank = FALSE
+  inherit.blank = FALSE,
+  width = NULL
 ) {
+  check_title_width(width)
   if (!inherits(chunks, c("paragraph", "chunk"))) {
     cli::cli_abort(
       "{.arg chunks} must be a paragraph or chunk object from 'flextable'"
@@ -593,7 +690,8 @@ element_chunks <- function(
       size = size,
       margin = margin,
       debug = debug,
-      inherit.blank = inherit.blank
+      inherit.blank = inherit.blank,
+      width = width
     ),
     class = c("element_chunks", "element_text", "element")
   )
@@ -853,6 +951,7 @@ element_grob.element_chunks <- function(
     content_h = report_h,
     margin = margin,
     auto_wrap = auto_wrap,
+    wrap_width = element$width,
     cl = "chunksGrob"
   )
 }
@@ -865,81 +964,12 @@ widthDetails.chunksGrob <- function(x) {
 
 #' @export
 heightDetails.chunksGrob <- function(x) {
-  if (!isTRUE(x$auto_wrap)) {
-    return(sum(x$heights))
-  }
-
-  avail_w <- tryCatch(
-    convertWidth(unit(1, "npc"), "inches", valueOnly = TRUE),
-    error = function(e) NA_real_
-  )
-
-  if (is.na(avail_w) || !is.finite(avail_w) || avail_w <= 0) {
-    return(sum(x$heights))
-  }
-
-  margin <- x$margin
-  if (!is.null(margin)) {
-    margin_l <- tryCatch(
-      convertWidth(margin[4], "inches", valueOnly = TRUE),
-      error = function(e) 0
-    )
-    margin_r <- tryCatch(
-      convertWidth(margin[2], "inches", valueOnly = TRUE),
-      error = function(e) 0
-    )
-    wrap_w <- avail_w - margin_l - margin_r
-  } else {
-    wrap_w <- avail_w
-  }
-
-  md_gr <- x$children[[1]]
-  md_gr$max_width <- max(wrap_w, 0.1)
-  dims <- dim(md_gr)
-  content_h <- unit(dims$height, "inches")
-
-  if (!is.null(margin)) {
-    margin[1] + content_h + margin[3]
-  } else {
-    content_h
-  }
+  title_height(x)
 }
 
 #' @export
 makeContent.chunksGrob <- function(x) {
-  if (!isTRUE(x$auto_wrap)) {
-    return(x)
-  }
-
-  avail_w <- tryCatch(
-    convertWidth(unit(1, "npc"), "inches", valueOnly = TRUE),
-    error = function(e) NA_real_
-  )
-
-  if (is.na(avail_w) || !is.finite(avail_w) || avail_w <= 0) {
-    return(x)
-  }
-
-  margin <- x$margin
-  if (!is.null(margin)) {
-    margin_l <- tryCatch(
-      convertWidth(margin[4], "inches", valueOnly = TRUE),
-      error = function(e) 0
-    )
-    margin_r <- tryCatch(
-      convertWidth(margin[2], "inches", valueOnly = TRUE),
-      error = function(e) 0
-    )
-    wrap_w <- avail_w - margin_l - margin_r
-  } else {
-    wrap_w <- avail_w
-  }
-
-  md_gr <- x$children[[1]]
-  md_gr$max_width <- max(wrap_w, 0.1)
-  x <- setChildren(x, gList(md_gr))
-
-  x
+  title_set_wrap_width(x)
 }
 
 #' @title Merge element_chunks with Another Element
@@ -960,7 +990,8 @@ merge_element.element_chunks <- function(new, old) {
     "size",
     "margin",
     "debug",
-    "inherit.blank"
+    "inherit.blank",
+    "width"
   )
   for (nm in props_names) {
     if (is.null(new[[nm]])) {

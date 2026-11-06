@@ -60,6 +60,7 @@ importFrom(grid,
   textGrob,
   unit,
   unit.c,
+  unitType,
   viewport,
   vpStack,
   widthDetails

@@ -50,7 +50,7 @@
 #' @importFrom grid gpar gTree gList textGrob unit viewport grid.layout
 #' @importFrom grid makeContext setChildren convertWidth convertHeight
 #' @importFrom grid nullGrob widthDetails heightDetails rectGrob rasterGrob
-#' @importFrom grid vpStack unit.c
+#' @importFrom grid vpStack unit.c unitType
 #' @importFrom gdtools strings_sizes
 #' @importFrom methods slot
 ## usethis namespace: end
