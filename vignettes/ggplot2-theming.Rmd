@@ -8,6 +8,8 @@ vignette: >
 ---
 
 ```{r, include = FALSE}
+# R CMD check runs this code without knitr: pdf() can not draw Liberation Sans
+if (!isTRUE(getOption("knitr.in.progress"))) ragg::agg_capture()
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
