@@ -31,7 +31,7 @@ containing chunks such as \code{\link[flextable:as_chunk]{flextable::as_chunk()}
 
 \item{size}{font size}
 
-\item{margin}{Margins around the text (use \code{\link[ggplot2:element]{ggplot2::margin()}}).}
+\item{margin}{Margins around the text (use \code{\link[ggplot2:margin]{ggplot2::margin()}}).}
 
 \item{debug}{Show debug rectangles.}
 

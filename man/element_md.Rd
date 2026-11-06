@@ -39,7 +39,7 @@ element_md(
 
 \item{lineheight}{Line height multiplier.}
 
-\item{margin}{Margins around the text (use \code{\link[ggplot2:element]{ggplot2::margin()}}).}
+\item{margin}{Margins around the text (use \code{\link[ggplot2:margin]{ggplot2::margin()}}).}
 
 \item{debug}{Show debug rectangles.}
 
@@ -50,7 +50,7 @@ An element of class \code{c("element_md", "element_text", "element")}.
 }
 \description{
 A theme element that renders text labels as markdown.
-Use in place of \code{\link[ggplot2:element]{ggplot2::element_text()}} for plot titles,
+Use in place of \code{\link[ggplot2:element_text]{ggplot2::element_text()}} for plot titles,
 subtitles, captions, axis labels, etc.
 }
 \examples{

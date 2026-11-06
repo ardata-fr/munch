@@ -14,7 +14,7 @@ Defaults to \code{"mono"}.}
 }
 \value{
 A paragraph object (class \code{"paragraph"}) that can be used
-with \code{\link[flextable:compose]{flextable::mk_par()}} or \code{\link[flextable:as_flextable]{flextable::as_flextable()}}.
+with \code{\link[flextable:mk_par]{flextable::mk_par()}} or \code{\link[flextable:as_flextable]{flextable::as_flextable()}}.
 }
 \description{
 Converts a markdown string to a paragraph object compatible
