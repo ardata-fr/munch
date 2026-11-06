@@ -5,13 +5,13 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Rich Inline Text for Grid Graphics and Flextable • munch</title>
+<title>Rich Inline Text for grid Graphics and flextable • munch</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/Open_Sans-0.4.10/font.css" rel="stylesheet">
+<link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/Open_Sans-0.4.10/font.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Rich Inline Text for Grid Graphics and Flextable">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Rich Inline Text for grid Graphics and flextable">
 <meta name="description" content="Renders rich inline text (bold, italic, code, links, images) in grid graphics and ggplot2, from markdown or flextable chunks. Provides grobs, theme elements, and geometry layers for styled text rendering. Only works with graphics devices that support systemfonts, such as those provided by ragg, svglite, or ggiraph. The cairo_pdf device is also supported when fonts are installed at the system level.">
 <meta property="og:description" content="Renders rich inline text (bold, italic, code, links, images) in grid graphics and ggplot2, from markdown or flextable chunks. Provides grobs, theme elements, and geometry layers for styled text rendering. Only works with graphics devices that support systemfonts, such as those provided by ragg, svglite, or ggiraph. The cairo_pdf device is also supported when fonts are installed at the system level.">
 <meta property="og:image" content="https://ardata-fr.github.io/munch/logo.png">
@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="index.html">munch</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.2.005</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.3.001</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -81,30 +81,30 @@
 <col width="33%">
 <col width="33%">
 </colgroup>
-<thead><tr class="header">
+<thead><tr>
 <th>Function</th>
 <th>Purpose</th>
 <th>Input</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td><code><a href="reference/element_md.html">element_md()</a></code></td>
 <td>Markdown in theme elements</td>
 <td>Character string</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code><a href="reference/element_chunks.html">element_chunks()</a></code></td>
 <td>Advanced formatting in theme elements</td>
 <td>
 <code><a href="https://davidgohel.github.io/flextable/reference/as_paragraph.html" class="external-link">as_paragraph()</a></code> object</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code><a href="reference/geom_text_md.html">geom_text_md()</a></code></td>
 <td>Markdown text annotations</td>
 <td>
 <code>label</code> aesthetic</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code><a href="reference/geom_label_md.html">geom_label_md()</a></code></td>
 <td>Markdown labels with background</td>
 <td>
@@ -153,13 +153,13 @@
 <h4 id="syntax-comparison">Syntax comparison<a class="anchor" aria-label="anchor" href="#syntax-comparison"></a>
 </h4>
 <table class="table">
-<thead><tr class="header">
+<thead><tr>
 <th>Syntax</th>
 <th><code><a href="reference/element_md.html">element_md()</a></code></th>
 <th><code><a href="reference/element_chunks.html">element_chunks()</a></code></th>
 </tr></thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td>Bold / Italic</td>
 <td>
 <code>**text**</code> / <code>*text*</code>
@@ -168,32 +168,32 @@
 <code><a href="https://davidgohel.github.io/flextable/reference/as_b.html" class="external-link">as_b()</a></code> / <code><a href="https://davidgohel.github.io/flextable/reference/as_i.html" class="external-link">as_i()</a></code>
 </td>
 </tr>
-<tr class="even">
+<tr>
 <td>Inline code</td>
 <td><code>`code`</code></td>
 <td>x</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>Strikethrough</td>
 <td><code>~~text~~</code></td>
 <td><code><a href="https://davidgohel.github.io/flextable/reference/as_strike.html" class="external-link">as_strike()</a></code></td>
 </tr>
-<tr class="even">
+<tr>
 <td>Superscript</td>
 <td>x</td>
 <td><code><a href="https://davidgohel.github.io/flextable/reference/as_sup.html" class="external-link">as_sup()</a></code></td>
 </tr>
-<tr class="odd">
+<tr>
 <td>Subscript</td>
 <td>x</td>
 <td><code><a href="https://davidgohel.github.io/flextable/reference/as_sub.html" class="external-link">as_sub()</a></code></td>
 </tr>
-<tr class="even">
+<tr>
 <td>Custom colors</td>
 <td>x</td>
 <td><code><a href="https://davidgohel.github.io/flextable/reference/colorize.html" class="external-link">colorize()</a></code></td>
 </tr>
-<tr class="odd">
+<tr>
 <td>Highlighting</td>
 <td>x</td>
 <td><code><a href="https://davidgohel.github.io/flextable/reference/as_highlight.html" class="external-link">as_highlight()</a></code></td>
@@ -308,53 +308,53 @@
 <col width="33%">
 <col width="33%">
 </colgroup>
-<thead><tr class="header">
+<thead><tr>
 <th></th>
 <th>munch</th>
 <th>gridtext</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td>Input format</td>
 <td>Markdown, flextable chunks</td>
 <td>HTML / CSS subset</td>
 </tr>
-<tr class="even">
+<tr>
 <td>Superscript / subscript</td>
 <td>Yes (<code><a href="https://davidgohel.github.io/flextable/reference/as_sup.html" class="external-link">as_sup()</a></code>, <code><a href="https://davidgohel.github.io/flextable/reference/as_sub.html" class="external-link">as_sub()</a></code>)</td>
 <td>Yes (<code>&lt;sup&gt;</code>, <code>&lt;sub&gt;</code>)</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>Custom colors / highlight</td>
 <td>Yes (via <code><a href="https://davidgohel.github.io/flextable/reference/colorize.html" class="external-link">colorize()</a></code>, <code><a href="https://davidgohel.github.io/flextable/reference/as_highlight.html" class="external-link">as_highlight()</a></code>)</td>
 <td>Yes (via inline CSS)</td>
 </tr>
-<tr class="even">
+<tr>
 <td>Inline images</td>
 <td>Yes</td>
 <td>Yes</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>Text wrapping</td>
 <td>Yes</td>
 <td>Yes (<code>textbox_grob()</code>)</td>
 </tr>
-<tr class="even">
+<tr>
 <td>Text measurement</td>
 <td>TBD</td>
 <td>TBD</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>Integration with ‘flextable’</td>
 <td>Yes (shared chunk model)</td>
 <td>No</td>
 </tr>
-<tr class="even">
+<tr>
 <td>Supported devices</td>
 <td>‘ragg’, ‘svglite’, ‘ggiraph’, cairo</td>
 <td>Most R graphic devices</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>Compiled code</td>
 <td>No (pure R)</td>
 <td>Yes (C++ via ‘Rcpp’)</td>
@@ -377,6 +377,7 @@
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
+<li><a href="https://cloud.r-project.org/package=munch" class="external-link">View on CRAN</a></li>
 <li><a href="https://github.com/ardata-fr/munch/" class="external-link">Browse source code</a></li>
 <li><a href="https://github.com/ardata-fr/munch/issues" class="external-link">Report a bug</a></li>
 </ul>
@@ -418,7 +419,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

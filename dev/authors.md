@@ -11,14 +11,14 @@
 Source:
 [`DESCRIPTION`](https://github.com/ardata-fr/munch/blob/main/DESCRIPTION)
 
-Gohel D (2026). *munch: Rich Inline Text for 'Grid' Graphics and
-'Flextable'*. R package version 0.0.2.005,
+Gohel D (2026). *munch: Rich Inline Text for 'grid' Graphics and
+'flextable'*. R package version 0.0.3.001,
 <https://ardata-fr.github.io/munch/>.
 
     @Manual{,
-      title = {munch: Rich Inline Text for 'Grid' Graphics and 'Flextable'},
+      title = {munch: Rich Inline Text for 'grid' Graphics and 'flextable'},
       author = {David Gohel},
       year = {2026},
-      note = {R package version 0.0.2.005},
+      note = {R package version 0.0.3.001},
       url = {https://ardata-fr.github.io/munch/},
     }

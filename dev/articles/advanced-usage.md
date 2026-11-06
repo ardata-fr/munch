@@ -1,6 +1,7 @@
 # Advanced usage
 
 ``` r
+
 library(munch)
 library(grid)
 library(flextable)
@@ -18,6 +19,7 @@ converts markdown text to a grid graphics object (grob).
 ### Basic usage
 
 ``` r
+
 gr <- md_grob("This is **bold** and *italic* text.")
 
 grid.newpage()
@@ -31,6 +33,7 @@ grid.draw(gr)
 Control position with `x`, `y`, `hjust`, `vjust`:
 
 ``` r
+
 grid.newpage()
 
 gr1 <- md_grob("**Top left**", x = 0, y = 1, hjust = 0, vjust = 1)
@@ -49,6 +52,7 @@ grid.draw(gr3)
 Use `width` to enable line wrapping:
 
 ``` r
+
 long_text <- "This is a **long text** that will be automatically
 wrapped across multiple lines using the `width` parameter."
 
@@ -67,6 +71,7 @@ converts ‘flextable’ paragraph objects to grobs. Use this when you need
 superscripts, subscripts, or custom colors.
 
 ``` r
+
 chunks <- as_paragraph(
   as_chunk("E = mc"),
   as_sup("2")
@@ -83,6 +88,7 @@ grid.draw(gr)
 ### Complex formatting
 
 ``` r
+
 chunks <- as_paragraph(
   as_chunk("The speed of light is "),
   as_b("c"),
@@ -102,6 +108,7 @@ grid.draw(gr)
 ### Colored and highlighted text
 
 ``` r
+
 chunks <- as_paragraph(
   as_chunk("Normal "),
   colorize(as_chunk("Red "), color = "red"),
@@ -123,6 +130,7 @@ Use
 to customize font size, family, and color:
 
 ``` r
+
 props <- default_text_props(
   font_size = 14,
   font_family = "serif",
@@ -154,6 +162,7 @@ grid.draw(gr)
 Text properties can also be set globally via ‘flextable’:
 
 ``` r
+
 set_flextable_defaults(
   font.size = 14,
   font.color = "darkblue"
@@ -169,6 +178,7 @@ grid.draw(gr)
 
 ``` r
 
+
 # Reset defaults
 init_flextable_defaults()
 ```
@@ -180,6 +190,7 @@ init_flextable_defaults()
 Use standard markdown image syntax:
 
 ``` r
+
 img_path <- system.file("img", "Rlogo.png", package = "png")
 
 text_with_img <- sprintf("The R logo: ![](%s) in text.", img_path)
@@ -201,6 +212,7 @@ Use
 for explicit size control:
 
 ``` r
+
 img_path <- system.file("img", "Rlogo.png", package = "png")
 
 chunks <- as_paragraph(
@@ -229,6 +241,7 @@ The `img_baseline_ratio` parameter controls vertical image alignment:
 - `0.5`: Image centered on baseline
 
 ``` r
+
 props <- default_text_props(img_baseline_ratio = 0.35)
 
 gr <- md_grob(
@@ -251,6 +264,7 @@ Use
 to add grobs to ggplot2:
 
 ``` r
+
 library(ggplot2)
 
 stats_grob <- md_grob(
@@ -278,6 +292,7 @@ Use
 for markdown in table cells:
 
 ``` r
+
 ft <- flextable(head(iris, 3))
 ft <- mk_par(ft, j = 1, part = "header",
   value = as_paragraph_md("*Sepal* **Length**"))

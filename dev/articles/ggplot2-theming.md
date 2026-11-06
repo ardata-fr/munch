@@ -1,6 +1,7 @@
 # Using munch with ggplot2
 
 ``` r
+
 library(munch)
 library(ggplot2)
 library(flextable)
@@ -26,6 +27,7 @@ replaces
 to render markdown in titles, subtitles, captions, and axis labels.
 
 ``` r
+
 ggplot(mtcars, aes(mpg, wt)) +
   geom_point() +
   labs(
@@ -43,6 +45,7 @@ ggplot(mtcars, aes(mpg, wt)) +
 ![](ggplot2-theming_files/figure-html/md-titles-1.png)
 
 ``` r
+
 ggplot(mtcars, aes(hp, mpg)) +
   geom_point() +
   labs(
@@ -74,17 +77,18 @@ highlighting, features that markdown does not support.
 Build text by combining chunks inside
 [`as_paragraph()`](https://davidgohel.github.io/flextable/reference/as_paragraph.html):
 
-| Function                                                                               | Description  | Example                                            |
-|----------------------------------------------------------------------------------------|--------------|----------------------------------------------------|
-| [`as_chunk()`](https://davidgohel.github.io/flextable/reference/as_chunk.html)         | Plain text   | `as_chunk("text")`                                 |
-| [`as_b()`](https://davidgohel.github.io/flextable/reference/as_b.html)                 | Bold         | `as_b("bold")`                                     |
-| [`as_i()`](https://davidgohel.github.io/flextable/reference/as_i.html)                 | Italic       | `as_i("italic")`                                   |
-| [`as_sup()`](https://davidgohel.github.io/flextable/reference/as_sup.html)             | Superscript  | `as_sup("2")`                                      |
-| [`as_sub()`](https://davidgohel.github.io/flextable/reference/as_sub.html)             | Subscript    | `as_sub("2")`                                      |
-| [`colorize()`](https://davidgohel.github.io/flextable/reference/colorize.html)         | Colored text | `colorize(as_chunk("red"), color = "red")`         |
-| [`as_highlight()`](https://davidgohel.github.io/flextable/reference/as_highlight.html) | Highlighted  | `as_highlight(as_chunk("text"), color = "yellow")` |
+| Function | Description | Example |
+|----|----|----|
+| [`as_chunk()`](https://davidgohel.github.io/flextable/reference/as_chunk.html) | Plain text | `as_chunk("text")` |
+| [`as_b()`](https://davidgohel.github.io/flextable/reference/as_b.html) | Bold | `as_b("bold")` |
+| [`as_i()`](https://davidgohel.github.io/flextable/reference/as_i.html) | Italic | `as_i("italic")` |
+| [`as_sup()`](https://davidgohel.github.io/flextable/reference/as_sup.html) | Superscript | `as_sup("2")` |
+| [`as_sub()`](https://davidgohel.github.io/flextable/reference/as_sub.html) | Subscript | `as_sub("2")` |
+| [`colorize()`](https://davidgohel.github.io/flextable/reference/colorize.html) | Colored text | `colorize(as_chunk("red"), color = "red")` |
+| [`as_highlight()`](https://davidgohel.github.io/flextable/reference/as_highlight.html) | Highlighted | `as_highlight(as_chunk("text"), color = "yellow")` |
 
 ``` r
+
 chunks <- as_paragraph(
   as_b("Bold"), as_chunk(", "),
   as_i("italic"), as_chunk(", "),
@@ -106,6 +110,7 @@ Superscripts and subscripts are essential for scientific text.
 makes them straightforward:
 
 ``` r
+
 title_chunks <- as_paragraph(
   as_chunk("Analysis: "),
   as_b("R"), as_sup("2"),
@@ -124,6 +129,7 @@ ggplot(mtcars, aes(mpg, wt)) +
 Chemical formulas:
 
 ``` r
+
 subtitle_chunks <- as_paragraph(
   as_chunk("Concentration of "),
   as_b("H"), as_sub("2"),
@@ -141,6 +147,7 @@ ggplot(mtcars, aes(mpg, wt)) +
 Units with exponents:
 
 ``` r
+
 caption_chunks <- as_paragraph(
   as_chunk("Units: mol\u00B7L"), as_sup("-1"),
   as_chunk(" | Speed: m\u00B7s"), as_sup("-2")
@@ -161,6 +168,7 @@ and
 add color and background highlighting:
 
 ``` r
+
 title_chunks <- as_paragraph(
   as_chunk("Results: "),
   colorize(as_chunk("significant"), color = "#E63946"),
@@ -192,6 +200,7 @@ embeds images inside
 This is useful for logos or icons in titles:
 
 ``` r
+
 r_logo <- file.path(R.home("doc"), "html", "logo.jpg")
 
 title_chunks <- as_paragraph(
@@ -223,6 +232,7 @@ accepts the same layout parameters as
 | `margin`     | Margins around text            |
 
 ``` r
+
 chunks <- as_paragraph(
   as_chunk("Centered: R"), as_sup("2"),
   as_chunk(" = 0.75")
@@ -246,6 +256,7 @@ and
 [`geom_label()`](https://ggplot2.tidyverse.org/reference/geom_text.html).
 
 ``` r
+
 annotations <- data.frame(
   x = c(15, 25, 30),
   y = c(4, 3, 2),
@@ -267,6 +278,7 @@ ggplot(mtcars, aes(mpg, wt)) +
 adds a background rectangle for better readability:
 
 ``` r
+
 ggplot(mtcars, aes(mpg, wt)) +
   geom_point() +
   geom_smooth(method = "lm", se = FALSE) +
@@ -289,6 +301,7 @@ and
 support the `width` parameter (in inches) for automatic line wrapping:
 
 ``` r
+
 df <- data.frame(
   x = c(15, 30),
   y = c(4, 2.5),
@@ -315,6 +328,7 @@ Use markdown image syntax `![](path)` to embed images in
 [`geom_label_md()`](https://ardata-fr.github.io/munch/dev/reference/geom_label_md.md):
 
 ``` r
+
 r_logo <- file.path(R.home("doc"), "html", "logo.jpg")
 
 df <- data.frame(
@@ -363,15 +377,15 @@ This is a known limitation and work is in progress to reduce the gap.
 
 ## Choosing the right approach
 
-| Feature       | [`element_md()`](https://ardata-fr.github.io/munch/dev/reference/element_md.md) | [`element_chunks()`](https://ardata-fr.github.io/munch/dev/reference/element_chunks.md)                                                         | `geom_*_md()`         |
-|---------------|---------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------|
-| Bold / Italic | `**text**` / `*text*`                                                           | [`as_b()`](https://davidgohel.github.io/flextable/reference/as_b.html) / [`as_i()`](https://davidgohel.github.io/flextable/reference/as_i.html) | `**text**` / `*text*` |
-| Inline code   | `` `text` ``                                                                    | x                                                                                                                                               | `` `text` ``          |
-| Superscript   | x                                                                               | [`as_sup()`](https://davidgohel.github.io/flextable/reference/as_sup.html)                                                                      | x                     |
-| Subscript     | x                                                                               | [`as_sub()`](https://davidgohel.github.io/flextable/reference/as_sub.html)                                                                      | x                     |
-| Colors        | x                                                                               | [`colorize()`](https://davidgohel.github.io/flextable/reference/colorize.html)                                                                  | x                     |
-| Highlighting  | x                                                                               | [`as_highlight()`](https://davidgohel.github.io/flextable/reference/as_highlight.html)                                                          | x                     |
-| Use case      | Theme elements                                                                  | Theme elements                                                                                                                                  | Text annotations      |
+| Feature | [`element_md()`](https://ardata-fr.github.io/munch/dev/reference/element_md.md) | [`element_chunks()`](https://ardata-fr.github.io/munch/dev/reference/element_chunks.md) | `geom_*_md()` |
+|----|----|----|----|
+| Bold / Italic | `**text**` / `*text*` | [`as_b()`](https://davidgohel.github.io/flextable/reference/as_b.html) / [`as_i()`](https://davidgohel.github.io/flextable/reference/as_i.html) | `**text**` / `*text*` |
+| Inline code | `` `text` `` | x | `` `text` `` |
+| Superscript | x | [`as_sup()`](https://davidgohel.github.io/flextable/reference/as_sup.html) | x |
+| Subscript | x | [`as_sub()`](https://davidgohel.github.io/flextable/reference/as_sub.html) | x |
+| Colors | x | [`colorize()`](https://davidgohel.github.io/flextable/reference/colorize.html) | x |
+| Highlighting | x | [`as_highlight()`](https://davidgohel.github.io/flextable/reference/as_highlight.html) | x |
+| Use case | Theme elements | Theme elements | Text annotations |
 
 - **[`element_md()`](https://ardata-fr.github.io/munch/dev/reference/element_md.md)**,
   simple markdown in theme elements (titles, captions, axes).

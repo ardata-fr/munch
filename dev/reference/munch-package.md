@@ -63,13 +63,15 @@ Useful links:
 
 - <https://ardata-fr.github.io/munch/>
 
-- <https://github.com/ardata-fr/munch>
-
 - Report bugs at <https://github.com/ardata-fr/munch/issues>
 
 ## Author
 
 **Maintainer**: David Gohel <david.gohel@ardata.fr>
+
+Authors:
+
+- David Gohel <david.gohel@ardata.fr>
 
 Other contributors:
 

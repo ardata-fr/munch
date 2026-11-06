@@ -28,11 +28,11 @@ another ; leading to overlapping, clipping or misaligned labels.
 
 ## Which devices agree with measurement?
 
-| Device family                                                                                                                                      | Font lookup   | Agrees with measurement?          |
-|----------------------------------------------------------------------------------------------------------------------------------------------------|---------------|-----------------------------------|
-| ragg, svglite, ggiraph                                                                                                                             | ‘systemfonts’ | Always, same lookup on both sides |
-| [`cairo_pdf()`](https://rdrr.io/r/grDevices/cairo.html), `png(type = "cairo")`                                                                     | fontconfig    | Only for system-installed fonts   |
-| [`pdf()`](https://rdrr.io/r/grDevices/pdf.html), [`png()`](https://rdrr.io/r/grDevices/png.html), [`jpeg()`](https://rdrr.io/r/grDevices/png.html) | Own engine    | No guarantee, needs ‘extrafont’   |
+| Device family | Font lookup | Agrees with measurement? |
+|----|----|----|
+| ragg, svglite, ggiraph | ‘systemfonts’ | Always, same lookup on both sides |
+| [`cairo_pdf()`](https://rdrr.io/r/grDevices/cairo.html), `png(type = "cairo")` | fontconfig | Only for system-installed fonts |
+| [`pdf()`](https://rdrr.io/r/grDevices/pdf.html), [`png()`](https://rdrr.io/r/grDevices/png.html), [`jpeg()`](https://rdrr.io/r/grDevices/png.html) | Own engine | No guarantee, needs ‘extrafont’ |
 
 ### systemfonts devices (recommended)
 
@@ -46,6 +46,7 @@ which registers Liberation Sans, Serif and Mono in a single call, no
 internet needed, SIL Open Font License:
 
 ``` r
+
 library(gdtools)
 font_set_liberation()
 ```
@@ -55,6 +56,7 @@ fallback), use
 [`font_set_auto()`](https://davidgohel.github.io/gdtools/reference/font_set_auto.html):
 
 ``` r
+
 font_set_auto()
 ```
 
@@ -62,6 +64,7 @@ For specific fonts (e.g. a Google Font), use
 [`font_set()`](https://davidgohel.github.io/gdtools/reference/font_set.html):
 
 ``` r
+
 library(munch)
 library(ggplot2)
 
@@ -100,6 +103,7 @@ Use `font_family_exists(system_only = TRUE)` to check whether a font
 will be found by fontconfig:
 
 ``` r
+
 library(gdtools)
 
 # Found by measurement (systemfonts + registry)?
@@ -137,6 +141,7 @@ not match the rendering and the output will have positioning errors.
 #### Example: exporting a munch plot to PDF
 
 ``` r
+
 library(gdtools)
 library(munch)
 library(ggplot2)
@@ -191,13 +196,13 @@ The steps are:
 
 ## Font sources at a glance
 
-| Font source                                                                                        | Measurement | ragg / svglite / ggiraph | Cairo devices             | pdf() / png() |
-|----------------------------------------------------------------------------------------------------|-------------|--------------------------|---------------------------|---------------|
-| System font                                                                                        | Yes         | Yes                      | Yes                       | Via extrafont |
-| [`register_gfont()`](https://davidgohel.github.io/gdtools/reference/register_gfont.html)           | Yes         | Yes                      | Depends on cache location | No            |
-| [`font_set_liberation()`](https://davidgohel.github.io/gdtools/reference/font_set_liberation.html) | Yes         | Yes                      | No (unless OS-installed)  | No            |
-| [`font_set_auto()`](https://davidgohel.github.io/gdtools/reference/font_set_auto.html)             | Yes         | Yes                      | System fonts only         | No            |
-| [`font_set()`](https://davidgohel.github.io/gdtools/reference/font_set.html)                       | Yes         | Yes                      | System fonts only         | No            |
+| Font source | Measurement | ragg / svglite / ggiraph | Cairo devices | pdf() / png() |
+|----|----|----|----|----|
+| System font | Yes | Yes | Yes | Via extrafont |
+| [`register_gfont()`](https://davidgohel.github.io/gdtools/reference/register_gfont.html) | Yes | Yes | Depends on cache location | No |
+| [`font_set_liberation()`](https://davidgohel.github.io/gdtools/reference/font_set_liberation.html) | Yes | Yes | No (unless OS-installed) | No |
+| [`font_set_auto()`](https://davidgohel.github.io/gdtools/reference/font_set_auto.html) | Yes | Yes | System fonts only | No |
+| [`font_set()`](https://davidgohel.github.io/gdtools/reference/font_set.html) | Yes | Yes | System fonts only | No |
 
 ## Diagnosing font problems
 
@@ -208,6 +213,7 @@ checklist:
 1.  **Is the font found by measurement?**
 
     ``` r
+
     gdtools::font_family_exists("My Font")
     ```
 
@@ -223,6 +229,7 @@ checklist:
     - For Cairo devices:
 
       ``` r
+
       gdtools::font_family_exists("My Font", system_only = TRUE)
       ```
 
@@ -239,6 +246,7 @@ checklist:
     substitution). Compare:
 
     ``` r
+
     # What systemfonts resolves
     systemfonts::match_fonts("My Font")
 
