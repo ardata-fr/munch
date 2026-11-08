@@ -49,7 +49,9 @@ md_grob(
 
 - line_spacing:
 
-  Line height multiplier (default 1.2).
+  Line height multiplier (default 1.2). When given, it takes precedence
+  over the `line_spacing` of `text_props`; when not given, the value of
+  `text_props` is used.
 
 - text_props:
 

@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">munch</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.3.002</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.3.003</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,7 +36,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><h6 class="dropdown-header" data-toc-skip>Using with ggplot2</h6></li>
-    <li><a class="dropdown-item" href="../articles/ggplot2-theming.html">Theming ggplot2 with munch</a></li>
+    <li><a class="dropdown-item" href="../articles/using-ggplot2.html">Using munch with ggplot2</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Advanced topics</h6></li>
     <li><a class="dropdown-item" href="../articles/advanced-usage.html">Advanced usage</a></li>
@@ -80,8 +80,8 @@
 <li><p><strong>Measurement</strong>, ‘munch’ calls
 <code><a href="https://davidgohel.github.io/gdtools/reference/strings_sizes.html" class="external-link">gdtools::strings_sizes()</a></code> to compute text metrics (width,
 ascent, descent). Under the hood, ‘systemfonts’ locates the font file,
-then Cairo calculates the metrics. Any font registered via
-<code><a href="https://systemfonts.r-lib.org/reference/register_font.html" class="external-link">systemfonts::register_font()</a></code>,
+then the metrics are read from this file with FreeType. Any font
+registered via <code><a href="https://systemfonts.r-lib.org/reference/register_font.html" class="external-link">systemfonts::register_font()</a></code>,
 <code><a href="https://davidgohel.github.io/gdtools/reference/register_gfont.html" class="external-link">gdtools::register_gfont()</a></code>,
 <code><a href="https://davidgohel.github.io/gdtools/reference/font_set.html" class="external-link">gdtools::font_set()</a></code>,
 <code><a href="https://davidgohel.github.io/gdtools/reference/font_set_liberation.html" class="external-link">gdtools::font_set_liberation()</a></code> or
@@ -94,7 +94,10 @@ device, or vice versa.</p></li>
 </ol>
 <p>When both steps find the same font, the output is correct. When they
 disagree, text is positioned using one font’s metrics but drawn with
-another ; leading to overlapping, clipping or misaligned labels.</p>
+another, leading to overlapping, clipping or misaligned labels.</p>
+<p>Even with the same font, measurement does not apply kerning while
+devices do: see the section “Alignment accuracy” of
+<code><a href="../articles/using-ggplot2.html">vignette("using-ggplot2")</a></code>.</p>
 </div>
 <div class="section level2">
 <h2 id="which-devices-agree-with-measurement">Which devices agree with measurement?<a class="anchor" aria-label="anchor" href="#which-devices-agree-with-measurement"></a>
@@ -124,11 +127,15 @@ another ; leading to overlapping, clipping or misaligned labels.</p>
 <td>Only for system-installed fonts</td>
 </tr>
 <tr class="odd">
-<td>
-<code><a href="https://rdrr.io/r/grDevices/pdf.html" class="external-link">pdf()</a></code>, <code><a href="https://rdrr.io/r/grDevices/png.html" class="external-link">png()</a></code>, <code><a href="https://rdrr.io/r/grDevices/png.html" class="external-link">jpeg()</a></code>
-</td>
+<td><code><a href="https://rdrr.io/r/grDevices/pdf.html" class="external-link">pdf()</a></code></td>
 <td>Own engine</td>
 <td>No guarantee, needs ‘extrafont’</td>
+</tr>
+<tr class="even">
+<td>
+<code><a href="https://rdrr.io/r/grDevices/png.html" class="external-link">png()</a></code>, <code><a href="https://rdrr.io/r/grDevices/png.html" class="external-link">jpeg()</a></code> (default type)</td>
+<td>Depends on the system</td>
+<td>Only for system-installed fonts</td>
 </tr>
 </tbody>
 </table>
@@ -138,6 +145,11 @@ another ; leading to overlapping, clipping or misaligned labels.</p>
 <p>Devices from ragg, svglite and ggiraph use ‘systemfonts’ for both
 measurement and rendering. Every registered font is visible on both
 sides.</p>
+<p>With svglite and ggiraph, the SVG file names the fonts, and the text
+is finally drawn by the browser or the viewer, which needs these fonts
+too. ‘ggiraph’ can embed them with HTML dependencies (for example
+<code><a href="https://davidgohel.github.io/gdtools/reference/liberationsansHtmlDependency.html" class="external-link">liberationsansHtmlDependency()</a></code>), ‘svglite’ with its
+argument <code>web_fonts</code>.</p>
 <p>The simplest approach is <code><a href="https://davidgohel.github.io/gdtools/reference/font_set_liberation.html" class="external-link">font_set_liberation()</a></code>, which
 registers Liberation Sans, Serif and Mono in a single call, no internet
 needed, SIL Open Font License:</p>
@@ -165,10 +177,9 @@ fallback), use <code><a href="https://davidgohel.github.io/gdtools/reference/fon
 <div class="section level3">
 <h3 id="cairo-devices">Cairo devices<a class="anchor" aria-label="anchor" href="#cairo-devices"></a>
 </h3>
-<p>Cairo devices (<code><a href="https://rdrr.io/r/grDevices/cairo.html" class="external-link">cairo_pdf()</a></code>,
-<code>png(type = "cairo")</code>) use the same Cairo engine for
-rendering as ‘gdtools’ uses for measurement. However, font lookup
-differs: measurement goes through ‘systemfonts’, rendering goes through
+<p>With Cairo devices (<code><a href="https://rdrr.io/r/grDevices/cairo.html" class="external-link">cairo_pdf()</a></code>,
+<code>png(type = "cairo")</code>), font lookup differs between the two
+steps: measurement goes through ‘systemfonts’, rendering goes through
 <strong>fontconfig</strong>. Fontconfig only scans system-installed
 fonts.</p>
 <p>This means:</p>
@@ -188,7 +199,7 @@ Rendering falls back silently unless the fonts are also installed at the
 OS level.</li>
 </ul>
 <p>Use <code>font_family_exists(system_only = TRUE)</code> to check
-whether a font will be found by fontconfig:</p>
+whether a font is installed at the system level:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://davidgohel.github.io/gdtools/" class="external-link">gdtools</a></span><span class="op">)</span></span>
 <span></span>
@@ -196,20 +207,33 @@ whether a font will be found by fontconfig:</p>
 <span><span class="fu"><a href="https://davidgohel.github.io/gdtools/reference/font_family_exists.html" class="external-link">font_family_exists</a></span><span class="op">(</span><span class="st">"sans"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
 <span></span>
-<span><span class="co"># Found by fontconfig (system-installed only)?</span></span>
+<span><span class="co"># Installed at the system level?</span></span>
 <span><span class="fu"><a href="https://davidgohel.github.io/gdtools/reference/font_family_exists.html" class="external-link">font_family_exists</a></span><span class="op">(</span><span class="st">"sans"</span>, system_only <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+<p>‘munch’ recognizes <code><a href="https://rdrr.io/r/grDevices/cairo.html" class="external-link">cairo_pdf()</a></code>, but not
+<code>png(type = "cairo")</code>: its device name, <code>"png"</code>,
+is the same as with other types. Set
+<code>options(munch.skip_device_check = TRUE)</code> to avoid the
+compatibility warning with this device.</p>
 </div>
 <div class="section level3">
-<h3 id="standard-r-devices-and-extrafont">Standard R devices and extrafont<a class="anchor" aria-label="anchor" href="#standard-r-devices-and-extrafont"></a>
+<h3 id="bitmap-devices-png-and-jpeg">Bitmap devices <code>png()</code> and <code>jpeg()</code><a class="anchor" aria-label="anchor" href="#bitmap-devices-png-and-jpeg"></a>
 </h3>
-<p>Standard devices (<code><a href="https://rdrr.io/r/grDevices/pdf.html" class="external-link">pdf()</a></code>, <code><a href="https://rdrr.io/r/grDevices/png.html" class="external-link">png()</a></code>,
-<code><a href="https://rdrr.io/r/grDevices/png.html" class="external-link">jpeg()</a></code>) use their own font engine and ignore ‘systemfonts’
-entirely.</p>
-<p>‘munch’ uses ‘gdtools’ (which relies on Cairo) for text measurement.
-The standard <code><a href="https://rdrr.io/r/grDevices/pdf.html" class="external-link">pdf()</a></code> device uses its own font engine. For the
-output to be correct, the fonts used by ‘munch’ must also be known to
-<code><a href="https://rdrr.io/r/grDevices/pdf.html" class="external-link">pdf()</a></code>.</p>
+<p>With their default type, <code><a href="https://rdrr.io/r/grDevices/png.html" class="external-link">png()</a></code> and <code><a href="https://rdrr.io/r/grDevices/png.html" class="external-link">jpeg()</a></code>
+use the graphics engine of the system: Cairo on Linux (see above),
+Quartz on macOS, GDI on Windows. They find fonts installed at the system
+level, not fonts registered with ‘systemfonts’ only. Prefer
+<code><a href="https://ragg.r-lib.org/reference/agg_png.html" class="external-link">ragg::agg_png()</a></code> and <code><a href="https://ragg.r-lib.org/reference/agg_jpeg.html" class="external-link">ragg::agg_jpeg()</a></code>, which
+are drop-in replacements.</p>
+</div>
+<div class="section level3">
+<h3 id="the-pdf-device-and-extrafont">The <code>pdf()</code> device and extrafont<a class="anchor" aria-label="anchor" href="#the-pdf-device-and-extrafont"></a>
+</h3>
+<p>The standard <code><a href="https://rdrr.io/r/grDevices/pdf.html" class="external-link">pdf()</a></code> device uses its own font engine and
+ignores ‘systemfonts’ entirely.</p>
+<p>‘munch’ uses ‘gdtools’ (which reads the font files found by
+‘systemfonts’) for text measurement. For the output to be correct, the
+fonts used by ‘munch’ must also be known to <code><a href="https://rdrr.io/r/grDevices/pdf.html" class="external-link">pdf()</a></code>.</p>
 <p>The ‘extrafont’ package bridges this gap: it imports TrueType fonts
 into R’s PDF device by generating font metric files that
 <code><a href="https://rdrr.io/r/grDevices/pdf.html" class="external-link">pdf()</a></code> can use.</p>
@@ -233,7 +257,8 @@ match the rendering and the output will have positioning errors.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">df</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, label <span class="op">=</span> <span class="va">label</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="../reference/geom_label_md.html">geom_label_md</a></span><span class="op">(</span>code_font_family <span class="op">=</span> <span class="st">"Courier New"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="co"># the theme font does not apply to geoms: set it in the geom too</span></span>
+<span>  <span class="fu"><a href="../reference/geom_label_md.html">geom_label_md</a></span><span class="op">(</span>family <span class="op">=</span> <span class="st">"Arial"</span>, code_font_family <span class="op">=</span> <span class="st">"Courier New"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span>base_family <span class="op">=</span> <span class="st">"Arial"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Make Arial and Courier New available to pdf()</span></span>
@@ -269,10 +294,9 @@ ensured font concordance manually, the warning is no longer needed.</li>
 </ol>
 <blockquote>
 <p><strong>Note</strong>: <code><a href="https://rdrr.io/r/grDevices/cairo.html" class="external-link">cairo_pdf()</a></code> is a simpler
-alternative. It uses Cairo for rendering (same engine as ‘gdtools’ for
-measurement), so system-installed fonts work without ‘extrafont’. Use
-<code><a href="https://rdrr.io/r/grDevices/pdf.html" class="external-link">pdf()</a></code> + ‘extrafont’ only when <code><a href="https://rdrr.io/r/grDevices/cairo.html" class="external-link">cairo_pdf()</a></code> is
-not available.</p>
+alternative. It finds system-installed fonts with fontconfig, so they
+work without ‘extrafont’. Use <code><a href="https://rdrr.io/r/grDevices/pdf.html" class="external-link">pdf()</a></code> + ‘extrafont’ only when
+<code><a href="https://rdrr.io/r/grDevices/cairo.html" class="external-link">cairo_pdf()</a></code> is not available.</p>
 </blockquote>
 </div>
 </div>
@@ -282,18 +306,19 @@ not available.</p>
 </h2>
 <table class="table">
 <colgroup>
-<col width="15%">
-<col width="15%">
-<col width="31%">
-<col width="18%">
-<col width="19%">
+<col width="13%">
+<col width="13%">
+<col width="27%">
+<col width="35%">
+<col width="9%">
 </colgroup>
 <thead><tr class="header">
 <th>Font source</th>
 <th>Measurement</th>
 <th>ragg / svglite / ggiraph</th>
-<th>Cairo devices</th>
-<th>pdf() / png()</th>
+<th>Cairo devices, <code><a href="https://rdrr.io/r/grDevices/png.html" class="external-link">png()</a></code>, <code><a href="https://rdrr.io/r/grDevices/png.html" class="external-link">jpeg()</a></code>
+</th>
+<th><code><a href="https://rdrr.io/r/grDevices/pdf.html" class="external-link">pdf()</a></code></th>
 </tr></thead>
 <tbody>
 <tr class="odd">
@@ -353,7 +378,8 @@ or <code><a href="https://systemfonts.r-lib.org/reference/register_font.html" cl
 <p><strong>Is the font found by the device?</strong></p>
 <ul>
 <li>
-<p>For Cairo devices:</p>
+<p>For Cairo devices, <code><a href="https://rdrr.io/r/grDevices/png.html" class="external-link">png()</a></code> and
+<code><a href="https://rdrr.io/r/grDevices/png.html" class="external-link">jpeg()</a></code>:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">gdtools</span><span class="fu">::</span><span class="fu"><a href="https://davidgohel.github.io/gdtools/reference/font_family_exists.html" class="external-link">font_family_exists</a></span><span class="op">(</span><span class="st">"My Font"</span>, system_only <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>If <code>FALSE</code>: the font is not system-installed. Either
@@ -362,8 +388,9 @@ svglite).</p>
 </li>
 <li><p>For <code><a href="https://rdrr.io/r/grDevices/pdf.html" class="external-link">pdf()</a></code>: check that
 <code>extrafont::fonts()</code> includes the family.</p></li>
-<li><p>For ragg/svglite/ggiraph: if step 1 passed, this always
-works.</p></li>
+<li><p>For ragg/svglite/ggiraph: if step 1 passed, this always works.
+With svglite and ggiraph, the browser that displays the SVG also needs
+the font (see above).</p></li>
 </ul>
 </li>
 <li>

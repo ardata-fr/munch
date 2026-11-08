@@ -7,8 +7,8 @@ Using fonts with ‘munch’ involves two independent steps:
 1.  **Measurement**, ‘munch’ calls
     [`gdtools::strings_sizes()`](https://davidgohel.github.io/gdtools/reference/strings_sizes.html)
     to compute text metrics (width, ascent, descent). Under the hood,
-    ‘systemfonts’ locates the font file, then Cairo calculates the
-    metrics. Any font registered via
+    ‘systemfonts’ locates the font file, then the metrics are read from
+    this file with FreeType. Any font registered via
     [`systemfonts::register_font()`](https://systemfonts.r-lib.org/reference/register_font.html),
     [`gdtools::register_gfont()`](https://davidgohel.github.io/gdtools/reference/register_gfont.html),
     [`gdtools::font_set()`](https://davidgohel.github.io/gdtools/reference/font_set.html),
@@ -24,7 +24,11 @@ Using fonts with ‘munch’ involves two independent steps:
 
 When both steps find the same font, the output is correct. When they
 disagree, text is positioned using one font’s metrics but drawn with
-another ; leading to overlapping, clipping or misaligned labels.
+another, leading to overlapping, clipping or misaligned labels.
+
+Even with the same font, measurement does not apply kerning while
+devices do: see the section “Alignment accuracy” of
+[`vignette("using-ggplot2")`](https://ardata-fr.github.io/munch/dev/articles/using-ggplot2.md).
 
 ## Which devices agree with measurement?
 
@@ -32,13 +36,20 @@ another ; leading to overlapping, clipping or misaligned labels.
 |----|----|----|
 | ragg, svglite, ggiraph | ‘systemfonts’ | Always, same lookup on both sides |
 | [`cairo_pdf()`](https://rdrr.io/r/grDevices/cairo.html), `png(type = "cairo")` | fontconfig | Only for system-installed fonts |
-| [`pdf()`](https://rdrr.io/r/grDevices/pdf.html), [`png()`](https://rdrr.io/r/grDevices/png.html), [`jpeg()`](https://rdrr.io/r/grDevices/png.html) | Own engine | No guarantee, needs ‘extrafont’ |
+| [`pdf()`](https://rdrr.io/r/grDevices/pdf.html) | Own engine | No guarantee, needs ‘extrafont’ |
+| [`png()`](https://rdrr.io/r/grDevices/png.html), [`jpeg()`](https://rdrr.io/r/grDevices/png.html) (default type) | Depends on the system | Only for system-installed fonts |
 
 ### systemfonts devices (recommended)
 
 Devices from ragg, svglite and ggiraph use ‘systemfonts’ for both
 measurement and rendering. Every registered font is visible on both
 sides.
+
+With svglite and ggiraph, the SVG file names the fonts, and the text is
+finally drawn by the browser or the viewer, which needs these fonts too.
+‘ggiraph’ can embed them with HTML dependencies (for example
+[`liberationsansHtmlDependency()`](https://davidgohel.github.io/gdtools/reference/liberationsansHtmlDependency.html)),
+‘svglite’ with its argument `web_fonts`.
 
 The simplest approach is
 [`font_set_liberation()`](https://davidgohel.github.io/gdtools/reference/font_set_liberation.html),
@@ -79,9 +90,9 @@ ggplot(mtcars, aes(mpg, wt)) +
 
 ### Cairo devices
 
-Cairo devices ([`cairo_pdf()`](https://rdrr.io/r/grDevices/cairo.html),
-`png(type = "cairo")`) use the same Cairo engine for rendering as
-‘gdtools’ uses for measurement. However, font lookup differs:
+With Cairo devices
+([`cairo_pdf()`](https://rdrr.io/r/grDevices/cairo.html),
+`png(type = "cairo")`), font lookup differs between the two steps:
 measurement goes through ‘systemfonts’, rendering goes through
 **fontconfig**. Fontconfig only scans system-installed fonts.
 
@@ -99,8 +110,8 @@ This means:
   Rendering falls back silently unless the fonts are also installed at
   the OS level.
 
-Use `font_family_exists(system_only = TRUE)` to check whether a font
-will be found by fontconfig:
+Use `font_family_exists(system_only = TRUE)` to check whether a font is
+installed at the system level:
 
 ``` r
 
@@ -110,22 +121,37 @@ library(gdtools)
 font_family_exists("sans")
 #> [1] TRUE
 
-# Found by fontconfig (system-installed only)?
+# Installed at the system level?
 font_family_exists("sans", system_only = TRUE)
 #> [1] TRUE
 ```
 
-### Standard R devices and extrafont
+‘munch’ recognizes
+[`cairo_pdf()`](https://rdrr.io/r/grDevices/cairo.html), but not
+`png(type = "cairo")`: its device name, `"png"`, is the same as with
+other types. Set `options(munch.skip_device_check = TRUE)` to avoid the
+compatibility warning with this device.
 
-Standard devices ([`pdf()`](https://rdrr.io/r/grDevices/pdf.html),
-[`png()`](https://rdrr.io/r/grDevices/png.html),
-[`jpeg()`](https://rdrr.io/r/grDevices/png.html)) use their own font
-engine and ignore ‘systemfonts’ entirely.
+### Bitmap devices `png()` and `jpeg()`
 
-‘munch’ uses ‘gdtools’ (which relies on Cairo) for text measurement. The
-standard [`pdf()`](https://rdrr.io/r/grDevices/pdf.html) device uses its
-own font engine. For the output to be correct, the fonts used by ‘munch’
-must also be known to [`pdf()`](https://rdrr.io/r/grDevices/pdf.html).
+With their default type, [`png()`](https://rdrr.io/r/grDevices/png.html)
+and [`jpeg()`](https://rdrr.io/r/grDevices/png.html) use the graphics
+engine of the system: Cairo on Linux (see above), Quartz on macOS, GDI
+on Windows. They find fonts installed at the system level, not fonts
+registered with ‘systemfonts’ only. Prefer
+[`ragg::agg_png()`](https://ragg.r-lib.org/reference/agg_png.html) and
+[`ragg::agg_jpeg()`](https://ragg.r-lib.org/reference/agg_jpeg.html),
+which are drop-in replacements.
+
+### The `pdf()` device and extrafont
+
+The standard [`pdf()`](https://rdrr.io/r/grDevices/pdf.html) device uses
+its own font engine and ignores ‘systemfonts’ entirely.
+
+‘munch’ uses ‘gdtools’ (which reads the font files found by
+‘systemfonts’) for text measurement. For the output to be correct, the
+fonts used by ‘munch’ must also be known to
+[`pdf()`](https://rdrr.io/r/grDevices/pdf.html).
 
 The ‘extrafont’ package bridges this gap: it imports TrueType fonts into
 R’s PDF device by generating font metric files that
@@ -153,7 +179,8 @@ df <- data.frame(
 )
 
 p <- ggplot(df, aes(x, y, label = label)) +
-  geom_label_md(code_font_family = "Courier New") +
+  # the theme font does not apply to geoms: set it in the geom too
+  geom_label_md(family = "Arial", code_font_family = "Courier New") +
   theme_minimal(base_family = "Arial")
 
 # Make Arial and Courier New available to pdf()
@@ -187,16 +214,15 @@ The steps are:
     font concordance manually, the warning is no longer needed.
 
 > **Note**: [`cairo_pdf()`](https://rdrr.io/r/grDevices/cairo.html) is a
-> simpler alternative. It uses Cairo for rendering (same engine as
-> ‘gdtools’ for measurement), so system-installed fonts work without
-> ‘extrafont’. Use [`pdf()`](https://rdrr.io/r/grDevices/pdf.html) +
-> ‘extrafont’ only when
-> [`cairo_pdf()`](https://rdrr.io/r/grDevices/cairo.html) is not
+> simpler alternative. It finds system-installed fonts with fontconfig,
+> so they work without ‘extrafont’. Use
+> [`pdf()`](https://rdrr.io/r/grDevices/pdf.html) + ‘extrafont’ only
+> when [`cairo_pdf()`](https://rdrr.io/r/grDevices/cairo.html) is not
 > available.
 
 ## Font sources at a glance
 
-| Font source | Measurement | ragg / svglite / ggiraph | Cairo devices | pdf() / png() |
+| Font source | Measurement | ragg / svglite / ggiraph | Cairo devices, [`png()`](https://rdrr.io/r/grDevices/png.html), [`jpeg()`](https://rdrr.io/r/grDevices/png.html) | [`pdf()`](https://rdrr.io/r/grDevices/pdf.html) |
 |----|----|----|----|----|
 | System font | Yes | Yes | Yes | Via extrafont |
 | [`register_gfont()`](https://davidgohel.github.io/gdtools/reference/register_gfont.html) | Yes | Yes | Depends on cache location | No |
@@ -226,7 +252,8 @@ checklist:
 
 2.  **Is the font found by the device?**
 
-    - For Cairo devices:
+    - For Cairo devices, [`png()`](https://rdrr.io/r/grDevices/png.html)
+      and [`jpeg()`](https://rdrr.io/r/grDevices/png.html):
 
       ``` r
 
@@ -240,6 +267,8 @@ checklist:
       `extrafont::fonts()` includes the family.
 
     - For ragg/svglite/ggiraph: if step 1 passed, this always works.
+      With svglite and ggiraph, the browser that displays the SVG also
+      needs the font (see above).
 
 3.  **Do both sides find the *same* font?** Even when both find a font,
     it may not be the same file (e.g. a different weight or a

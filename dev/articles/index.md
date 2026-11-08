@@ -3,7 +3,7 @@
 ### Using with ggplot2
 
 - [Using munch with
-  ggplot2](https://ardata-fr.github.io/munch/dev/articles/ggplot2-theming.md):
+  ggplot2](https://ardata-fr.github.io/munch/dev/articles/using-ggplot2.md):
 
 ### Advanced topics
 

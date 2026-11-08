@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">munch</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.3.002</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.3.003</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,7 +36,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><h6 class="dropdown-header" data-toc-skip>Using with ggplot2</h6></li>
-    <li><a class="dropdown-item" href="../articles/ggplot2-theming.html">Theming ggplot2 with munch</a></li>
+    <li><a class="dropdown-item" href="../articles/using-ggplot2.html">Using munch with ggplot2</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Advanced topics</h6></li>
     <li><a class="dropdown-item" href="../articles/advanced-usage.html">Advanced usage</a></li>
@@ -75,7 +75,13 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ardata-fr.github.io/munch/">munch</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">grid</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ardata-fr.github.io/flextable-book/" class="external-link">flextable</a></span><span class="op">)</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ardata-fr.github.io/flextable-book/" class="external-link">flextable</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://davidgohel.github.io/gdtools/" class="external-link">gdtools</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">fset</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://davidgohel.github.io/gdtools/reference/font_set_liberation.html" class="external-link">font_set_liberation</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://davidgohel.github.io/flextable/reference/set_flextable_defaults.html" class="external-link">set_flextable_defaults</a></span><span class="op">(</span>font.family <span class="op">=</span> <span class="st">"Liberation Sans"</span><span class="op">)</span></span>
+<span><span class="co"># text properties with a monospace font for inline code</span></span>
+<span><span class="va">lib_props</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/default_text_props.html">default_text_props</a></span><span class="op">(</span>code_font_family <span class="op">=</span> <span class="st">"Liberation Mono"</span><span class="op">)</span></span></code></pre></div>
 <p>This vignette covers advanced topics: creating grobs directly,
 configuring text properties, embedding images, and ‘flextable’
 integration.</p>
@@ -104,7 +110,8 @@ object (grob).</p>
 <span></span>
 <span><span class="va">gr1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/md_grob.html">md_grob</a></span><span class="op">(</span><span class="st">"**Top left**"</span>, x <span class="op">=</span> <span class="fl">0</span>, y <span class="op">=</span> <span class="fl">1</span>, hjust <span class="op">=</span> <span class="fl">0</span>, vjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">gr2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/md_grob.html">md_grob</a></span><span class="op">(</span><span class="st">"*Center*"</span>, x <span class="op">=</span> <span class="fl">0.5</span>, y <span class="op">=</span> <span class="fl">0.5</span>, hjust <span class="op">=</span> <span class="fl">0.5</span>, vjust <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
-<span><span class="va">gr3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/md_grob.html">md_grob</a></span><span class="op">(</span><span class="st">"`Bottom right`"</span>, x <span class="op">=</span> <span class="fl">1</span>, y <span class="op">=</span> <span class="fl">0</span>, hjust <span class="op">=</span> <span class="fl">1</span>, vjust <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
+<span><span class="va">gr3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/md_grob.html">md_grob</a></span><span class="op">(</span><span class="st">"`Bottom right`"</span>, x <span class="op">=</span> <span class="fl">1</span>, y <span class="op">=</span> <span class="fl">0</span>, hjust <span class="op">=</span> <span class="fl">1</span>, vjust <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  text_props <span class="op">=</span> <span class="va">lib_props</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/grid/grid.draw.html" class="external-link">grid.draw</a></span><span class="op">(</span><span class="va">gr1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/grid/grid.draw.html" class="external-link">grid.draw</a></span><span class="op">(</span><span class="va">gr2</span><span class="op">)</span></span>
@@ -119,7 +126,8 @@ object (grob).</p>
 <code class="sourceCode R"><span><span class="va">long_text</span> <span class="op">&lt;-</span> <span class="st">"This is a **long text** that will be automatically</span></span>
 <span><span class="st">wrapped across multiple lines using the `width` parameter."</span></span>
 <span></span>
-<span><span class="va">gr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/md_grob.html">md_grob</a></span><span class="op">(</span><span class="va">long_text</span>, x <span class="op">=</span> <span class="fl">0.1</span>, hjust <span class="op">=</span> <span class="fl">0</span>, width <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<span><span class="va">gr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/md_grob.html">md_grob</a></span><span class="op">(</span><span class="va">long_text</span>, x <span class="op">=</span> <span class="fl">0.1</span>, hjust <span class="op">=</span> <span class="fl">0</span>, width <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  text_props <span class="op">=</span> <span class="va">lib_props</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/grid/grid.newpage.html" class="external-link">grid.newpage</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/grid/grid.draw.html" class="external-link">grid.draw</a></span><span class="op">(</span><span class="va">gr</span><span class="op">)</span></span></code></pre></div>
@@ -186,9 +194,9 @@ and color:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">props</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/default_text_props.html">default_text_props</a></span><span class="op">(</span></span>
 <span>  font_size <span class="op">=</span> <span class="fl">14</span>,</span>
-<span>  font_family <span class="op">=</span> <span class="st">"serif"</span>,</span>
+<span>  font_family <span class="op">=</span> <span class="va">fset</span><span class="op">$</span><span class="va">serif</span>,</span>
 <span>  font_color <span class="op">=</span> <span class="st">"darkblue"</span>,</span>
-<span>  code_font_family <span class="op">=</span> <span class="st">"mono"</span></span>
+<span>  code_font_family <span class="op">=</span> <span class="st">"Liberation Mono"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">gr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/md_grob.html">md_grob</a></span><span class="op">(</span><span class="st">"Custom **styled** text with `code`"</span>, text_props <span class="op">=</span> <span class="va">props</span><span class="op">)</span></span>
@@ -209,17 +217,20 @@ and color:</p>
 <tr class="odd">
 <td><code>font_size</code></td>
 <td>Font size in points</td>
-<td>11</td>
+<td>from <code><a href="https://davidgohel.github.io/flextable/reference/get_flextable_defaults.html" class="external-link">get_flextable_defaults()</a></code>
+</td>
 </tr>
 <tr class="even">
 <td><code>font_family</code></td>
 <td>Font family</td>
-<td>“Helvetica”</td>
+<td>from <code><a href="https://davidgohel.github.io/flextable/reference/get_flextable_defaults.html" class="external-link">get_flextable_defaults()</a></code>
+</td>
 </tr>
 <tr class="odd">
 <td><code>font_color</code></td>
 <td>Text color</td>
-<td>“black”</td>
+<td>from <code><a href="https://davidgohel.github.io/flextable/reference/get_flextable_defaults.html" class="external-link">get_flextable_defaults()</a></code>
+</td>
 </tr>
 <tr class="even">
 <td><code>code_font_family</code></td>
@@ -244,7 +255,7 @@ and color:</p>
 </h3>
 <p>Text properties can also be set globally via ‘flextable’:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://davidgohel.github.io/flextable/reference/set_flextable_defaults.html" class="external-link">set_flextable_defaults</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">old</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/set_flextable_defaults.html" class="external-link">set_flextable_defaults</a></span><span class="op">(</span></span>
 <span>  font.size <span class="op">=</span> <span class="fl">14</span>,</span>
 <span>  font.color <span class="op">=</span> <span class="st">"darkblue"</span></span>
 <span><span class="op">)</span></span>
@@ -256,8 +267,8 @@ and color:</p>
 <p><img src="advanced-usage_files/figure-html/flextable-defaults-1.png" class="r-plt" alt="" width="100%"></p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="co"># Reset defaults</span></span>
-<span><span class="fu"><a href="https://davidgohel.github.io/flextable/reference/set_flextable_defaults.html" class="external-link">init_flextable_defaults</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co"># Restore the previous defaults</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">set_flextable_defaults</span>, <span class="va">old</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -268,13 +279,11 @@ and color:</p>
 </h3>
 <p>Use standard markdown image syntax:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">img_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"img"</span>, <span class="st">"Rlogo.png"</span>, package <span class="op">=</span> <span class="st">"png"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">img_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Rhome.html" class="external-link">R.home</a></span><span class="op">(</span><span class="st">"doc"</span><span class="op">)</span>, <span class="st">"html"</span>, <span class="st">"logo.jpg"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">text_with_img</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"The R logo: ![](%s) in text."</span>, <span class="va">img_path</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">gr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/md_grob.html">md_grob</a></span><span class="op">(</span><span class="va">text_with_img</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: Image file not found.</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">✖</span> Cannot find file .</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/grid/grid.newpage.html" class="external-link">grid.newpage</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/grid/grid.draw.html" class="external-link">grid.draw</a></span><span class="op">(</span><span class="va">gr</span><span class="op">)</span></span></code></pre></div>
@@ -285,7 +294,7 @@ and color:</p>
 </h3>
 <p>Use <code><a href="https://davidgohel.github.io/flextable/reference/as_image.html" class="external-link">as_image()</a></code> for explicit size control:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">img_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"img"</span>, <span class="st">"Rlogo.png"</span>, package <span class="op">=</span> <span class="st">"png"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">img_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Rhome.html" class="external-link">R.home</a></span><span class="op">(</span><span class="st">"doc"</span><span class="op">)</span>, <span class="st">"html"</span>, <span class="st">"logo.jpg"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">chunks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/as_paragraph.html" class="external-link">as_paragraph</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/as_chunk.html" class="external-link">as_chunk</a></span><span class="op">(</span><span class="st">"The R logo "</span><span class="op">)</span>,</span>
@@ -294,8 +303,6 @@ and color:</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">gr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/chunks_grob.html">chunks_grob</a></span><span class="op">(</span><span class="va">chunks</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: Image file not found.</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">✖</span> Cannot find file .</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/grid/grid.newpage.html" class="external-link">grid.newpage</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/grid/grid.draw.html" class="external-link">grid.draw</a></span><span class="op">(</span><span class="va">gr</span><span class="op">)</span></span></code></pre></div>
@@ -324,8 +331,6 @@ proportions</li>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Text ![](%s) centered"</span>, <span class="va">img_path</span><span class="op">)</span>,</span>
 <span>  text_props <span class="op">=</span> <span class="va">props</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: Image file not found.</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">✖</span> Cannot find file .</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/grid/grid.newpage.html" class="external-link">grid.newpage</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/grid/grid.draw.html" class="external-link">grid.draw</a></span><span class="op">(</span><span class="va">gr</span><span class="op">)</span></span></code></pre></div>
@@ -365,36 +370,36 @@ proportions</li>
 <span>  value <span class="op">=</span> <span class="fu"><a href="../reference/as_paragraph_md.html">as_paragraph_md</a></span><span class="op">(</span><span class="st">"*Sepal* **Length**"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://davidgohel.github.io/flextable/reference/autofit.html" class="external-link">autofit</a></span><span class="op">(</span><span class="va">ft</span><span class="op">)</span></span></code></pre></div>
 <div class="tabwid">
-<style>.cl-d8bad469{}.cl-2c5a1875{font-family:'DejaVu Sans';font-size:11pt;font-weight:normal;font-style:italic;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-5430bca3{font-family:'DejaVu Sans';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-8a796ab5{font-family:'DejaVu Sans';font-size:11pt;font-weight:bold;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-a1958ec5{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-6477613b{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-c6842213{width:1.359in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-91d246af{width:1.205in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-58e55b8f{width:1.245in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-4452de96{width:1.163in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-7d9ca12b{width:0.873in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-8e1e7fda{width:1.359in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-49905f53{width:1.205in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-49978c29{width:1.245in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f3569919{width:1.163in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-c9ef6616{width:0.873in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-c616d9a3{width:1.359in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-5b6b85d8{width:1.205in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d6860f4b{width:1.245in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-2c808ee7{width:1.163in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-24218e32{width:0.873in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style>
+<style>.cl-d8bad469{}.cl-c362961f{font-family:'Liberation Sans';font-size:11pt;font-weight:normal;font-style:italic;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-58d9c9bd{font-family:'Liberation Sans';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-b2bba020{font-family:'Liberation Sans';font-size:11pt;font-weight:bold;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-a1958ec5{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-6477613b{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-f1fda1cd{width:1.228in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e464ba6d{width:1.109in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-7e760f32{width:1.143in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d386a97f{width:1.066in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-62dd396b{width:0.829in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-fe489137{width:1.228in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-62fc2cac{width:1.109in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-af9aa164{width:1.143in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-a8472722{width:1.066in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-a13fd892{width:0.829in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-df173a8d{width:1.228in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-d5a403d5{width:1.109in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-4e3189aa{width:1.143in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-3ba1c4b3{width:1.066in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-48f100fd{width:0.829in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style>
 <table data-quarto-disable-processing="true" class="table cl-d8bad469">
 <thead><tr style="overflow-wrap:break-word;">
-<th class="cl-c6842213"><p class="cl-a1958ec5"><span class="cl-2c5a1875">Sepal</span><span class="cl-5430bca3"> </span><span class="cl-8a796ab5">Length</span></p></th>
-<th class="cl-91d246af"><p class="cl-a1958ec5"><span class="cl-5430bca3">Sepal.Width</span></p></th>
-<th class="cl-58e55b8f"><p class="cl-a1958ec5"><span class="cl-5430bca3">Petal.Length</span></p></th>
-<th class="cl-4452de96"><p class="cl-a1958ec5"><span class="cl-5430bca3">Petal.Width</span></p></th>
-<th class="cl-7d9ca12b"><p class="cl-6477613b"><span class="cl-5430bca3">Species</span></p></th>
+<th class="cl-f1fda1cd"><p class="cl-a1958ec5"><span class="cl-c362961f">Sepal</span><span class="cl-58d9c9bd"> </span><span class="cl-b2bba020">Length</span></p></th>
+<th class="cl-e464ba6d"><p class="cl-a1958ec5"><span class="cl-58d9c9bd">Sepal.Width</span></p></th>
+<th class="cl-7e760f32"><p class="cl-a1958ec5"><span class="cl-58d9c9bd">Petal.Length</span></p></th>
+<th class="cl-d386a97f"><p class="cl-a1958ec5"><span class="cl-58d9c9bd">Petal.Width</span></p></th>
+<th class="cl-62dd396b"><p class="cl-6477613b"><span class="cl-58d9c9bd">Species</span></p></th>
 </tr></thead>
 <tbody>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-8e1e7fda"><p class="cl-a1958ec5"><span class="cl-5430bca3">5.1</span></p></td>
-<td class="cl-49905f53"><p class="cl-a1958ec5"><span class="cl-5430bca3">3.5</span></p></td>
-<td class="cl-49978c29"><p class="cl-a1958ec5"><span class="cl-5430bca3">1.4</span></p></td>
-<td class="cl-f3569919"><p class="cl-a1958ec5"><span class="cl-5430bca3">0.2</span></p></td>
-<td class="cl-c9ef6616"><p class="cl-6477613b"><span class="cl-5430bca3">setosa</span></p></td>
+<td class="cl-fe489137"><p class="cl-a1958ec5"><span class="cl-58d9c9bd">5.1</span></p></td>
+<td class="cl-62fc2cac"><p class="cl-a1958ec5"><span class="cl-58d9c9bd">3.5</span></p></td>
+<td class="cl-af9aa164"><p class="cl-a1958ec5"><span class="cl-58d9c9bd">1.4</span></p></td>
+<td class="cl-a8472722"><p class="cl-a1958ec5"><span class="cl-58d9c9bd">0.2</span></p></td>
+<td class="cl-a13fd892"><p class="cl-6477613b"><span class="cl-58d9c9bd">setosa</span></p></td>
 </tr>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-8e1e7fda"><p class="cl-a1958ec5"><span class="cl-5430bca3">4.9</span></p></td>
-<td class="cl-49905f53"><p class="cl-a1958ec5"><span class="cl-5430bca3">3.0</span></p></td>
-<td class="cl-49978c29"><p class="cl-a1958ec5"><span class="cl-5430bca3">1.4</span></p></td>
-<td class="cl-f3569919"><p class="cl-a1958ec5"><span class="cl-5430bca3">0.2</span></p></td>
-<td class="cl-c9ef6616"><p class="cl-6477613b"><span class="cl-5430bca3">setosa</span></p></td>
+<td class="cl-fe489137"><p class="cl-a1958ec5"><span class="cl-58d9c9bd">4.9</span></p></td>
+<td class="cl-62fc2cac"><p class="cl-a1958ec5"><span class="cl-58d9c9bd">3.0</span></p></td>
+<td class="cl-af9aa164"><p class="cl-a1958ec5"><span class="cl-58d9c9bd">1.4</span></p></td>
+<td class="cl-a8472722"><p class="cl-a1958ec5"><span class="cl-58d9c9bd">0.2</span></p></td>
+<td class="cl-a13fd892"><p class="cl-6477613b"><span class="cl-58d9c9bd">setosa</span></p></td>
 </tr>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-c616d9a3"><p class="cl-a1958ec5"><span class="cl-5430bca3">4.7</span></p></td>
-<td class="cl-5b6b85d8"><p class="cl-a1958ec5"><span class="cl-5430bca3">3.2</span></p></td>
-<td class="cl-d6860f4b"><p class="cl-a1958ec5"><span class="cl-5430bca3">1.3</span></p></td>
-<td class="cl-2c808ee7"><p class="cl-a1958ec5"><span class="cl-5430bca3">0.2</span></p></td>
-<td class="cl-24218e32"><p class="cl-6477613b"><span class="cl-5430bca3">setosa</span></p></td>
+<td class="cl-df173a8d"><p class="cl-a1958ec5"><span class="cl-58d9c9bd">4.7</span></p></td>
+<td class="cl-d5a403d5"><p class="cl-a1958ec5"><span class="cl-58d9c9bd">3.2</span></p></td>
+<td class="cl-4e3189aa"><p class="cl-a1958ec5"><span class="cl-58d9c9bd">1.3</span></p></td>
+<td class="cl-3ba1c4b3"><p class="cl-a1958ec5"><span class="cl-58d9c9bd">0.2</span></p></td>
+<td class="cl-48f100fd"><p class="cl-6477613b"><span class="cl-58d9c9bd">setosa</span></p></td>
 </tr>
 </tbody>
 </table>
