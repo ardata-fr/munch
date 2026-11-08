@@ -184,7 +184,7 @@ do.call(set_flextable_defaults, old)
 Use standard markdown image syntax:
 
 ```{r images-md}
-img_path <- system.file("img", "Rlogo.png", package = "png")
+img_path <- file.path(R.home("doc"), "html", "logo.jpg")
 
 text_with_img <- sprintf("The R logo: ![](%s) in text.", img_path)
 
@@ -199,7 +199,7 @@ grid.draw(gr)
 Use `as_image()` for explicit size control:
 
 ```{r images-chunks}
-img_path <- system.file("img", "Rlogo.png", package = "png")
+img_path <- file.path(R.home("doc"), "html", "logo.jpg")
 
 chunks <- as_paragraph(
   as_chunk("The R logo "),
