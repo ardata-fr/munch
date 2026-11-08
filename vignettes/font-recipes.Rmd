@@ -21,10 +21,10 @@ Using fonts with 'munch' involves two independent steps:
 1. **Measurement**, 'munch' calls `gdtools::strings_sizes()` to compute
    text metrics (width, ascent, descent). Under the hood, 'systemfonts'
    locates the font file, then the metrics are read from this file with
-   FreeType. Any font
-   registered via `systemfonts::register_font()`, `gdtools::register_gfont()`,
-   `gdtools::font_set()`, `gdtools::font_set_liberation()` or
-   `gdtools::font_set_auto()` is found at measurement time.
+   FreeType. Any font registered via `systemfonts::register_font()`,
+   `gdtools::register_gfont()`, `gdtools::font_set()`,
+   `gdtools::font_set_liberation()` or `gdtools::font_set_auto()` is
+   found at measurement time.
 
 2. **Rendering**, the graphic device draws the text. Each device has its
    own way of resolving font names. This is where mismatches happen: a font
@@ -32,7 +32,10 @@ Using fonts with 'munch' involves two independent steps:
 
 When both steps find the same font, the output is correct. When they
 disagree, text is positioned using one font's metrics but drawn with
-another ; leading to overlapping, clipping or misaligned labels.
+another, leading to overlapping, clipping or misaligned labels.
+
+Even with the same font, measurement does not apply kerning while devices
+do: see the section "Alignment accuracy" of `vignette("using-ggplot2")`.
 
 ## Which devices agree with measurement?
 
@@ -40,13 +43,20 @@ another ; leading to overlapping, clipping or misaligned labels.
 |---------------|-------------|--------------------------|
 | ragg, svglite, ggiraph | 'systemfonts' | Always, same lookup on both sides |
 | `cairo_pdf()`, `png(type = "cairo")` | fontconfig | Only for system-installed fonts |
-| `pdf()`, `png()`, `jpeg()` | Own engine | No guarantee, needs 'extrafont' |
+| `pdf()` | Own engine | No guarantee, needs 'extrafont' |
+| `png()`, `jpeg()` (default type) | Depends on the system | Only for system-installed fonts |
 
 ### systemfonts devices (recommended)
 
 Devices from ragg, svglite and ggiraph use 'systemfonts' for both
 measurement and rendering. Every registered font is visible on both
 sides.
+
+With svglite and ggiraph, the SVG file names the fonts, and the text is
+finally drawn by the browser or the viewer, which needs these fonts too.
+'ggiraph' can embed them with HTML dependencies (for example
+`liberationsansHtmlDependency()`), 'svglite' with its argument
+`web_fonts`.
 
 The simplest approach is `font_set_liberation()`, which registers
 Liberation Sans, Serif and Mono in a single call, no internet
@@ -98,7 +108,7 @@ This means:
   OS level.
 
 Use `font_family_exists(system_only = TRUE)` to check whether a font
-will be found by fontconfig:
+is installed at the system level:
 
 ```{r}
 library(gdtools)
@@ -106,19 +116,31 @@ library(gdtools)
 # Found by measurement (systemfonts + registry)?
 font_family_exists("sans")
 
-# Found by fontconfig (system-installed only)?
+# Installed at the system level?
 font_family_exists("sans", system_only = TRUE)
 ```
 
-### Standard R devices and extrafont
+'munch' recognizes `cairo_pdf()`, but not `png(type = "cairo")`: its
+device name, `"png"`, is the same as with other types. Set
+`options(munch.skip_device_check = TRUE)` to avoid the compatibility
+warning with this device.
 
-Standard devices (`pdf()`, `png()`, `jpeg()`) use their own font engine
-and ignore 'systemfonts' entirely.
+### Bitmap devices `png()` and `jpeg()`
+
+With their default type, `png()` and `jpeg()` use the graphics engine of
+the system: Cairo on Linux (see above), Quartz on macOS, GDI on Windows.
+They find fonts installed at the system level, not fonts registered with
+'systemfonts' only. Prefer `ragg::agg_png()` and `ragg::agg_jpeg()`,
+which are drop-in replacements.
+
+### The `pdf()` device and extrafont
+
+The standard `pdf()` device uses its own font engine and ignores
+'systemfonts' entirely.
 
 'munch' uses 'gdtools' (which reads the font files found by
-'systemfonts') for text measurement. The standard `pdf()` device uses its
-own font engine. For the output to be
-correct, the fonts used by 'munch' must also be known to `pdf()`.
+'systemfonts') for text measurement. For the output to be correct, the
+fonts used by 'munch' must also be known to `pdf()`.
 
 The 'extrafont' package bridges this gap: it imports TrueType fonts into
 R's PDF device by generating font metric files that `pdf()` can use.
@@ -143,7 +165,8 @@ df <- data.frame(
 )
 
 p <- ggplot(df, aes(x, y, label = label)) +
-  geom_label_md(code_font_family = "Courier New") +
+  # the theme font does not apply to geoms: set it in the geom too
+  geom_label_md(family = "Arial", code_font_family = "Courier New") +
   theme_minimal(base_family = "Arial")
 
 # Make Arial and Courier New available to pdf()
@@ -180,8 +203,8 @@ The steps are:
 
 ## Font sources at a glance
 
-| Font source | Measurement | ragg / svglite / ggiraph | Cairo devices | pdf() / png() |
-|-------------|-------------|--------------------------|---------------|----------------|
+| Font source | Measurement | ragg / svglite / ggiraph | Cairo devices, `png()`, `jpeg()` | `pdf()` |
+|-------------|-------------|--------------------------|----------------------------------|---------|
 | System font | Yes | Yes | Yes | Via extrafont |
 | `register_gfont()` | Yes | Yes | Depends on cache location | No |
 | `font_set_liberation()` | Yes | Yes | No (unless OS-installed) | No |
@@ -202,14 +225,16 @@ checklist:
    with `register_gfont()`, `font_set()`, or `systemfonts::register_font()`.
 
 2. **Is the font found by the device?**
-   - For Cairo devices:
+   - For Cairo devices, `png()` and `jpeg()`:
      ```r
      gdtools::font_family_exists("My Font", system_only = TRUE)
      ```
      If `FALSE`: the font is not system-installed. Either install it at
      the OS level or switch to a 'systemfonts' device (ragg, svglite).
    - For `pdf()`: check that `extrafont::fonts()` includes the family.
-   - For ragg/svglite/ggiraph: if step 1 passed, this always works.
+   - For ragg/svglite/ggiraph: if step 1 passed, this always works. With
+     svglite and ggiraph, the browser that displays the SVG also needs
+     the font (see above).
 
 3. **Do both sides find the *same* font?**
    Even when both find a font, it may not be the same file (e.g. a

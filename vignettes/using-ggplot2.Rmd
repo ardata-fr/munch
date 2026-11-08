@@ -26,7 +26,7 @@ library(munch)
 library(ggplot2)
 library(flextable)
 library(gdtools)
-font_set_liberation()
+fset <- font_set_liberation()
 set_theme(theme_minimal(base_family = "Liberation Sans", base_size = 11))
 ```
 
@@ -48,7 +48,7 @@ ggplot(mtcars, aes(mpg, wt)) +
   ) +
   theme(
     plot.title = element_md(size = 16),
-    plot.subtitle = element_md(size = 12),
+    plot.subtitle = element_md(size = 12, code_font_family = "Liberation Mono"),
     plot.caption = element_md(size = 9)
   )
 ```
@@ -266,7 +266,8 @@ ggplot(mtcars, aes(mpg, wt)) +
   geom_text_md(
     data = annotations,
     aes(x = x, y = y, label = label),
-    size = 4
+    size = 4,
+    code_font_family = "Liberation Mono"
   )
 ```
 
@@ -305,7 +306,8 @@ ggplot(mtcars, aes(mpg, wt)) +
   geom_text_md(
     data = df,
     aes(x = x, y = y, label = label),
-    width = 2, hjust = 0, size = 3.5
+    width = 2, hjust = 0, size = 3.5,
+    code_font_family = "Liberation Mono"
   )
 ```
 
