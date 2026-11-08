@@ -222,6 +222,29 @@ test_that("get_image_info reads valid image", {
   expect_gt(result$height, 0)
 })
 
+test_that("get_image_info reads the dimensions from the file header", {
+  skip_if_not_installed("magick")
+  r_logo <- file.path(R.home("doc"), "html", "logo.jpg")
+  skip_if_not(file.exists(r_logo), "R logo not found")
+
+  expect_equal(
+    munch:::get_image_info(r_logo),
+    list(width = 100, height = 76)
+  )
+})
+
+test_that("get_image_info reads svg files with magick", {
+  skip_if_not_installed("magick")
+  svg <- file.path(R.home("doc"), "html", "Rlogo.svg")
+  skip_if_not(file.exists(svg), "R svg logo not found")
+
+  info <- magick::image_info(magick::image_read(svg))
+  expect_equal(
+    munch:::get_image_info(svg),
+    list(width = info$width, height = info$height)
+  )
+})
+
 test_that("read_image_raster returns NULL on NA path", {
   result <- munch:::read_image_raster(NA_character_)
 

@@ -5,6 +5,9 @@ faster. Consecutive line breaks give empty lines, and spaces written after a lin
 break are kept. It needs 'flextable' >= 0.10.4.
 - Images are decoded once in a session with `flextable::image_raster()`, and drawn
 faster. SVG images are rendered at the size they are drawn.
+- The size of 'png', 'jpeg' and 'gif' images is read from their header with
+`officer::image_dims()`, without decoding them, which is about 15 times faster. It
+needs 'officer' >= 0.7.8.
 - A word wider than `width` now starts on a new line and is split between
 characters if it is still too wide, without hyphen, as in 'flextable'. It used to
 overflow. Images, superscripts and subscripts are not split.

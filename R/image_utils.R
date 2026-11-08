@@ -8,8 +8,12 @@ has_magick <- function() {
 
 #' Get image dimensions
 #'
-#' Reads an image file and returns its pixel dimensions.
-#' Requires the 'magick' package.
+#' Returns the pixel dimensions of an image file. The dimensions of 'png',
+#' 'jpeg' and 'gif' files are read from their header by
+#' `officer::image_dims()`, without decoding the image. 'svg' files are read
+#' with `magick::image_read()`, which does not need package 'rsvg' as
+#' `officer::image_dims()` does. The 'magick' package is still required, as it
+#' is used to draw the images.
 #'
 #' @param path Path to image file.
 #' @return List with width and height in pixels, or NULL if unreadable.
@@ -33,9 +37,13 @@ get_image_info <- function(path) {
 
   tryCatch(
     {
-      img <- magick::image_read(path)
-      info <- magick::image_info(img)
-      list(width = info$width, height = info$height)
+      if (grepl("\\.svg$", path, ignore.case = TRUE)) {
+        info <- magick::image_info(magick::image_read(path))
+        list(width = info$width, height = info$height)
+      } else {
+        dims <- officer::image_dims(path)
+        list(width = unname(dims[["width"]]), height = unname(dims[["height"]]))
+      }
     },
     error = function(e) {
       cli::cli_warn(c(
