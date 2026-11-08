@@ -1,41 +1,62 @@
 # Changelog
 
-## munch (development version)
+## munch 0.0.3
 
-- Lines are now arranged by
-  [`flextable::layout_lines()`](https://davidgohel.github.io/flextable/reference/layout_lines.html),
-  as in ‘flextable’, and faster. Consecutive line breaks give empty
-  lines, and spaces written after a line break are kept. It needs
-  ‘flextable’ \>= 0.10.4.
-- Images are decoded once in a session with
-  [`flextable::image_raster()`](https://davidgohel.github.io/flextable/reference/image_raster.html),
-  and drawn faster. SVG images are rendered at the size they are drawn.
-- A word wider than `width` now starts on a new line and is split
-  between characters if it is still too wide, without hyphen, as in
-  ‘flextable’. It used to overflow. Images, superscripts and subscripts
-  are not split.
-- The height of titles, subtitles and captions made with
+### New features
+
+- [`element_md()`](https://ardata-fr.github.io/munch/dev/reference/element_md.md)
+  and
+  [`element_chunks()`](https://ardata-fr.github.io/munch/dev/reference/element_chunks.md)
+  have a new argument `width` to set the maximum width of the text. Use
+  it with ‘patchwork’ or with a fixed aspect ratio to get titles with
+  the right height (see below).
+
+### Bug fixes
+
+- Titles, subtitles and captions made with
   [`element_md()`](https://ardata-fr.github.io/munch/dev/reference/element_md.md)
   or
   [`element_chunks()`](https://ardata-fr.github.io/munch/dev/reference/element_chunks.md)
-  is now computed for the width they are drawn with, the one of their
-  column. It was computed for the width of the plot, so that their first
-  lines could be cut at the top of the plot. This is not possible with
-  ‘patchwork’, and is only an improvement with a fixed aspect ratio.
-- New argument `width` in
-  [`element_md()`](https://ardata-fr.github.io/munch/dev/reference/element_md.md)
-  and
-  [`element_chunks()`](https://ardata-fr.github.io/munch/dev/reference/element_chunks.md)
-  to set the maximum width of the text, which also gives the right
-  height with ‘patchwork’ and with a fixed aspect ratio.
+  could have their first lines cut at the top of the plot: their height
+  was computed for the width of the plot instead of the width of their
+  column. It is now computed for the width they are drawn with. With
+  ‘patchwork’ or a fixed aspect ratio, this width is not known in
+  advance: set `width` in these cases.
+- A word wider than the available width no longer overflows: it starts
+  on a new line and, if it is still too wide, it is split between
+  characters (without hyphen). Images, superscripts and subscripts are
+  never split.
+- Consecutive line breaks now give empty lines, and spaces written after
+  a line break are kept.
+
+### Changes
+
+- Text is now arranged into lines by
+  [`flextable::layout_lines()`](https://davidgohel.github.io/flextable/reference/layout_lines.html),
+  so that rich text wraps the same way in ‘munch’ and in ‘flextable’.
+- SVG images are rendered at the size they are drawn, so that they stay
+  sharp.
+
+### Performance
+
+- Lines are arranged faster.
+- An image used several times is decoded only once in a session.
+- The size of ‘png’, ‘jpeg’ and ‘gif’ images is read from their file
+  header, without decoding them: about 15 times faster.
+
+### Dependencies
+
+- ‘munch’ now requires ‘flextable’ \>= 0.10.4, ‘officer’ \>= 0.7.8 and
+  ‘gdtools’ \>= 0.5.3.
 
 ## munch 0.0.2
 
 CRAN release: 2026-04-16
 
-- Fixed
-  [`element_md()`](https://ardata-fr.github.io/munch/dev/reference/element_md.md)
+### Bug fixes
+
+- [`element_md()`](https://ardata-fr.github.io/munch/dev/reference/element_md.md)
   and
   [`element_chunks()`](https://ardata-fr.github.io/munch/dev/reference/element_chunks.md)
-  ignoring `plot.tag.position` and `plot.tag.location`
+  no longer ignore `plot.tag.position` and `plot.tag.location`
   ([\#1](https://github.com/ardata-fr/munch/issues/1)).

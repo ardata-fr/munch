@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">munch</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.3.001</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.3.002</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -42,17 +42,42 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="development version" id="munch-development-version">munch (development version)<a class="anchor" aria-label="anchor" href="#munch-development-version"></a></h2>
-<ul><li>Lines are now arranged by <code><a href="https://davidgohel.github.io/flextable/reference/layout_lines.html" class="external-link">flextable::layout_lines()</a></code>, as in ‘flextable’, and faster. Consecutive line breaks give empty lines, and spaces written after a line break are kept. It needs ‘flextable’ &gt;= 0.10.4.</li>
-<li>Images are decoded once in a session with <code><a href="https://davidgohel.github.io/flextable/reference/image_raster.html" class="external-link">flextable::image_raster()</a></code>, and drawn faster. SVG images are rendered at the size they are drawn.</li>
-<li>A word wider than <code>width</code> now starts on a new line and is split between characters if it is still too wide, without hyphen, as in ‘flextable’. It used to overflow. Images, superscripts and subscripts are not split.</li>
-<li>The height of titles, subtitles and captions made with <code><a href="../reference/element_md.html">element_md()</a></code> or <code><a href="../reference/element_chunks.html">element_chunks()</a></code> is now computed for the width they are drawn with, the one of their column. It was computed for the width of the plot, so that their first lines could be cut at the top of the plot. This is not possible with ‘patchwork’, and is only an improvement with a fixed aspect ratio.</li>
-<li>New argument <code>width</code> in <code><a href="../reference/element_md.html">element_md()</a></code> and <code><a href="../reference/element_chunks.html">element_chunks()</a></code> to set the maximum width of the text, which also gives the right height with ‘patchwork’ and with a fixed aspect ratio.</li>
+<h2 class="pkg-version" data-toc-text="0.0.3" id="munch-003">munch 0.0.3<a class="anchor" aria-label="anchor" href="#munch-003"></a></h2>
+<div class="section level3">
+<h3 id="new-features-0-0-3">New features<a class="anchor" aria-label="anchor" href="#new-features-0-0-3"></a></h3>
+<ul><li>
+<code><a href="../reference/element_md.html">element_md()</a></code> and <code><a href="../reference/element_chunks.html">element_chunks()</a></code> have a new argument <code>width</code> to set the maximum width of the text. Use it with ‘patchwork’ or with a fixed aspect ratio to get titles with the right height (see below).</li>
 </ul></div>
+<div class="section level3">
+<h3 id="bug-fixes-0-0-3">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-0-3"></a></h3>
+<ul><li>Titles, subtitles and captions made with <code><a href="../reference/element_md.html">element_md()</a></code> or <code><a href="../reference/element_chunks.html">element_chunks()</a></code> could have their first lines cut at the top of the plot: their height was computed for the width of the plot instead of the width of their column. It is now computed for the width they are drawn with. With ‘patchwork’ or a fixed aspect ratio, this width is not known in advance: set <code>width</code> in these cases.</li>
+<li>A word wider than the available width no longer overflows: it starts on a new line and, if it is still too wide, it is split between characters (without hyphen). Images, superscripts and subscripts are never split.</li>
+<li>Consecutive line breaks now give empty lines, and spaces written after a line break are kept.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="changes-0-0-3">Changes<a class="anchor" aria-label="anchor" href="#changes-0-0-3"></a></h3>
+<ul><li>Text is now arranged into lines by <code><a href="https://davidgohel.github.io/flextable/reference/layout_lines.html" class="external-link">flextable::layout_lines()</a></code>, so that rich text wraps the same way in ‘munch’ and in ‘flextable’.</li>
+<li>SVG images are rendered at the size they are drawn, so that they stay sharp.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="performance-0-0-3">Performance<a class="anchor" aria-label="anchor" href="#performance-0-0-3"></a></h3>
+<ul><li>Lines are arranged faster.</li>
+<li>An image used several times is decoded only once in a session.</li>
+<li>The size of ‘png’, ‘jpeg’ and ‘gif’ images is read from their file header, without decoding them: about 15 times faster.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="dependencies-0-0-3">Dependencies<a class="anchor" aria-label="anchor" href="#dependencies-0-0-3"></a></h3>
+<ul><li>‘munch’ now requires ‘flextable’ &gt;= 0.10.4, ‘officer’ &gt;= 0.7.8 and ‘gdtools’ &gt;= 0.5.3.</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.2" id="munch-002">munch 0.0.2<a class="anchor" aria-label="anchor" href="#munch-002"></a></h2><p class="text-muted">CRAN release: 2026-04-16</p>
-<ul><li>Fixed <code><a href="../reference/element_md.html">element_md()</a></code> and <code><a href="../reference/element_chunks.html">element_chunks()</a></code> ignoring <code>plot.tag.position</code> and <code>plot.tag.location</code> (<a href="https://github.com/ardata-fr/munch/issues/1" class="external-link">#1</a>).</li>
+<div class="section level3">
+<h3 id="bug-fixes-0-0-2">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-0-2"></a></h3>
+<ul><li>
+<code><a href="../reference/element_md.html">element_md()</a></code> and <code><a href="../reference/element_chunks.html">element_chunks()</a></code> no longer ignore <code>plot.tag.position</code> and <code>plot.tag.location</code> (<a href="https://github.com/ardata-fr/munch/issues/1" class="external-link">#1</a>).</li>
 </ul></div>
+</div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 
