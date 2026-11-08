@@ -21,8 +21,8 @@ navbar:
       text: Articles
       menu:
       - text: Using with ggplot2
-      - text: Theming ggplot2 with munch
-        href: articles/ggplot2-theming.html
+      - text: Using munch with ggplot2
+        href: articles/using-ggplot2.html
       - text: "---"
       - text: Advanced topics
       - text: Advanced usage
@@ -35,7 +35,7 @@ navbar:
 articles:
   - title: Using with ggplot2
     contents:
-    - ggplot2-theming
+    - using-ggplot2
   - title: Advanced topics
     contents:
     - advanced-usage
@@ -72,3 +72,6 @@ reference:
     desc: Configure default text styling
     contents:
     - default_text_props
+
+redirects:
+  - ["articles/ggplot2-theming.html", "articles/using-ggplot2.html"]

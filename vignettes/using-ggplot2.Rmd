@@ -333,29 +333,23 @@ ggplot(mtcars, aes(mpg, wt)) +
 
 ## Alignment accuracy
 
-'munch' splits text into individually-styled chunks and measures
-each chunk width separately using 'gdtools'. The widths are then summed
-to obtain the total line width. This approach works well in most cases,
-but it does not produce the same result as a full text shaping engine
-such as textshaping or systemfonts. Those engines compute the width of
-a complete string and account for kerning pairs, ligatures, and glyph
-substitutions between adjacent characters, adjustments that are lost
-when characters belong to separate chunks. The summed width is close
-but not exact.
+'munch' measures text with 'gdtools', which adds up the advance widths of the
+glyphs read from the font file. Kerning, the adjustment of the space between
+some pairs of letters, is not applied. Devices such as 'ragg', 'svglite' or
+'ggiraph' apply it when they draw the text, so a word can be drawn slightly
+narrower than measured.
 
-The practical effect depends on the horizontal justification:
+The difference is negligible for most words, but can reach about 7% of the
+width of words with pairs such as "AV", "To" or "WA" (for example "AVATAR").
+Each word is placed at its measured position, so the differences do not add
+up along a line. Their visible effects are:
 
-- `hjust = 0` (left-aligned): unaffected. The left edge is always
-  anchored at x = 0, so any width discrepancy has no visible impact.
-- `hjust = 0.5` (centered): minor. The measurement error is split
-  equally on both sides.
-- `hjust = 1` (right-aligned): most visible. The right edge of
-  successive wrapped lines may not align precisely because each line
-  carries a slightly different measurement error.
+- a slightly wider space after such a word;
+- with `hjust = 1` (right-aligned), a line ending with such a word stops
+  slightly before the right edge; with `hjust = 0.5`, the difference is half
+  as large on each side; with `hjust = 0`, the left edge is exact.
 
-For best accuracy, prefer left or center alignment. Right alignment may show slight edge misalignment on multi-line text.
-
-This is a known limitation and work is in progress to reduce the gap.
+Taking kerning into account in measurements is planned.
 
 ## Choosing the right approach
 

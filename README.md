@@ -202,8 +202,8 @@ grid.draw(gr)
 
 ## Learn more
 
-- [Theming ggplot2 with
-  munch](https://ardata-fr.github.io/munch/articles/ggplot2-theming.html) -
+- [Using munch with
+  ggplot2](https://ardata-fr.github.io/munch/articles/using-ggplot2.html) -
   `element_md()`, `element_chunks()`, `geom_text_md()`,
   `geom_label_md()`
 - [Advanced
