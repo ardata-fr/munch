@@ -29,7 +29,9 @@ md_grob(
 
 \item{width}{Maximum width in inches (NULL for no wrapping).}
 
-\item{line_spacing}{Line height multiplier (default 1.2).}
+\item{line_spacing}{Line height multiplier (default 1.2). When given, it
+takes precedence over the \code{line_spacing} of \code{text_props}; when not given,
+the value of \code{text_props} is used.}
 
 \item{text_props}{Text properties created with \code{\link[=default_text_props]{default_text_props()}}.
 If \code{NULL}, uses current defaults from \code{\link[flextable:get_flextable_defaults]{flextable::get_flextable_defaults()}}.

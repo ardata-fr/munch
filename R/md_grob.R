@@ -8,7 +8,9 @@
 #' @param hjust Horizontal justification (0=left, 0.5=center, 1=right).
 #' @param vjust Vertical justification (0=bottom, 0.5=center, 1=top).
 #' @param width Maximum width in inches (NULL for no wrapping).
-#' @param line_spacing Line height multiplier (default 1.2).
+#' @param line_spacing Line height multiplier (default 1.2). When given, it
+#'   takes precedence over the `line_spacing` of `text_props`; when not given,
+#'   the value of `text_props` is used.
 #' @param text_props Text properties created with [default_text_props()].
 #'   If `NULL`, uses current defaults from [flextable::get_flextable_defaults()].
 #'   Use `img_baseline_ratio` in text_props to control image vertical alignment.
