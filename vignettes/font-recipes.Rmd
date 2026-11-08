@@ -20,7 +20,8 @@ Using fonts with 'munch' involves two independent steps:
 
 1. **Measurement**, 'munch' calls `gdtools::strings_sizes()` to compute
    text metrics (width, ascent, descent). Under the hood, 'systemfonts'
-   locates the font file, then Cairo calculates the metrics. Any font
+   locates the font file, then the metrics are read from this file with
+   FreeType. Any font
    registered via `systemfonts::register_font()`, `gdtools::register_gfont()`,
    `gdtools::font_set()`, `gdtools::font_set_liberation()` or
    `gdtools::font_set_auto()` is found at measurement time.
@@ -80,10 +81,10 @@ ggplot(mtcars, aes(mpg, wt)) +
 
 ### Cairo devices
 
-Cairo devices (`cairo_pdf()`, `png(type = "cairo")`) use the same Cairo
-engine for rendering as 'gdtools' uses for measurement. However, font
-lookup differs: measurement goes through 'systemfonts', rendering goes
-through **fontconfig**. Fontconfig only scans system-installed fonts.
+With Cairo devices (`cairo_pdf()`, `png(type = "cairo")`), font lookup
+differs between the two steps: measurement goes through 'systemfonts',
+rendering goes through **fontconfig**. Fontconfig only scans
+system-installed fonts.
 
 This means:
 
@@ -114,8 +115,9 @@ font_family_exists("sans", system_only = TRUE)
 Standard devices (`pdf()`, `png()`, `jpeg()`) use their own font engine
 and ignore 'systemfonts' entirely.
 
-'munch' uses 'gdtools' (which relies on Cairo) for text measurement. The
-standard `pdf()` device uses its own font engine. For the output to be
+'munch' uses 'gdtools' (which reads the font files found by
+'systemfonts') for text measurement. The standard `pdf()` device uses its
+own font engine. For the output to be
 correct, the fonts used by 'munch' must also be known to `pdf()`.
 
 The 'extrafont' package bridges this gap: it imports TrueType fonts into
@@ -171,9 +173,9 @@ The steps are:
    `options(munch.skip_device_check = TRUE)`, since you have ensured
    font concordance manually, the warning is no longer needed.
 
-> **Note**: `cairo_pdf()` is a simpler alternative. It uses Cairo for
-> rendering (same engine as 'gdtools' for measurement), so
-> system-installed fonts work without 'extrafont'. Use `pdf()` +
+> **Note**: `cairo_pdf()` is a simpler alternative. It finds
+> system-installed fonts with fontconfig, so they work without
+> 'extrafont'. Use `pdf()` +
 > 'extrafont' only when `cairo_pdf()` is not available.
 
 ## Font sources at a glance

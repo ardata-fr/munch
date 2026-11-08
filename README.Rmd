@@ -130,6 +130,14 @@ embedded image.
 
 ## Installation
 
+Install the released version from CRAN:
+
+```r
+install.packages("munch")
+```
+
+Or the development version from GitHub:
+
 ```r
 # install.packages("pak")
 pak::pak("ardata-fr/munch")
@@ -140,7 +148,7 @@ pak::pak("ardata-fr/munch")
 'munch' requires graphics devices that support 'systemfonts':
 ['ragg'](https://ragg.r-lib.org/), ['svglite'](https://svglite.r-lib.org/), or
 ['ggiraph'](https://davidgohel.github.io/ggiraph/).
-'cairo' devices is also supported when fonts are installed at the system level.
+'cairo' devices are also supported when fonts are installed at the system level.
 See `vignette("font-recipes")` for font configuration, alternative devices,
 and troubleshooting.
 
@@ -187,9 +195,9 @@ ggplot(mtcars, aes(mpg, wt)) +
 
 ### Patchwork integration
 
-Use `munch_annotation()` as a drop in replacement for `patchwork::plot_annotation()` 
-which accepts `element_chunk()` and `element_md()` to add rich-text titles, subtitles, 
-and captions — including auto-wrapping — to combined plots:
+Use `munch_annotation()` as a drop-in replacement for `patchwork::plot_annotation()`
+that accepts `element_chunks()` and `element_md()`. It adds rich-text titles,
+subtitles and captions to combined plots, with automatic wrapping:
 
 ```{r patchwork-example, fig.height=4, fig.width=7, message=FALSE}
 library(ggplot2)
@@ -222,13 +230,13 @@ wrap_plots(p1, p2) +
 ```
 
 For plain markdown text, pass the content as a string and use `element_md()`
-in the `theme` argument — the same pattern as regular ggplot2 theming:
+in the `theme` argument, as in regular ggplot2 theming:
 
 ```{r patchwork-example-md, fig.height=4, fig.width=7, message=FALSE}
 wrap_plots(p1, p2) +
   munch_annotation(
     title   = "**Motor Trend** — engine performance, 1974",
-    caption = "R^2^ = 0.75 · *Lorem ipsum dolor sit amet, ut platea nullam odio dui in. Placerat gravida pretium phasellus non, dolor suscipit at aliquet.*",
+    caption = "R² = 0.75 · *Lorem ipsum dolor sit amet, ut platea nullam odio dui in. Placerat gravida pretium phasellus non, dolor suscipit at aliquet.*",
     theme   = theme(
       plot.title   = element_md(),
       plot.caption = element_md(lineheight = 1.5, hjust = 0)
@@ -302,7 +310,6 @@ chunks as input and relies on 'systemfonts' for text measurement.
 | Custom colors / highlight | Yes (via `colorize()`, `as_highlight()`) | Yes (via inline CSS) |
 | Inline images | Yes | Yes |
 | Text wrapping | Yes | Yes (`textbox_grob()`) |
-| Text measurement | TBD | TBD |
 | Integration with 'flextable' | Yes (shared chunk model) | No |
 | Supported devices | 'ragg', 'svglite', 'ggiraph', cairo | Most R graphic devices |
 | Compiled code | No (pure R) | Yes (C++ via 'Rcpp') |
@@ -314,9 +321,11 @@ markdown features (headings, lists, code blocks, custom spans). 'munch' focuses
 first on integration with 'flextable' chunks and advanced
 formatting not available in markdown.
 
-- 'munch' works with 'ragg', 'svglite', 'ggiraph', `cairo_pdf()`, `png(type = "cairo")`, eventually `pdf()` with
-few cautions.
+- 'munch' works with 'ragg', 'svglite', 'ggiraph', `cairo_pdf()`,
+`png(type = "cairo")`, and possibly `pdf()` with some care (see
+`vignette("font-recipes")`).
 - 'marquee' works on a wide range of R devices but not yet with 'svglite' or 'ggiraph'.
-- If working with markdown, 'munch' expect only a single paragraph, 'marquee'
-can handle many markdown blocks in one call.
+- With markdown, 'munch' only handles inline formatting (paragraphs are
+separated by an empty line), while 'marquee' also handles blocks such as
+headings, lists and code blocks.
 

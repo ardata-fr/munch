@@ -21,7 +21,7 @@
 #' supported when fonts are installed at the system level.
 #' Standard R devices ([pdf()], [png()], [jpeg()]) are not compatible
 #' but can still produce correct output if fonts are made available
-#' to the device (e.g. via 'extrafont'). See the "Getting started" vignette
+#' to the device (e.g. via 'extrafont'). See `vignette("font-recipes")`
 #' for details.
 #'
 #' LaTeX and MathJax equations are not supported. For simple scientific
