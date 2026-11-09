@@ -1,9 +1,16 @@
 # Advanced usage
 
 ``` r
+
 library(munch)
 library(grid)
 library(flextable)
+library(gdtools)
+
+fset <- font_set_liberation()
+set_flextable_defaults(font.family = "Liberation Sans")
+# text properties with a monospace font for inline code
+lib_props <- default_text_props(code_font_family = "Liberation Mono")
 ```
 
 This vignette covers advanced topics: creating grobs directly,
@@ -18,6 +25,7 @@ converts markdown text to a grid graphics object (grob).
 ### Basic usage
 
 ``` r
+
 gr <- md_grob("This is **bold** and *italic* text.")
 
 grid.newpage()
@@ -31,11 +39,13 @@ grid.draw(gr)
 Control position with `x`, `y`, `hjust`, `vjust`:
 
 ``` r
+
 grid.newpage()
 
 gr1 <- md_grob("**Top left**", x = 0, y = 1, hjust = 0, vjust = 1)
 gr2 <- md_grob("*Center*", x = 0.5, y = 0.5, hjust = 0.5, vjust = 0.5)
-gr3 <- md_grob("`Bottom right`", x = 1, y = 0, hjust = 1, vjust = 0)
+gr3 <- md_grob("`Bottom right`", x = 1, y = 0, hjust = 1, vjust = 0,
+  text_props = lib_props)
 
 grid.draw(gr1)
 grid.draw(gr2)
@@ -49,10 +59,12 @@ grid.draw(gr3)
 Use `width` to enable line wrapping:
 
 ``` r
+
 long_text <- "This is a **long text** that will be automatically
 wrapped across multiple lines using the `width` parameter."
 
-gr <- md_grob(long_text, x = 0.1, hjust = 0, width = 3)
+gr <- md_grob(long_text, x = 0.1, hjust = 0, width = 3,
+  text_props = lib_props)
 
 grid.newpage()
 grid.draw(gr)
@@ -67,6 +79,7 @@ converts ‘flextable’ paragraph objects to grobs. Use this when you need
 superscripts, subscripts, or custom colors.
 
 ``` r
+
 chunks <- as_paragraph(
   as_chunk("E = mc"),
   as_sup("2")
@@ -83,6 +96,7 @@ grid.draw(gr)
 ### Complex formatting
 
 ``` r
+
 chunks <- as_paragraph(
   as_chunk("The speed of light is "),
   as_b("c"),
@@ -102,6 +116,7 @@ grid.draw(gr)
 ### Colored and highlighted text
 
 ``` r
+
 chunks <- as_paragraph(
   as_chunk("Normal "),
   colorize(as_chunk("Red "), color = "red"),
@@ -123,11 +138,12 @@ Use
 to customize font size, family, and color:
 
 ``` r
+
 props <- default_text_props(
   font_size = 14,
-  font_family = "serif",
+  font_family = fset$serif,
   font_color = "darkblue",
-  code_font_family = "mono"
+  code_font_family = "Liberation Mono"
 )
 
 gr <- md_grob("Custom **styled** text with `code`", text_props = props)
@@ -140,21 +156,22 @@ grid.draw(gr)
 
 ### Available parameters
 
-| Parameter            | Description              | Default     |
-|----------------------|--------------------------|-------------|
-| `font_size`          | Font size in points      | 11          |
-| `font_family`        | Font family              | “Helvetica” |
-| `font_color`         | Text color               | “black”     |
-| `code_font_family`   | Font for inline code     | “mono”      |
-| `line_spacing`       | Line height multiplier   | 1.2         |
-| `img_baseline_ratio` | Image vertical alignment | 0.15        |
+| Parameter | Description | Default |
+|----|----|----|
+| `font_size` | Font size in points | from [`get_flextable_defaults()`](https://davidgohel.github.io/flextable/reference/get_flextable_defaults.html) |
+| `font_family` | Font family | from [`get_flextable_defaults()`](https://davidgohel.github.io/flextable/reference/get_flextable_defaults.html) |
+| `font_color` | Text color | from [`get_flextable_defaults()`](https://davidgohel.github.io/flextable/reference/get_flextable_defaults.html) |
+| `code_font_family` | Font for inline code | “mono” |
+| `line_spacing` | Line height multiplier | 1.2 |
+| `img_baseline_ratio` | Image vertical alignment | 0.15 |
 
 ### Integration with flextable theming
 
 Text properties can also be set globally via ‘flextable’:
 
 ``` r
-set_flextable_defaults(
+
+old <- set_flextable_defaults(
   font.size = 14,
   font.color = "darkblue"
 )
@@ -169,8 +186,9 @@ grid.draw(gr)
 
 ``` r
 
-# Reset defaults
-init_flextable_defaults()
+
+# Restore the previous defaults
+do.call(set_flextable_defaults, old)
 ```
 
 ## Embedding images
@@ -180,13 +198,12 @@ init_flextable_defaults()
 Use standard markdown image syntax:
 
 ``` r
-img_path <- system.file("img", "Rlogo.png", package = "png")
+
+img_path <- file.path(R.home("doc"), "html", "logo.jpg")
 
 text_with_img <- sprintf("The R logo: ![](%s) in text.", img_path)
 
 gr <- md_grob(text_with_img)
-#> Warning: Image file not found.
-#> ✖ Cannot find file .
 
 grid.newpage()
 grid.draw(gr)
@@ -201,7 +218,8 @@ Use
 for explicit size control:
 
 ``` r
-img_path <- system.file("img", "Rlogo.png", package = "png")
+
+img_path <- file.path(R.home("doc"), "html", "logo.jpg")
 
 chunks <- as_paragraph(
   as_chunk("The R logo "),
@@ -210,8 +228,6 @@ chunks <- as_paragraph(
 )
 
 gr <- chunks_grob(chunks)
-#> Warning: Image file not found.
-#> ✖ Cannot find file .
 
 grid.newpage()
 grid.draw(gr)
@@ -229,14 +245,13 @@ The `img_baseline_ratio` parameter controls vertical image alignment:
 - `0.5`: Image centered on baseline
 
 ``` r
+
 props <- default_text_props(img_baseline_ratio = 0.35)
 
 gr <- md_grob(
   sprintf("Text ![](%s) centered", img_path),
   text_props = props
 )
-#> Warning: Image file not found.
-#> ✖ Cannot find file .
 
 grid.newpage()
 grid.draw(gr)
@@ -251,6 +266,7 @@ Use
 to add grobs to ggplot2:
 
 ``` r
+
 library(ggplot2)
 
 stats_grob <- md_grob(
@@ -278,6 +294,7 @@ Use
 for markdown in table cells:
 
 ``` r
+
 ft <- flextable(head(iris, 3))
 ft <- mk_par(ft, j = 1, part = "header",
   value = as_paragraph_md("*Sepal* **Length**"))

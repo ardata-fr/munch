@@ -33,8 +33,9 @@ devices ([`pdf()`](https://rdrr.io/r/grDevices/pdf.html),
 [`png()`](https://rdrr.io/r/grDevices/png.html),
 [`jpeg()`](https://rdrr.io/r/grDevices/png.html)) are not compatible but
 can still produce correct output if fonts are made available to the
-device (e.g. via 'extrafont'). See the "Getting started" vignette for
-details.
+device (e.g. via 'extrafont'). See
+[`vignette("font-recipes")`](https://ardata-fr.github.io/munch/articles/font-recipes.md)
+for details.
 
 LaTeX and MathJax equations are not supported. For simple scientific
 notation, use
@@ -68,6 +69,10 @@ Useful links:
 ## Author
 
 **Maintainer**: David Gohel <david.gohel@ardata.fr>
+
+Authors:
+
+- David Gohel <david.gohel@ardata.fr>
 
 Other contributors:
 

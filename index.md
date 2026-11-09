@@ -19,16 +19,26 @@ The title, subtitle, caption and axis labels above are all built with
 and ‘flextable’ paragraph objects, bold, italic, colors, highlights,
 superscripts, subscripts, strikethrough and an embedded image.
 
-| Function                                                                            | Purpose                               | Input                                                                                         |
-|-------------------------------------------------------------------------------------|---------------------------------------|-----------------------------------------------------------------------------------------------|
-| [`element_md()`](https://ardata-fr.github.io/munch/reference/element_md.md)         | Markdown in theme elements            | Character string                                                                              |
+| Function | Purpose | Input |
+|----|----|----|
+| [`element_md()`](https://ardata-fr.github.io/munch/reference/element_md.md) | Markdown in theme elements | Character string |
 | [`element_chunks()`](https://ardata-fr.github.io/munch/reference/element_chunks.md) | Advanced formatting in theme elements | [`as_paragraph()`](https://davidgohel.github.io/flextable/reference/as_paragraph.html) object |
-| [`geom_text_md()`](https://ardata-fr.github.io/munch/reference/geom_text_md.md)     | Markdown text annotations             | `label` aesthetic                                                                             |
-| [`geom_label_md()`](https://ardata-fr.github.io/munch/reference/geom_label_md.md)   | Markdown labels with background       | `label` aesthetic                                                                             |
+| [`geom_text_md()`](https://ardata-fr.github.io/munch/reference/geom_text_md.md) | Markdown text annotations | `label` aesthetic |
+| [`geom_label_md()`](https://ardata-fr.github.io/munch/reference/geom_label_md.md) | Markdown labels with background | `label` aesthetic |
 
 ## Installation
 
+Install the released version from CRAN:
+
 ``` r
+
+install.packages("munch")
+```
+
+Or the development version from GitHub:
+
+``` r
+
 # install.packages("pak")
 pak::pak("ardata-fr/munch")
 ```
@@ -38,7 +48,7 @@ pak::pak("ardata-fr/munch")
 ‘munch’ requires graphics devices that support ‘systemfonts’:
 [‘ragg’](https://ragg.r-lib.org/),
 [‘svglite’](https://svglite.r-lib.org/), or
-[‘ggiraph’](https://davidgohel.github.io/ggiraph/). ‘cairo’ devices is
+[‘ggiraph’](https://davidgohel.github.io/ggiraph/). ‘cairo’ devices are
 also supported when fonts are installed at the system level. See
 [`vignette("font-recipes")`](https://ardata-fr.github.io/munch/articles/font-recipes.md)
 for font configuration, alternative devices, and troubleshooting.
@@ -56,6 +66,7 @@ or
 for annotations:
 
 ``` r
+
 library(ggplot2)
 
 ggplot(mtcars, aes(mpg, wt)) +
@@ -71,6 +82,7 @@ For advanced formatting (superscripts, subscripts, colors), use
 with ‘flextable’ paragraph objects:
 
 ``` r
+
 title_chunks <- as_paragraph(
  as_chunk("Model: R"), as_sup("2"), as_chunk(" = 0.75")
 )
@@ -84,28 +96,31 @@ ggplot(mtcars, aes(mpg, wt)) +
 
 #### Syntax comparison
 
-| Syntax        | [`element_md()`](https://ardata-fr.github.io/munch/reference/element_md.md) | [`element_chunks()`](https://ardata-fr.github.io/munch/reference/element_chunks.md)                                                             |
-|---------------|-----------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------|
-| Bold / Italic | `**text**` / `*text*`                                                       | [`as_b()`](https://davidgohel.github.io/flextable/reference/as_b.html) / [`as_i()`](https://davidgohel.github.io/flextable/reference/as_i.html) |
-| Inline code   | `` `code` ``                                                                | x                                                                                                                                               |
-| Strikethrough | `~~text~~`                                                                  | [`as_strike()`](https://davidgohel.github.io/flextable/reference/as_strike.html)                                                                |
-| Superscript   | x                                                                           | [`as_sup()`](https://davidgohel.github.io/flextable/reference/as_sup.html)                                                                      |
-| Subscript     | x                                                                           | [`as_sub()`](https://davidgohel.github.io/flextable/reference/as_sub.html)                                                                      |
-| Custom colors | x                                                                           | [`colorize()`](https://davidgohel.github.io/flextable/reference/colorize.html)                                                                  |
-| Highlighting  | x                                                                           | [`as_highlight()`](https://davidgohel.github.io/flextable/reference/as_highlight.html)                                                          |
+| Syntax | [`element_md()`](https://ardata-fr.github.io/munch/reference/element_md.md) | [`element_chunks()`](https://ardata-fr.github.io/munch/reference/element_chunks.md) |
+|----|----|----|
+| Bold / Italic | `**text**` / `*text*` | [`as_b()`](https://davidgohel.github.io/flextable/reference/as_b.html) / [`as_i()`](https://davidgohel.github.io/flextable/reference/as_i.html) |
+| Inline code | `` `code` `` | x |
+| Strikethrough | `~~text~~` | [`as_strike()`](https://davidgohel.github.io/flextable/reference/as_strike.html) |
+| Superscript | x | [`as_sup()`](https://davidgohel.github.io/flextable/reference/as_sup.html) |
+| Subscript | x | [`as_sub()`](https://davidgohel.github.io/flextable/reference/as_sub.html) |
+| Custom colors | x | [`colorize()`](https://davidgohel.github.io/flextable/reference/colorize.html) |
+| Highlighting | x | [`as_highlight()`](https://davidgohel.github.io/flextable/reference/as_highlight.html) |
 
 ### Patchwork integration
 
 Use
 [`munch_annotation()`](https://ardata-fr.github.io/munch/reference/munch_annotation.md)
-as a drop in replacement for
+as a drop-in replacement for
 [`patchwork::plot_annotation()`](https://patchwork.data-imaginist.com/reference/plot_annotation.html)
-which accepts `element_chunk()` and
-[`element_md()`](https://ardata-fr.github.io/munch/reference/element_md.md)
-to add rich-text titles, subtitles, and captions — including
-auto-wrapping — to combined plots:
+that accepts
+[`element_chunks()`](https://ardata-fr.github.io/munch/reference/element_chunks.md)
+and
+[`element_md()`](https://ardata-fr.github.io/munch/reference/element_md.md).
+It adds rich-text titles, subtitles and captions to combined plots, with
+automatic wrapping:
 
 ``` r
+
 library(ggplot2)
 library(patchwork)
 
@@ -139,13 +154,14 @@ wrap_plots(p1, p2) +
 
 For plain markdown text, pass the content as a string and use
 [`element_md()`](https://ardata-fr.github.io/munch/reference/element_md.md)
-in the `theme` argument — the same pattern as regular ggplot2 theming:
+in the `theme` argument, as in regular ggplot2 theming:
 
 ``` r
+
 wrap_plots(p1, p2) +
   munch_annotation(
     title   = "**Motor Trend** — engine performance, 1974",
-    caption = "R^2^ = 0.75 · *Lorem ipsum dolor sit amet, ut platea nullam odio dui in. Placerat gravida pretium phasellus non, dolor suscipit at aliquet.*",
+    caption = "R² = 0.75 · *Lorem ipsum dolor sit amet, ut platea nullam odio dui in. Placerat gravida pretium phasellus non, dolor suscipit at aliquet.*",
     theme   = theme(
       plot.title   = element_md(),
       plot.caption = element_md(lineheight = 1.5, hjust = 0)
@@ -172,6 +188,7 @@ Use
 for markdown in table cells:
 
 ``` r
+
 ft <- flextable(head(iris, 3))
 ft <- mk_par(ft, j = 1, part = "header",
  value = as_paragraph_md("*Sepal* **Length**"))
@@ -183,6 +200,7 @@ autofit(ft)
 ### Markdown to grob
 
 ``` r
+
 library(munch)
 library(grid)
 
@@ -198,6 +216,7 @@ For superscripts, subscripts, or colors not available in markdown, use
 [`chunks_grob()`](https://ardata-fr.github.io/munch/reference/chunks_grob.md):
 
 ``` r
+
 library(flextable)
 
 chunks <- as_paragraph(as_chunk("E = mc"), as_sup("2"))
@@ -210,8 +229,8 @@ grid.draw(gr)
 
 ## Learn more
 
-- [Theming ggplot2 with
-  munch](https://ardata-fr.github.io/munch/articles/ggplot2-theming.html) -
+- [Using munch with
+  ggplot2](https://ardata-fr.github.io/munch/articles/using-ggplot2.html) -
   [`element_md()`](https://ardata-fr.github.io/munch/reference/element_md.md),
   [`element_chunks()`](https://ardata-fr.github.io/munch/reference/element_chunks.md),
   [`geom_text_md()`](https://ardata-fr.github.io/munch/reference/geom_text_md.md),
@@ -235,17 +254,16 @@ subset of HTML/CSS. ‘munch’ takes a different approach: it uses markdown
 or ‘flextable’ chunks as input and relies on ‘systemfonts’ for text
 measurement.
 
-|                              | munch                                                                                                                                                                            | gridtext               |
-|------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------|
-| Input format                 | Markdown, flextable chunks                                                                                                                                                       | HTML / CSS subset      |
-| Superscript / subscript      | Yes ([`as_sup()`](https://davidgohel.github.io/flextable/reference/as_sup.html), [`as_sub()`](https://davidgohel.github.io/flextable/reference/as_sub.html))                     | Yes (`<sup>`, `<sub>`) |
-| Custom colors / highlight    | Yes (via [`colorize()`](https://davidgohel.github.io/flextable/reference/colorize.html), [`as_highlight()`](https://davidgohel.github.io/flextable/reference/as_highlight.html)) | Yes (via inline CSS)   |
-| Inline images                | Yes                                                                                                                                                                              | Yes                    |
-| Text wrapping                | Yes                                                                                                                                                                              | Yes (`textbox_grob()`) |
-| Text measurement             | TBD                                                                                                                                                                              | TBD                    |
-| Integration with ‘flextable’ | Yes (shared chunk model)                                                                                                                                                         | No                     |
-| Supported devices            | ‘ragg’, ‘svglite’, ‘ggiraph’, cairo                                                                                                                                              | Most R graphic devices |
-| Compiled code                | No (pure R)                                                                                                                                                                      | Yes (C++ via ‘Rcpp’)   |
+|  | munch | gridtext |
+|----|----|----|
+| Input format | Markdown, flextable chunks | HTML / CSS subset |
+| Superscript / subscript | Yes ([`as_sup()`](https://davidgohel.github.io/flextable/reference/as_sup.html), [`as_sub()`](https://davidgohel.github.io/flextable/reference/as_sub.html)) | Yes (`<sup>`, `<sub>`) |
+| Custom colors / highlight | Yes (via [`colorize()`](https://davidgohel.github.io/flextable/reference/colorize.html), [`as_highlight()`](https://davidgohel.github.io/flextable/reference/as_highlight.html)) | Yes (via inline CSS) |
+| Inline images | Yes | Yes |
+| Text wrapping | Yes | Yes (`textbox_grob()`) |
+| Integration with ‘flextable’ | Yes (shared chunk model) | No |
+| Supported devices | ‘ragg’, ‘svglite’, ‘ggiraph’, cairo | Most R graphic devices |
+| Compiled code | No (pure R) | Yes (C++ via ‘Rcpp’) |
 
 ### with ‘marquee’
 
@@ -256,9 +274,11 @@ advanced formatting not available in markdown.
 
 - ‘munch’ works with ‘ragg’, ‘svglite’, ‘ggiraph’,
   [`cairo_pdf()`](https://rdrr.io/r/grDevices/cairo.html),
-  `png(type = "cairo")`, eventually
-  [`pdf()`](https://rdrr.io/r/grDevices/pdf.html) with few cautions.
+  `png(type = "cairo")`, and possibly
+  [`pdf()`](https://rdrr.io/r/grDevices/pdf.html) with some care (see
+  [`vignette("font-recipes")`](https://ardata-fr.github.io/munch/articles/font-recipes.md)).
 - ‘marquee’ works on a wide range of R devices but not yet with
   ‘svglite’ or ‘ggiraph’.
-- If working with markdown, ‘munch’ expect only a single paragraph,
-  ‘marquee’ can handle many markdown blocks in one call.
+- With markdown, ‘munch’ only handles inline formatting (paragraphs are
+  separated by an empty line), while ‘marquee’ also handles blocks such
+  as headings, lists and code blocks.
