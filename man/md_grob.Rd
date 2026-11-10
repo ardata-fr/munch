@@ -13,7 +13,8 @@ md_grob(
   width = NULL,
   line_spacing = 1.2,
   text_props = NULL,
-  name = NULL
+  name = NULL,
+  paragraph_spacing = 0
 )
 }
 \arguments{
@@ -38,6 +39,9 @@ If \code{NULL}, uses current defaults from \code{\link[flextable:get_flextable_d
 Use \code{img_baseline_ratio} in text_props to control image vertical alignment.}
 
 \item{name}{Grob name (optional).}
+
+\item{paragraph_spacing}{Additional space after explicit line breaks, as a
+multiple of the line height. Defaults to \code{0}.}
 }
 \value{
 A grob of class "mdGrob".

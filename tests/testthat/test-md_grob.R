@@ -79,6 +79,48 @@ test_that("md_grob with max_width wraps text", {
   expect_gt(dims_wrap$height, dims_nowrap$height)
 })
 
+test_that("md_grob adds paragraph spacing after explicit line breaks", {
+  text <- "First line  \nSecond line"
+  base <- md_grob(text)
+  spaced <- md_grob(text, paragraph_spacing = 0.5)
+  one_line <- md_grob("First line")
+
+  expect_equal(
+    dim(spaced)$height - dim(base)$height,
+    dim(one_line)$height * 0.5,
+    tolerance = 1e-8
+  )
+  expect_equal(
+    dim(md_grob("First line\n", paragraph_spacing = 0.5))$height,
+    dim(md_grob("First line\n"))$height
+  )
+  expect_equal(
+    dim(md_grob("One two three four", width = 0.25, paragraph_spacing = 0.5)),
+    dim(md_grob("One two three four", width = 0.25))
+  )
+})
+
+test_that("theme elements pass paragraph spacing to their grobs", {
+  text <- "First line  \nSecond line"
+  base_md <- ggplot2::element_grob(
+    element = element_md(),
+    label = text
+  )
+  spaced_md <- ggplot2::element_grob(
+    element = element_md(paragraph_spacing = 0.5),
+    label = text
+  )
+  expect_gt(
+    dim(spaced_md$children[[1]])$height,
+    dim(base_md$children[[1]])$height
+  )
+})
+
+test_that("paragraph_spacing must be one finite non-negative number", {
+  expect_error(md_grob("a\nb", paragraph_spacing = -1), "non-negative")
+  expect_error(md_grob("a\nb", paragraph_spacing = c(0, 1)), "one finite")
+})
+
 # --- dim.mdGrob empty ---
 
 test_that("dim.mdGrob returns zero for empty grob", {

@@ -18,7 +18,8 @@ element_md(
   margin = NULL,
   debug = FALSE,
   inherit.blank = FALSE,
-  width = NULL
+  width = NULL,
+  paragraph_spacing = 0
 )
 }
 \arguments{
@@ -52,6 +53,9 @@ fixed aspect ratio, the available width is not known when the height of the
 title is computed: the text may need more lines than the space kept for it,
 and setting \code{width} solves this. It is ignored for rotated text and for text
 with an explicit position.}
+
+\item{paragraph_spacing}{Additional space after explicit line breaks, as a
+multiple of the line height. Defaults to \code{0}.}
 }
 \value{
 An element of class \code{c("element_md", "element_text", "element")}.

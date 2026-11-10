@@ -5,6 +5,9 @@
 - `element_md()` and `element_chunks()` have a new argument `width` to set the
 maximum width of the text. Use it with 'patchwork' or with a fixed aspect ratio
 to get titles with the right height (see below).
+- `element_md()` has a `paragraph_spacing` argument to add space after explicit
+  Markdown line breaks independently of `lineheight`. The value is a multiple of
+  the line height; automatic wrapping is unchanged.
 
 ## Bug fixes
 
