@@ -11,6 +11,8 @@
 #' @param line_spacing Line height multiplier (default 1.2). When given, it
 #'   takes precedence over the `line_spacing` of `text_props`; when not given,
 #'   the value of `text_props` is used.
+#' @param paragraph_spacing Additional space after explicit line breaks, as a
+#'   multiple of the line height. Defaults to `0`.
 #' @param text_props Text properties created with [default_text_props()].
 #'   If `NULL`, uses current defaults from [flextable::get_flextable_defaults()].
 #'   Use `img_baseline_ratio` in text_props to control image vertical alignment.
@@ -28,7 +30,8 @@ md_grob <- function(
   width = NULL,
   line_spacing = 1.2,
   text_props = NULL,
-  name = NULL
+  name = NULL,
+  paragraph_spacing = 0
 ) {
   # Get text properties
   if (is.null(text_props)) {
@@ -44,6 +47,7 @@ md_grob <- function(
   if (missing(line_spacing) && !is.null(text_props$line_spacing)) {
     line_spacing <- text_props$line_spacing
   }
+  check_paragraph_spacing(paragraph_spacing)
 
   # Parse markdown to chunks
   chunks <- md_to_chunks(md_text, text_props = text_props)
@@ -63,7 +67,7 @@ md_grob <- function(
   chunks$.chunk_index <- seq_len(nrow(chunks))
 
   # Calculate dimensions for viewport
-  lines <- arrange_chunks_into_lines(chunks, width)
+  lines <- arrange_chunks_into_lines(chunks, width, paragraph_spacing)
   total_height <- sum(sapply(lines, function(l) l$height))
   total_width <- max(sapply(lines, function(l) l$width))
 
@@ -77,6 +81,7 @@ md_grob <- function(
     vjust = vjust,
     max_width = width,
     line_spacing = line_spacing,
+    paragraph_spacing = paragraph_spacing,
     vp = viewport(
       x = unit(x, "npc"),
       y = unit(y, "npc"),
@@ -99,13 +104,14 @@ makeContent.mdGrob <- function(x) {
   vjust <- x$vjust
   max_width <- x$max_width
   line_spacing <- x$line_spacing
+  paragraph_spacing <- x$paragraph_spacing %||% 0
 
   if (nrow(chunks) == 0) {
     return(setChildren(x, gList(nullGrob())))
   }
 
   # Arrange chunks into lines
-  lines <- arrange_chunks_into_lines(chunks, max_width)
+  lines <- arrange_chunks_into_lines(chunks, max_width, paragraph_spacing)
 
   # Calculate total dimensions
   total_height <- sum(sapply(lines, function(l) l$height))
@@ -334,7 +340,17 @@ makeContent.mdGrob <- function(x) {
 #'
 #' @return List of lines, each with chunks, width, height, ascent, descent.
 #' @noRd
-arrange_chunks_into_lines <- function(chunks, max_width = NULL) {
+check_paragraph_spacing <- function(paragraph_spacing) {
+  if (!is.numeric(paragraph_spacing) || length(paragraph_spacing) != 1L ||
+      !is.finite(paragraph_spacing) || paragraph_spacing < 0) {
+    cli::cli_abort(
+      "{.arg paragraph_spacing} must be one finite, non-negative number."
+    )
+  }
+  invisible(NULL)
+}
+
+arrange_chunks_into_lines <- function(chunks, max_width = NULL, paragraph_spacing = 0) {
   n <- nrow(chunks)
   if (n == 0L) {
     return(list(list(
@@ -367,10 +383,19 @@ arrange_chunks_into_lines <- function(chunks, max_width = NULL) {
   lapply(unname(split(kept, line_index[kept])), function(index) {
     # a line with only a line break is an empty line: it gives the height
     drawn <- index[!is_newline[index]]
+    height <- max(chunks$ascent[index]) + max(chunks$descent[index])
+    following <- which(line_index > line_index[index[[1]]])
+    has_paragraph_break <- FALSE
+    if (length(following) > 0L && max(index) + 1L < min(following)) {
+      break_indices <- seq.int(max(index) + 1L, min(following) - 1L)
+      if (length(break_indices) > 0L) {
+        has_paragraph_break <- any(is_newline[break_indices])
+      }
+    }
     list(
       chunks = lapply(drawn, chunk_at),
       width = sum(chunks$width[drawn]),
-      height = max(chunks$ascent[index]) + max(chunks$descent[index]),
+      height = height + if (has_paragraph_break) height * paragraph_spacing else 0,
       ascent = max(chunks$ascent[index]),
       descent = max(chunks$descent[index]),
       max_ascend = max(chunks$max_ascend[index]),
@@ -471,12 +496,13 @@ merge_word_pieces <- function(chunks) {
 dim.mdGrob <- function(x) {
   chunks <- x$chunks
   max_width <- x$max_width
+  paragraph_spacing <- x$paragraph_spacing %||% 0
 
   if (nrow(chunks) == 0) {
     return(list(width = 0, height = 0))
   }
 
-  lines <- arrange_chunks_into_lines(chunks, max_width)
+  lines <- arrange_chunks_into_lines(chunks, max_width, paragraph_spacing)
 
   list(
     width = max(sapply(lines, function(l) l$width)),

@@ -13,6 +13,8 @@
 #' @param vjust Vertical justification (0-1).
 #' @param angle Text rotation angle in degrees.
 #' @param lineheight Line height multiplier.
+#' @param paragraph_spacing Additional space after explicit line breaks, as a
+#'   multiple of the line height. Defaults to `0`.
 #' @param margin Margins around the text (use [ggplot2::margin()]).
 #' @param width Maximum width of the text in inches, for titles, subtitles and
 #'   captions, which wrap to their available width by default. With 'patchwork' or a
@@ -75,7 +77,8 @@ element_md <- function(
   margin = NULL,
   debug = FALSE,
   inherit.blank = FALSE,
-  width = NULL
+  width = NULL,
+  paragraph_spacing = 0
 ) {
   if (!is.null(color)) {
     colour <- color
@@ -95,7 +98,8 @@ element_md <- function(
       margin = margin,
       debug = debug,
       inherit.blank = inherit.blank,
-      width = width
+      width = width,
+      paragraph_spacing = paragraph_spacing
     ),
     class = c("element_md", "element_text", "element")
   )
@@ -119,6 +123,7 @@ element_grob.element_md <- function(
   margin = NULL,
   margin_x = FALSE,
   margin_y = FALSE,
+  paragraph_spacing = NULL,
   ...
 ) {
   check_device_compatibility()
@@ -165,7 +170,8 @@ element_grob.element_md <- function(
     y = vj,
     hjust = hj,
     vjust = vj,
-    text_props = props
+    text_props = props,
+    paragraph_spacing = paragraph_spacing %||% element$paragraph_spacing %||% 0
   )
 
   dims <- dim(md_gr)
@@ -555,7 +561,8 @@ merge_element.element_md <- function(new, old) {
     "margin",
     "debug",
     "inherit.blank",
-    "width"
+    "width",
+    "paragraph_spacing"
   )
   for (nm in props_names) {
     if (is.null(new[[nm]])) {
