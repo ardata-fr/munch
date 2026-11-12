@@ -335,23 +335,19 @@ ggplot(mtcars, aes(mpg, wt)) +
 
 ## Alignment accuracy
 
-'munch' measures text with 'gdtools', which adds up the advance widths of the
-glyphs read from the font file. Kerning, the adjustment of the space between
-some pairs of letters, is not applied. Devices such as 'ragg', 'svglite' or
-'ggiraph' apply it when they draw the text, so a word can be drawn slightly
-narrower than measured.
+'munch' measures text with 'gdtools', from the font file: the advance widths
+of the glyphs and the kerning stored in the font, the adjustment of the space
+between some pairs of letters such as "AV", "To" or "WA". Devices such as
+'ragg', 'svglite' or 'ggiraph' apply the same kerning when they draw the text,
+so words are drawn with the width measured, and right-aligned lines
+(`hjust = 1`) end at the right edge.
 
-The difference is negligible for most words, but can reach about 7% of the
-width of words with pairs such as "AV", "To" or "WA" (for example "AVATAR").
-Each word is placed at its measured position, so the differences do not add
-up along a line. Their visible effects are:
+Ligatures and other substitutions of glyphs made by some fonts are not
+measured: a word using them can be drawn slightly narrower than measured.
 
-- a slightly wider space after such a word;
-- with `hjust = 1` (right-aligned), a line ending with such a word stops
-  slightly before the right edge; with `hjust = 0.5`, the difference is half
-  as large on each side; with `hjust = 0`, the left edge is exact.
-
-Taking kerning into account in measurements is planned.
+The default `png()` device of macOS (Quartz) does not kern: words such as
+"AVATAR" are drawn wider than measured (up to about 7%), and can touch the
+next word. Use 'ragg' instead.
 
 ## Choosing the right approach
 

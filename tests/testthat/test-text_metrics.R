@@ -85,8 +85,10 @@ test_that("calc_chunk_metrics applies line_spacing", {
   r1 <- munch:::calc_chunk_metrics(chunks, line_spacing = 1.0)
   r2 <- munch:::calc_chunk_metrics(chunks, line_spacing = 2.0)
 
-  expect_gt(r2$ascent[1], r1$ascent[1])
-  expect_gt(r2$height[1], r1$height[1])
+  # as in Word, the added space is below the line
+  expect_equal(r2$ascent[1], r1$ascent[1])
+  expect_gt(r2$descent[1], r1$descent[1])
+  expect_equal(r2$height[1], 2 * r1$height[1])
 })
 
 test_that("calc_chunk_metrics shrinks superscript", {
@@ -345,4 +347,27 @@ test_that("calc_chunk_metrics handles no img_width column", {
   expect_gt(result$width[1], 0)
   expect_equal(result$img_width[1], NA_real_)
   expect_equal(result$img_height[1], NA_real_)
+})
+
+test_that("words are measured with the kerning of the font, as ragg draws them", {
+  skip_if_not_installed("ragg")
+  props <- default_text_props(font_family = "Liberation Sans", font_size = 12)
+  file <- tempfile(fileext = ".png")
+  ragg::agg_png(file)
+  on.exit({
+    grDevices::dev.off()
+    unlink(file)
+  })
+  grid::pushViewport(grid::viewport(
+    gp = grid::gpar(fontfamily = "Liberation Sans", fontsize = 12)
+  ))
+  for (word in c("AVATAR", "Today,")) {
+    drawn <- grid::convertWidth(grid::stringWidth(word), "bigpts", valueOnly = TRUE)
+    measured <- grid::convertWidth(
+      grid::grobWidth(md_grob(word, text_props = props)),
+      "bigpts",
+      valueOnly = TRUE
+    )
+    expect_equal(measured, drawn, tolerance = 0.05 / drawn)
+  }
 })

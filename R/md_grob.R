@@ -8,7 +8,8 @@
 #' @param hjust Horizontal justification (0=left, 0.5=center, 1=right).
 #' @param vjust Vertical justification (0=bottom, 0.5=center, 1=top).
 #' @param width Maximum width in inches (NULL for no wrapping).
-#' @param line_spacing Line height multiplier (default 1.2). When given, it
+#' @param line_spacing Line spacing, a multiple of the single line spacing
+#'   of the font, as in Word (default 1). When given, it
 #'   takes precedence over the `line_spacing` of `text_props`; when not given,
 #'   the value of `text_props` is used.
 #' @param text_props Text properties created with [default_text_props()].
@@ -26,7 +27,7 @@ md_grob <- function(
   hjust = 0.5,
   vjust = 0.5,
   width = NULL,
-  line_spacing = 1.2,
+  line_spacing = 1,
   text_props = NULL,
   name = NULL
 ) {
@@ -428,7 +429,8 @@ split_too_wide_words <- function(chunks, max_width) {
     fontname = chunks$font.family[is_piece],
     fontsize = chunks$font.size[is_piece],
     bold = chunks$bold[is_piece],
-    italic = chunks$italic[is_piece]
+    italic = chunks$italic[is_piece],
+    kerning = TRUE
   )$width
   chunks
 }
@@ -564,7 +566,8 @@ plot.mdGrob <- function(x, ...) {
 #' @param hjust Horizontal justification.
 #' @param vjust Vertical justification.
 #' @param width Maximum width in inches (NULL for no wrapping).
-#' @param line_spacing Line height multiplier.
+#' @param line_spacing Line spacing, a multiple of the single line spacing
+#'   of the font, as in Word (default 1).
 #' @param img_baseline_ratio Controls vertical alignment of inline images.
 #'   Specifies the proportion of the image height below the text baseline:
 #'   `0` = bottom at baseline, `0.15` = default, `0.35` = centered on text,
@@ -617,7 +620,7 @@ chunks_grob <- function(
   hjust = 0.5,
   vjust = 0.5,
   width = NULL,
-  line_spacing = 1.2,
+  line_spacing = 1,
   img_baseline_ratio = 0.15,
   name = NULL
 ) {

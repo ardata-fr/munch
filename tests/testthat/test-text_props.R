@@ -47,7 +47,7 @@ test_that("default_text_props has sensible defaults", {
   props <- default_text_props()
 
   expect_equal(props$code.font.family, "mono")
-  expect_equal(props$line_spacing, 1.2)
+  expect_equal(props$line_spacing, flextable::get_flextable_defaults()$line_spacing)
   expect_equal(props$img_baseline_ratio, 0.15)
 })
 

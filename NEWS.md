@@ -1,5 +1,20 @@
 # munch 0.0.4
 
+## Changes
+
+- Words are measured with the kerning of their font
+(`gdtools::strings_sizes(kerning = TRUE)`), as 'ragg', 'svglite' and 'ggiraph'
+draw them: spaces after kerned words are no longer too wide and right-aligned
+lines end at the right edge. Lines can contain slightly more words. Requires
+'gdtools' >= 0.6.0.
+- Line spacing follows Word: the height of a line is the line height of its
+font (`gdtools::font_line_metrics()`, the single line spacing of Word), and a
+line spacing larger than 1 adds its space below the line. It was computed from
+the ink of the glyphs, so that lines almost touched with a line spacing of 1.
+The default line spacing is now the one of `flextable::get_flextable_defaults()`
+(1) instead of 1.2, also for the `lineheight` of `geom_text_md()` and
+`geom_label_md()`. Texts are a bit more spaced than before.
+
 ## Bug fixes
 
 - `element_md()` now uses its argument `face` ("bold", "italic",

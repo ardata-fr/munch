@@ -312,7 +312,7 @@ GeomTextMd <- ggplot2::ggproto(
     vjust = 0.5,
     alpha = NA,
     family = "",
-    lineheight = 1.2
+    lineheight = 1
   ),
 
   draw_panel = function(
@@ -561,7 +561,7 @@ GeomLabelMd <- ggplot2::ggproto(
     vjust = 0.5,
     alpha = NA,
     family = "",
-    lineheight = 1.2
+    lineheight = 1
   ),
 
   draw_panel = function(

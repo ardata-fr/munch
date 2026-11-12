@@ -11,7 +11,7 @@ chunks_grob(
   hjust = 0.5,
   vjust = 0.5,
   width = NULL,
-  line_spacing = 1.2,
+  line_spacing = 1,
   img_baseline_ratio = 0.15,
   name = NULL
 )
@@ -30,7 +30,8 @@ chunks_grob(
 
 \item{width}{Maximum width in inches (NULL for no wrapping).}
 
-\item{line_spacing}{Line height multiplier.}
+\item{line_spacing}{Line spacing, a multiple of the single line spacing
+of the font, as in Word (default 1).}
 
 \item{img_baseline_ratio}{Controls vertical alignment of inline images.
 Specifies the proportion of the image height below the text baseline:

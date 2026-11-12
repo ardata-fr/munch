@@ -10,7 +10,10 @@
 #' @param font_color Text color.
 #' @param code_font_family Font family name for inline code (backticks).
 #'   Defaults to `"mono"`.
-#' @param line_spacing Line height multiplier.
+#' @param line_spacing Line spacing, a multiple of the single line spacing
+#'   of the font, as in Word: the distance between the baselines of two lines
+#'   is `line_spacing` times the line height of the font
+#'   ([gdtools::font_line_metrics()]).
 #' @param img_baseline_ratio Controls vertical alignment of inline images.
 #'   Specifies the proportion of the image height that appears below the
 #'   text baseline:
@@ -71,7 +74,7 @@ default_text_props <- function(
     font.family = font_family %||% ft_defaults$font.family,
     font.color = font_color %||% ft_defaults$font.color,
     code.font.family = code_font_family %||% "mono",
-    line_spacing = line_spacing %||% 1.2,
+    line_spacing = line_spacing %||% ft_defaults$line_spacing,
     img_baseline_ratio = img_baseline_ratio %||% 0.15,
     bold = isTRUE(bold),
     italic = isTRUE(italic)

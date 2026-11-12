@@ -4,7 +4,8 @@
 #' using gdtools for accurate font metrics.
 #'
 #' @param chunks A md_chunk data.frame.
-#' @param line_spacing Line height multiplier (default 1.2).
+#' @param line_spacing Line spacing, a multiple of the single line spacing
+#'   of the font (default 1).
 #' @param img_baseline_ratio Proportion of image height below baseline (default 0.15).
 #'
 #' @return The chunks data.frame with added columns: width, height, ascent, descent.
@@ -13,7 +14,7 @@
 #' @importFrom systemfonts font_info
 calc_chunk_metrics <- function(
   chunks,
-  line_spacing = 1.2,
+  line_spacing = 1,
   img_baseline_ratio = 0.15
 ) {
   if (nrow(chunks) == 0) {
@@ -98,29 +99,35 @@ calc_chunk_metrics <- function(
     txt_measure[chunks$is_newline[is_text]] <- "."
     txt_measure[is.na(txt_measure)] <- ""
 
+    # widths with the kerning of the fonts, as devices draw the words
     metrics <- gdtools::strings_sizes(
       x = txt_measure,
       fontname = chunks$font.family[is_text],
       fontsize = chunks$font.size[is_text],
       bold = chunks$bold[is_text],
-      italic = chunks$italic[is_text]
+      italic = chunks$italic[is_text],
+      kerning = TRUE
     )
 
     chunks$width[is_text] <- metrics$width
 
-    # Use font-level reference metrics for ascent/descent so that
-    # all lines in a wrapped block have uniform height. "Mg" covers
-    # the capital ascent and descender depth of the font.
-    ref_metrics <- gdtools::strings_sizes(
-      x = rep("Mg", sum(is_text)),
+    # Line metrics of the font, as Word uses them for single line spacing
+    # (gdtools::font_line_metrics()), so that all lines of a block have the
+    # same height and a line spacing of 1 gives the distance between lines
+    # of Word. As in Word, the space added by a line spacing larger than 1 is
+    # below the line: the part above the baseline does not change.
+    ref_metrics <- gdtools::font_line_metrics(
       fontname = chunks$font.family[is_text],
       fontsize = chunks$font.size[is_text],
       bold = chunks$bold[is_text],
       italic = chunks$italic[is_text]
     )
 
-    chunks$ascent[is_text] <- ref_metrics$ascent * line_spacing
-    chunks$descent[is_text] <- ref_metrics$descent * line_spacing
+    chunks$ascent[is_text] <- ref_metrics$ascent
+    chunks$descent[is_text] <- pmax(
+      ref_metrics$descent + (line_spacing - 1) * ref_metrics$line_height,
+      0
+    )
     chunks$height[is_text] <- (chunks$ascent[is_text] + chunks$descent[is_text])
 
     # Font-level max glyph extents from systemfonts (used for highlight rects).

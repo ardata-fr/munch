@@ -25,7 +25,10 @@ default_text_props(
 \item{code_font_family}{Font family name for inline code (backticks).
 Defaults to \code{"mono"}.}
 
-\item{line_spacing}{Line height multiplier.}
+\item{line_spacing}{Line spacing, a multiple of the single line spacing
+of the font, as in Word: the distance between the baselines of two lines
+is \code{line_spacing} times the line height of the font
+(\code{\link[gdtools:font_line_metrics]{gdtools::font_line_metrics()}}).}
 
 \item{img_baseline_ratio}{Controls vertical alignment of inline images.
 Specifies the proportion of the image height that appears below the

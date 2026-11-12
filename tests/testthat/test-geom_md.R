@@ -299,7 +299,7 @@ test_that("GeomTextMd has correct default aesthetics", {
   expect_equal(defaults$vjust, 0.5)
   expect_true(is.na(defaults$alpha))
   expect_equal(defaults$family, "")
-  expect_equal(defaults$lineheight, 1.2)
+  expect_equal(defaults$lineheight, 1)
 })
 
 test_that("GeomLabelMd has correct default aesthetics", {
@@ -313,7 +313,7 @@ test_that("GeomLabelMd has correct default aesthetics", {
   expect_equal(defaults$vjust, 0.5)
   expect_true(is.na(defaults$alpha))
   expect_equal(defaults$family, "")
-  expect_equal(defaults$lineheight, 1.2)
+  expect_equal(defaults$lineheight, 1)
 })
 
 test_that("GeomTextMd has correct required aesthetics", {
