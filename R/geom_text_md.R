@@ -41,6 +41,7 @@
 #' - `~~strikethrough~~`
 #' - `[link](url)` (underlined and colored)
 #' - `![alt](path)` (images)
+#' - `^superscript^` and `~subscript~` (as in Pandoc)
 #' - `$...$` and `$$...$$` (LaTeX equations, drawn with 'equatags', see
 #'   [munch-package])
 #'

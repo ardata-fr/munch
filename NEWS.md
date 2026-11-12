@@ -9,6 +9,9 @@ with the colour and size of the text around them, and `as_paragraph_md()`
 gives them to 'flextable' as equations. A dollar that is not an equation
 (`5$ and 10$`, or `\$`) stays a dollar. Drawing needs the package 'equatags'
 (R >= 4.3); without it, the LaTeX source is written as text.
+- Markdown text can contain superscripts and subscripts, written as in Pandoc
+and R Markdown: `m^2^`, `H~2~O`. There must be no space inside, unless escaped
+(`^a\ b^`); `~~text~~` is still a strikethrough.
 
 ## Changes
 
@@ -27,6 +30,10 @@ The default line spacing is now the one of `flextable::get_flextable_defaults()`
 
 ## Bug fixes
 
+- Superscripts and subscripts are placed as Word places them with Arial and
+Liberation Sans, and as `flextable::gen_grob()` now does: 65% of the font size,
+baseline raised by 0.34 or lowered by 0.07 of the font size. Subscripts were
+barely below the baseline, and the shift depended on the line spacing.
 - `as_paragraph_md()` with an image (`![alt](path)`) gave a paragraph that
 `flextable::mk_par()` and `flextable::compose()` refused. Images are now given
 to 'flextable' with a height of twice the font size, as in `md_grob()`; an

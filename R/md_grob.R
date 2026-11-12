@@ -256,13 +256,9 @@ makeContent.mdGrob <- function(x) {
       # Use plain text label (no plotmath)
       label <- chunk$txt
 
-      # Compute Y position based on vertical alignment
-      text_y <- line_y
-      if (identical(chunk$vertical.align, "superscript")) {
-        text_y <- line_y + chunk$ascent * 0.4
-      } else if (identical(chunk$vertical.align, "subscript")) {
-        text_y <- line_y - chunk$descent * 0.2
-      }
+      # Superscripts and subscripts: baseline shifted (see
+      # calc_chunk_metrics())
+      text_y <- line_y + (chunk$baseline_shift %||% 0)
 
       # Create text grob
       txt_grob <- textGrob(

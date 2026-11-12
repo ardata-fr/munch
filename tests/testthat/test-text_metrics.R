@@ -98,7 +98,14 @@ test_that("calc_chunk_metrics shrinks superscript", {
   )
   result <- munch:::calc_chunk_metrics(chunks)
 
-  expect_equal(result$font.size[2], 12 * 0.75)
+  # size and shift of Word with Arial and Liberation Sans
+  expect_equal(result$font.size[2], 12 * 0.65)
+  expect_equal(result$baseline_shift, c(0, 0.34 * 12 / 72))
+  # measured at its size
+  expect_equal(
+    result$width[2],
+    gdtools::strings_sizes("2", fontname = "Liberation Sans", fontsize = 12 * 0.65, kerning = TRUE)$width
+  )
 })
 
 test_that("calc_chunk_metrics shrinks subscript", {
@@ -108,7 +115,8 @@ test_that("calc_chunk_metrics shrinks subscript", {
   )
   result <- munch:::calc_chunk_metrics(chunks)
 
-  expect_equal(result$font.size[2], 12 * 0.75)
+  expect_equal(result$font.size[2], 12 * 0.65)
+  expect_equal(result$baseline_shift, c(0, -0.07 * 12 / 72))
 })
 
 test_that("calc_chunk_metrics handles missing img_path column", {

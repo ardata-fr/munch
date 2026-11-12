@@ -21,6 +21,8 @@
 #' - `![alt](path)` (images, with a height of twice the font size, as in
 #'   [md_grob()]; an image that can not be read is dropped with a warning)
 #' - Line breaks with `\n\n` (paragraph) or two spaces + `\n` (hard break)
+#' - `^superscript^` and `~subscript~`, as in Pandoc (no space inside, unless
+#'   escaped: `^a\ b^`)
 #' - Equations `$...$` and `$$...$$` (LaTeX), as in Pandoc; `\$` is a
 #'   dollar. They are written as equations of 'flextable'
 #'   ([flextable::as_equation()]), which needs the package 'equatags'.

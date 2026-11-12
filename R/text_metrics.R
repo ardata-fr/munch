@@ -24,6 +24,7 @@ calc_chunk_metrics <- function(
     chunks$descent <- numeric(0)
     chunks$max_ascend <- numeric(0)
     chunks$max_descend <- numeric(0)
+    chunks$baseline_shift <- numeric(0)
     chunks$is_newline <- logical(0)
     chunks$is_space <- logical(0)
     return(chunks)
@@ -87,6 +88,7 @@ calc_chunk_metrics <- function(
   chunks$descent <- 0
   chunks$max_ascend <- 0
   chunks$max_descend <- 0
+  chunks$baseline_shift <- 0
 
   # Mark special chunks
   chunks$is_newline <- !is.na(chunks$txt) & chunks$txt %in% c("\n", "\n\n")
@@ -103,11 +105,17 @@ calc_chunk_metrics <- function(
     txt_measure[chunks$is_newline[is_text]] <- "."
     txt_measure[is.na(txt_measure)] <- ""
 
+    # superscripts and subscripts are measured at their size
+    is_script_text <- chunks$vertical.align[is_text] %in%
+      c("superscript", "subscript")
+    measure_size <- chunks$font.size[is_text]
+    measure_size[is_script_text] <- measure_size[is_script_text] * script_size
+
     # widths with the kerning of the fonts, as devices draw the words
     metrics <- gdtools::strings_sizes(
       x = txt_measure,
       fontname = chunks$font.family[is_text],
-      fontsize = chunks$font.size[is_text],
+      fontsize = measure_size,
       bold = chunks$bold[is_text],
       italic = chunks$italic[is_text],
       kerning = TRUE
@@ -144,11 +152,14 @@ calc_chunk_metrics <- function(
     chunks$max_ascend[is_text] <- fi$max_ascend / 72
     chunks$max_descend[is_text] <- abs(fi$max_descend) / 72
 
-    # Adjust for superscript/subscript
+    # Superscripts and subscripts: drawn at their size, with their baseline
+    # shifted from the font size of the text around them (the height of
+    # the line does not change)
     is_ss <- is_text &
       (chunks$vertical.align %in% c("superscript", "subscript"))
-    chunks$width[is_ss] <- chunks$width[is_ss] * 0.75
-    chunks$font.size[is_ss] <- chunks$font.size[is_ss] * 0.75
+    chunks$baseline_shift[is_ss] <- script_shift[chunks$vertical.align[is_ss]] *
+      chunks$font.size[is_ss] / 72
+    chunks$font.size[is_ss] <- chunks$font.size[is_ss] * script_size
   }
 
   # --- Equation metrics ---
@@ -226,3 +237,9 @@ calc_fontface <- function(bold, italic) {
     1L
   }
 }
+
+# Size of superscripts and subscripts (share of the font size) and shift of
+# their baseline (share of the font size, positive up), as Word draws them
+# with Arial and Liberation Sans; the same values as flextable::gen_grob().
+script_size <- 0.65
+script_shift <- c(superscript = 0.34, subscript = -0.07)

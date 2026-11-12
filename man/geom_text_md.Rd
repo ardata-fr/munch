@@ -139,6 +139,7 @@ The geom supports the following markdown syntax:
 \item \verb{~~strikethrough~~}
 \item \verb{[link](url)} (underlined and colored)
 \item \verb{![alt](path)} (images)
+\item \verb{^superscript^} and \verb{~subscript~} (as in Pandoc)
 \item \verb{$...$} and \verb{$$...$$} (LaTeX equations, drawn with 'equatags', see
 \link{munch-package})
 }

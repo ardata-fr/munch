@@ -2,7 +2,8 @@
 #' @description
 #' Converts markdown text to a chunk data.frame using commonmark.
 #' Supports: bold (**), italic (*), code (`), strikethrough (~~),
-#' equations ($...$ and $$...$$, see protect_equations()),
+#' equations ($...$ and $$...$$), superscripts (^...^) and subscripts (~...~)
+#' (see protect_md_extensions()),
 #' images, and line breaks.
 #'
 #' @param md_text Character string with markdown formatting.
@@ -39,10 +40,12 @@ md_to_chunks <- function(md_text, text_props = NULL) {
     vertical.align = "baseline"
   )
 
-  # Equations are replaced by markers before commonmark reads the text (see
-  # protect_equations()), and become equation chunks in the text nodes
+  # Equations, superscripts and subscripts are replaced by markers before
+  # commonmark reads the text (see protect_md_extensions()); equations become
+  # equation chunks in the text nodes, scripts change the vertical alignment
+  # of the chunks between their markers
   # (several strings are one text, as commonmark joins them)
-  protected <- protect_equations(paste(md_text, collapse = "\n"))
+  protected <- protect_md_extensions(paste(md_text, collapse = "\n"))
   defaults$equations <- protected
 
   # Parse markdown to XML
@@ -66,6 +69,7 @@ md_to_chunks <- function(md_text, text_props = NULL) {
   all_chunks <- lapply(seq_along(paragraphs), function(i) {
     p <- paragraphs[[i]]
     chunks <- parse_md_node(p, defaults, ns)
+    chunks <- apply_script_markers(chunks)
     chunks <- display_equations_on_own_line(chunks)
 
     # Add paragraph break between paragraphs (except last)
@@ -187,7 +191,7 @@ text_md_chunk <- function(txt, props) {
   )
 }
 
-# The chunk of equation number `k` of the text (see protect_equations()),
+# The chunk of equation number `k` of the text (see protect_md_extensions()),
 # with the size and the colour in effect; bold and italic do not apply to
 # equations. Display equations are put on their own line by
 # display_equations_on_own_line().

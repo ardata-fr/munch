@@ -40,7 +40,9 @@ scientific notation, \code{as_sup()} and \code{as_sub()} from 'flextable' are
 enough.
 
 Only inline formatting is supported: bold, italic, code, strikethrough,
-links, and images. Block elements such as headings, bullet lists, and
+links, images, superscripts (\verb{^2^}), subscripts (\verb{~2~}) and equations.
+Superscripts, subscripts and equations follow the markdown of Pandoc
+(R Markdown, Quarto). Block elements such as headings, bullet lists, and
 numbered lists are not available.
 }
 
