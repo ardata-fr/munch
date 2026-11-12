@@ -13,9 +13,16 @@ knitr::opts_chunk$set(
   dev = "ragg_png",
   dpi = 300,
   fig.width = 5,
-  fig.height = 1,
-  out.width = "100%"
+  fig.height = 1
 )
+# images at 96 pixels per inch of figure: a width of "100%" fills the page of
+# CRAN, which has no maximum width (GitHub shrinks wider images to its column)
+knitr::opts_hooks$set(fig.width = function(options) {
+  if (is.null(options$out.width)) {
+    options$out.width <- paste0(round(options$fig.width * 96), "px")
+  }
+  options
+})
 library(munch)
 library(flextable)
 set_flextable_defaults(font.family = "Liberation Sans")

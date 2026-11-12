@@ -15,7 +15,7 @@ and ‘flextable’ tables.
 
 ‘munch’ lets you produce this annotated graphic:
 
-<img src="man/figures/README-unnamed-chunk-2-1.png" alt="" width="100%" />
+<img src="man/figures/README-unnamed-chunk-2-1.png" alt="" width="672px" />
 
 The title, subtitle, caption and axis labels above are all built with
 `element_chunks()` and ‘flextable’ paragraph objects, bold, italic,
@@ -70,7 +70,7 @@ ggplot(mtcars, aes(mpg, wt)) +
  theme(plot.title = element_md(size = 16))
 ```
 
-<img src="man/figures/README-ggplot-example-1.png" alt="" width="100%" />
+<img src="man/figures/README-ggplot-example-1.png" alt="" width="480px" />
 
 For advanced formatting (superscripts, subscripts, colors), use
 `element_chunks()` with ‘flextable’ paragraph objects:
@@ -85,7 +85,7 @@ ggplot(mtcars, aes(mpg, wt)) +
  theme(plot.title = element_chunks(title_chunks))
 ```
 
-<img src="man/figures/README-element-chunks-example-1.png" alt="" width="100%" />
+<img src="man/figures/README-element-chunks-example-1.png" alt="" width="480px" />
 
 #### Syntax comparison
 
@@ -136,7 +136,7 @@ wrap_plots(p1, p2) +
   )
 ```
 
-<img src="man/figures/README-patchwork-example-1.png" alt="" width="100%" />
+<img src="man/figures/README-patchwork-example-1.png" alt="" width="672px" />
 
 For plain markdown text, pass the content as a string and use
 `element_md()` in the `theme` argument, as in regular ggplot2 theming:
@@ -153,7 +153,7 @@ wrap_plots(p1, p2) +
   )
 ```
 
-<img src="man/figures/README-patchwork-example-md-1.png" alt="" width="100%" />
+<img src="man/figures/README-patchwork-example-md-1.png" alt="" width="672px" />
 
 The caption auto-wraps to the full figure width at render time, so it
 works correctly regardless of output size. `title`, `subtitle`, and
@@ -171,7 +171,7 @@ ft <- mk_par(ft, j = 1, part = "header",
 autofit(ft)
 ```
 
-<img src="man/figures/README-flextable-example-1.png" alt="" width="100%" />
+<img src="man/figures/README-flextable-example-1.png" alt="" width="480px" />
 
 ### Markdown to grob
 
@@ -184,7 +184,7 @@ grid.newpage()
 grid.draw(gr)
 ```
 
-<img src="man/figures/README-md-grob-basic-1.png" alt="" width="100%" />
+<img src="man/figures/README-md-grob-basic-1.png" alt="" width="480px" />
 
 For superscripts, subscripts, or colors not available in markdown, use
 ‘flextable’ chunks with `chunks_grob()`:
