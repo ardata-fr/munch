@@ -26,8 +26,8 @@ When both steps find the same font, the output is correct. When they
 disagree, text is positioned using one font’s metrics but drawn with
 another, leading to overlapping, clipping or misaligned labels.
 
-Even with the same font, measurement does not apply kerning while
-devices do: see the section “Alignment accuracy” of
+Measurement applies the kerning of the font, as devices that kern do;
+see the section “Alignment accuracy” of
 [`vignette("using-ggplot2")`](https://ardata-fr.github.io/munch/dev/articles/using-ggplot2.md).
 
 ## Which devices agree with measurement?

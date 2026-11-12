@@ -15,7 +15,7 @@ md_grob(
   hjust = 0.5,
   vjust = 0.5,
   width = NULL,
-  line_spacing = 1.2,
+  line_spacing = 1,
   text_props = NULL,
   name = NULL
 )
@@ -49,8 +49,9 @@ md_grob(
 
 - line_spacing:
 
-  Line height multiplier (default 1.2). When given, it takes precedence
-  over the `line_spacing` of `text_props`; when not given, the value of
+  Line spacing, a multiple of the single line spacing of the font, as in
+  Word (default 1). When given, it takes precedence over the
+  `line_spacing` of `text_props`; when not given, the value of
   `text_props` is used.
 
 - text_props:

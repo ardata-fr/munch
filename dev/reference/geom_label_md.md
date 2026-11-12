@@ -4,7 +4,7 @@ A ggplot2 geom for rendering markdown-formatted text with a background
 rectangle, similar to
 [`ggplot2::geom_label()`](https://ggplot2.tidyverse.org/reference/geom_text.html).
 Supports basic markdown formatting (bold, italic, code, strikethrough,
-links, images).
+links, images, equations).
 
 ## Usage
 

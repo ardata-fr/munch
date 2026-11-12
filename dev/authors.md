@@ -12,13 +12,13 @@ Source:
 [`DESCRIPTION`](https://github.com/ardata-fr/munch/blob/main/DESCRIPTION)
 
 Gohel D (2026). *munch: Rich Inline Text for 'grid' Graphics and
-'flextable'*. R package version 0.0.3.003,
+'flextable'*. R package version 0.0.4.007,
 <https://ardata-fr.github.io/munch/>.
 
     @Manual{,
       title = {munch: Rich Inline Text for 'grid' Graphics and 'flextable'},
       author = {David Gohel},
       year = {2026},
-      note = {R package version 0.0.3.003},
+      note = {R package version 0.0.4.007},
       url = {https://ardata-fr.github.io/munch/},
     }

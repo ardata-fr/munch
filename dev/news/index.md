@@ -1,6 +1,89 @@
 # Changelog
 
+## munch 0.0.4
+
+### New features
+
+- Markdown text can contain LaTeX equations, written as in R Markdown
+  and Quarto: `$...$` in the text, `$$...$$` alone on its line in
+  display style. They take the colour and size of the text around them.
+  [`md_grob()`](https://ardata-fr.github.io/munch/dev/reference/md_grob.md),
+  [`element_md()`](https://ardata-fr.github.io/munch/dev/reference/element_md.md),
+  [`geom_text_md()`](https://ardata-fr.github.io/munch/dev/reference/geom_text_md.md)
+  and
+  [`geom_label_md()`](https://ardata-fr.github.io/munch/dev/reference/geom_label_md.md)
+  draw them, and
+  [`as_paragraph_md()`](https://ardata-fr.github.io/munch/dev/reference/as_paragraph_md.md)
+  gives them to ‘flextable’ as equations. A dollar that does not open an
+  equation stays a dollar (`5$ and 10$`), and `\$` is always a dollar.
+- Markdown text can contain superscripts and subscripts, written as in R
+  Markdown and Quarto: `m^2^`, `H~2~O`. They contain no space, unless it
+  is escaped (`^a\ b^`); `~~text~~` is still a strikethrough.
+- Drawing equations needs the package ‘equatags’ and R \>= 4.3. Without
+  them, the LaTeX source of equations is written as text, with a
+  warning.
+
+### Changes
+
+These changes make the text look like Word, and move or resize existing
+texts slightly:
+
+- Words are measured with the kerning of their font, as ‘ragg’,
+  ‘svglite’ and ‘ggiraph’ draw them: spaces after kerned words are no
+  longer too wide, right-aligned lines end exactly at the right edge,
+  and lines can hold slightly more words.
+- The height of a line is the line height of its font, the single line
+  spacing of Word; a larger line spacing adds its space below the line.
+  Lines almost touched each other with a line spacing of 1. The default
+  line spacing is now 1, the default of ‘flextable’, instead of 1.2,
+  also for the `lineheight` of
+  [`geom_text_md()`](https://ardata-fr.github.io/munch/dev/reference/geom_text_md.md)
+  and
+  [`geom_label_md()`](https://ardata-fr.github.io/munch/dev/reference/geom_label_md.md):
+  texts are a bit more spaced than before.
+- Superscripts and subscripts are 65% of the font size, raised by 0.34
+  or lowered by 0.07 of the font size, as in Word with Arial or
+  Liberation Sans. Subscripts were barely below the baseline.
+
+### Bug fixes
+
+- Equations created with
+  [`flextable::as_equation()`](https://davidgohel.github.io/flextable/reference/as_equation.html)
+  were dropped without a message by
+  [`chunks_grob()`](https://ardata-fr.github.io/munch/dev/reference/chunks_grob.md)
+  and
+  [`element_chunks()`](https://ardata-fr.github.io/munch/dev/reference/element_chunks.md);
+  they are now drawn.
+- [`as_paragraph_md()`](https://ardata-fr.github.io/munch/dev/reference/as_paragraph_md.md)
+  with an image (`![alt](path)`) gave a paragraph that
+  [`flextable::mk_par()`](https://davidgohel.github.io/flextable/reference/compose.html)
+  and
+  [`flextable::compose()`](https://davidgohel.github.io/flextable/reference/compose.html)
+  refused. Images now have a height of twice the font size, as in
+  [`md_grob()`](https://ardata-fr.github.io/munch/dev/reference/md_grob.md);
+  an image that can not be read is dropped with a warning.
+- [`element_md()`](https://ardata-fr.github.io/munch/dev/reference/element_md.md)
+  ignored its argument `face`
+  ([\#4](https://github.com/ardata-fr/munch/issues/4)). Markdown
+  emphasis now adds to it, and
+  [`default_text_props()`](https://ardata-fr.github.io/munch/dev/reference/default_text_props.md)
+  has new arguments `bold` and `italic`.
+- With `width` and `hjust` \> 0, the text of
+  [`md_grob()`](https://ardata-fr.github.io/munch/dev/reference/md_grob.md),
+  [`chunks_grob()`](https://ardata-fr.github.io/munch/dev/reference/chunks_grob.md),
+  [`geom_text_md()`](https://ardata-fr.github.io/munch/dev/reference/geom_text_md.md)
+  and
+  [`geom_label_md()`](https://ardata-fr.github.io/munch/dev/reference/geom_label_md.md)
+  was shifted to the right of its anchor, and out of the box of labels.
+
+### Dependencies
+
+- ‘gdtools’ \>= 0.6.0 is required.
+- ‘equatags’ \>= 0.4.0 is suggested, to draw equations.
+
 ## munch 0.0.3
+
+CRAN release: 2026-11-10
 
 ### New features
 

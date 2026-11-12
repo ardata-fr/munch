@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">munch</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.3.003</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.4.007</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -449,23 +449,18 @@ wrapping:</p>
 <div class="section level2">
 <h2 id="alignment-accuracy">Alignment accuracy<a class="anchor" aria-label="anchor" href="#alignment-accuracy"></a>
 </h2>
-<p>‘munch’ measures text with ‘gdtools’, which adds up the advance
-widths of the glyphs read from the font file. Kerning, the adjustment of
-the space between some pairs of letters, is not applied. Devices such as
-‘ragg’, ‘svglite’ or ‘ggiraph’ apply it when they draw the text, so a
-word can be drawn slightly narrower than measured.</p>
-<p>The difference is negligible for most words, but can reach about 7%
-of the width of words with pairs such as “AV”, “To” or “WA” (for example
-“AVATAR”). Each word is placed at its measured position, so the
-differences do not add up along a line. Their visible effects are:</p>
-<ul>
-<li>a slightly wider space after such a word;</li>
-<li>with <code>hjust = 1</code> (right-aligned), a line ending with such
-a word stops slightly before the right edge; with
-<code>hjust = 0.5</code>, the difference is half as large on each side;
-with <code>hjust = 0</code>, the left edge is exact.</li>
-</ul>
-<p>Taking kerning into account in measurements is planned.</p>
+<p>‘munch’ measures text with ‘gdtools’, from the font file: the advance
+widths of the glyphs and the kerning stored in the font, the adjustment
+of the space between some pairs of letters such as “AV”, “To” or “WA”.
+Devices such as ‘ragg’, ‘svglite’ or ‘ggiraph’ apply the same kerning
+when they draw the text, so words are drawn with the width measured, and
+right-aligned lines (<code>hjust = 1</code>) end at the right edge.</p>
+<p>Ligatures and other substitutions of glyphs made by some fonts are
+not measured: a word using them can be drawn slightly narrower than
+measured.</p>
+<p>The default <code><a href="https://rdrr.io/r/grDevices/png.html" class="external-link">png()</a></code> device of macOS (Quartz) does not
+kern: words such as “AVATAR” are drawn wider than measured (up to about
+7%), and can touch the next word. Use ‘ragg’ instead.</p>
 </div>
 <div class="section level2">
 <h2 id="choosing-the-right-approach">Choosing the right approach<a class="anchor" aria-label="anchor" href="#choosing-the-right-approach"></a>

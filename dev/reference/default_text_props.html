@@ -13,7 +13,7 @@ a standalone API for munch."><meta property="og:image" content="https://ardata-f
 
     <a class="navbar-brand me-2" href="../index.html">munch</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.3.003</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.4.007</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -63,7 +63,9 @@ a standalone API for munch.</p>
 <span>  font_color <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  code_font_family <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  line_spacing <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  img_baseline_ratio <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  img_baseline_ratio <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  bold <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  italic <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -89,7 +91,10 @@ Defaults to <code>"mono"</code>.</p></dd>
 
 
 <dt id="arg-line-spacing">line_spacing<a class="anchor" aria-label="anchor" href="#arg-line-spacing"></a></dt>
-<dd><p>Line height multiplier.</p></dd>
+<dd><p>Line spacing, a multiple of the single line spacing
+of the font, as in Word: the distance between the baselines of two lines
+is <code>line_spacing</code> times the line height of the font
+(<code><a href="https://davidgohel.github.io/gdtools/reference/font_line_metrics.html" class="external-link">gdtools::font_line_metrics()</a></code>).</p></dd>
 
 
 <dt id="arg-img-baseline-ratio">img_baseline_ratio<a class="anchor" aria-label="anchor" href="#arg-img-baseline-ratio"></a></dt>
@@ -101,6 +106,11 @@ text baseline:</p><ul><li><p><code>0</code>: image bottom at baseline</p></li>
 <li><p><code>0.5</code>: image centered on baseline</p></li>
 </ul></dd>
 
+
+<dt id="arg-bold-italic">bold, italic<a class="anchor" aria-label="anchor" href="#arg-bold-italic"></a></dt>
+<dd><p>If <code>TRUE</code>, the text is bold or italic by default;
+markdown emphasis adds to it. Default <code>FALSE</code>.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -110,6 +120,7 @@ text baseline:</p><ul><li><p><code>0</code>: image bottom at baseline</p></li>
 <li><p><code>code.font.family</code>: Font family for code</p></li>
 <li><p><code>line_spacing</code>: Line height multiplier</p></li>
 <li><p><code>img_baseline_ratio</code>: Image baseline alignment ratio</p></li>
+<li><p><code>bold</code>, <code>italic</code>: default font face of the text</p></li>
 </ul><p>Some element names use dot separators (<code>font.size</code>, <code>font.family</code>, etc.)
 for compatibility with 'flextable' conventions. Function parameters
 and newer elements use snake_case (<code>line_spacing</code>, <code>img_baseline_ratio</code>)
@@ -139,8 +150,10 @@ which is the preferred convention going forward.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> • font_family: <span style="color: #0000BB;">"DejaVu Sans"</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> • font_color: <span style="color: #0000BB;">"black"</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> • code_font_family: <span style="color: #0000BB;">"mono"</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> • line_spacing: <span style="color: #0000BB;">1.2</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> • line_spacing: <span style="color: #0000BB;">1</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> • img_baseline_ratio: <span style="color: #0000BB;">0.15</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> • bold: <span style="color: #0000BB;">FALSE</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> • italic: <span style="color: #0000BB;">FALSE</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Override specific properties</span></span></span>
 <span class="r-in"><span><span class="fu">default_text_props</span><span class="op">(</span>font_size <span class="op">=</span> <span class="fl">14</span>, font_color <span class="op">=</span> <span class="st">"navy"</span><span class="op">)</span></span></span>
@@ -150,8 +163,10 @@ which is the preferred convention going forward.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> • font_family: <span style="color: #0000BB;">"DejaVu Sans"</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> • font_color: <span style="color: #0000BB;">"navy"</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> • code_font_family: <span style="color: #0000BB;">"mono"</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> • line_spacing: <span style="color: #0000BB;">1.2</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> • line_spacing: <span style="color: #0000BB;">1</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> • img_baseline_ratio: <span style="color: #0000BB;">0.15</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> • bold: <span style="color: #0000BB;">FALSE</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> • italic: <span style="color: #0000BB;">FALSE</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://davidgohel.github.io/gdtools/" class="external-link">gdtools</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://davidgohel.github.io/gdtools/reference/font_set_liberation.html" class="external-link">font_set_liberation</a></span><span class="op">(</span><span class="op">)</span></span></span>

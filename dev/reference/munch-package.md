@@ -1,8 +1,8 @@
 # munch: Rich Inline Text for Grid Graphics and Flextable
 
 The 'munch' package renders rich inline text (bold, italic, code, links,
-images) in grid graphics and 'ggplot2', from markdown or 'flextable'
-chunks.
+images, equations) in grid graphics and 'ggplot2', from markdown or
+'flextable' chunks.
 
 For 'ggplot2' integration, use
 [`element_md()`](https://ardata-fr.github.io/munch/dev/reference/element_md.md)
@@ -37,15 +37,21 @@ device (e.g. via 'extrafont'). See
 [`vignette("font-recipes")`](https://ardata-fr.github.io/munch/dev/articles/font-recipes.md)
 for details.
 
-LaTeX and MathJax equations are not supported. For simple scientific
-notation, use
+Equations, written `$...$` and `$$...$$` in markdown (as in Pandoc) or
+created with
+[`flextable::as_equation()`](https://davidgohel.github.io/flextable/reference/as_equation.html),
+are drawn with the package 'equatags' (R \>= 4.3); without it, their
+LaTeX source is written as text. A `$$...$$` equation is alone on its
+line, in display style. For simple scientific notation,
 [`as_sup()`](https://davidgohel.github.io/flextable/reference/as_sup.html)
 and
 [`as_sub()`](https://davidgohel.github.io/flextable/reference/as_sub.html)
-from 'flextable'.
+from 'flextable' are enough.
 
 Only inline formatting is supported: bold, italic, code, strikethrough,
-links, and images. Block elements such as headings, bullet lists, and
+links, images, superscripts (`^2^`), subscripts (`~2~`) and equations.
+Superscripts, subscripts and equations follow the markdown of Pandoc (R
+Markdown, Quarto). Block elements such as headings, bullet lists, and
 numbered lists are not available.
 
 ## Options

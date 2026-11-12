@@ -162,7 +162,7 @@ grid.draw(gr)
 | `font_family` | Font family | from [`get_flextable_defaults()`](https://davidgohel.github.io/flextable/reference/get_flextable_defaults.html) |
 | `font_color` | Text color | from [`get_flextable_defaults()`](https://davidgohel.github.io/flextable/reference/get_flextable_defaults.html) |
 | `code_font_family` | Font for inline code | “mono” |
-| `line_spacing` | Line height multiplier | 1.2 |
+| `line_spacing` | Line spacing, a multiple of the single line spacing of the font | from [`get_flextable_defaults()`](https://davidgohel.github.io/flextable/reference/get_flextable_defaults.html) |
 | `img_baseline_ratio` | Image vertical alignment | 0.15 |
 
 ### Integration with flextable theming
