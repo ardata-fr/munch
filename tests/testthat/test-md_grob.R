@@ -79,6 +79,22 @@ test_that("md_grob with max_width wraps text", {
   expect_gt(dims_wrap$height, dims_nowrap$height)
 })
 
+test_that("the viewport has the wrapping width, where lines are aligned", {
+  # lines are aligned within `width`: with a viewport as wide as the text,
+  # hjust > 0 moved the text out of its anchor and out of label boxes
+  for (hjust in c(0, 0.5, 1)) {
+    gr <- md_grob("Hello", hjust = hjust, width = 2)
+    expect_equal(grid::convertWidth(gr$vp$width, "inches", TRUE), 2)
+    expect_lt(dim(gr)$width, 2)
+  }
+  # without width, the viewport is as wide as the text
+  gr <- md_grob("Hello", hjust = 1)
+  expect_equal(
+    grid::convertWidth(gr$vp$width, "inches", TRUE),
+    dim(gr)$width
+  )
+})
+
 # --- dim.mdGrob empty ---
 
 test_that("dim.mdGrob returns zero for empty grob", {

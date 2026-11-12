@@ -146,13 +146,18 @@ element_grob.element_md <- function(
   # Handle rotation angle (not from text_props - it's a layout property)
   angle <- angle %||% element$angle %||% 0
 
+  # font face of the text, markdown emphasis adds to it
+  face <- face %||% element$face %||% "plain"
+
   # Create text_props for the grob
   props <- default_text_props(
     font_size = size,
     font_family = family,
     font_color = colour,
     code_font_family = element$code_font_family,
-    line_spacing = lineheight
+    line_spacing = lineheight,
+    bold = face %in% c("bold", "bold.italic", 2, 4),
+    italic = face %in% c("italic", "bold.italic", 3, 4)
   )
 
   # Detect explicit positioning (e.g. plot.tag with location = "plot"/"panel")

@@ -66,6 +66,13 @@ md_grob <- function(
   lines <- arrange_chunks_into_lines(chunks, width)
   total_height <- sum(sapply(lines, function(l) l$height))
   total_width <- max(sapply(lines, function(l) l$width))
+  # lines are aligned within `width` when given (see makeContent.mdGrob()):
+  # the viewport must have this width
+  vp_width <- if (!is.null(width) && is.numeric(width) && width > 0) {
+    width
+  } else {
+    total_width
+  }
 
   # Create grob with properly sized viewport
   gr <- gTree(
@@ -80,7 +87,7 @@ md_grob <- function(
     vp = viewport(
       x = unit(x, "npc"),
       y = unit(y, "npc"),
-      width = unit(total_width, "inches"),
+      width = unit(vp_width, "inches"),
       height = unit(total_height, "inches"),
       just = c(hjust, vjust)
     )
@@ -637,6 +644,13 @@ chunks_grob <- function(
   lines <- arrange_chunks_into_lines(chunks, width)
   total_height <- sum(sapply(lines, function(l) l$height))
   total_width <- max(sapply(lines, function(l) l$width))
+  # lines are aligned within `width` when given (see makeContent.mdGrob()):
+  # the viewport must have this width
+  vp_width <- if (!is.null(width) && is.numeric(width) && width > 0) {
+    width
+  } else {
+    total_width
+  }
 
   # Create grob with properly sized viewport
   gr <- gTree(
@@ -651,7 +665,7 @@ chunks_grob <- function(
     vp = viewport(
       x = unit(x, "npc"),
       y = unit(y, "npc"),
-      width = unit(total_width, "inches"),
+      width = unit(vp_width, "inches"),
       height = unit(total_height, "inches"),
       just = c(hjust, vjust)
     )

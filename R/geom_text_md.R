@@ -681,11 +681,13 @@ GeomLabelMd <- ggplot2::ggproto(
         text_props = props
       )
 
-      # Override the viewport to position text with padding offset
+      # Override the viewport to position text with padding offset; lines
+      # are aligned within the wrapping width when given
+      text_w <- wrap_width %||% dims$width
       text_gr$vp <- grid::viewport(
         x = unit(row$x, "npc") + unit(x_offset, "inches"),
         y = unit(row$y, "npc") + unit(y_offset, "inches"),
-        width = unit(dims$width, "inches"),
+        width = unit(text_w, "inches"),
         height = unit(dims$height, "inches"),
         just = c(row$hjust, row$vjust)
       )
@@ -701,7 +703,7 @@ GeomLabelMd <- ggplot2::ggproto(
         text_gr$vp <- grid::viewport(
           x = unit(row$x, "npc") + unit(x_offset, "inches"),
           y = unit(row$y, "npc") + unit(y_offset, "inches"),
-          width = unit(dims$width, "inches"),
+          width = unit(text_w, "inches"),
           height = unit(dims$height, "inches"),
           angle = row$angle,
           just = c(row$hjust, row$vjust)

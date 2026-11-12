@@ -1,3 +1,14 @@
+# munch 0.0.4
+
+## Bug fixes
+
+- `element_md()` now uses its argument `face` ("bold", "italic",
+"bold.italic"): it was ignored (#4). Markdown emphasis adds to it.
+`default_text_props()` has new arguments `bold` and `italic`.
+- With `width` and `hjust` > 0, the text of `md_grob()`, `chunks_grob()`,
+`geom_text_md()` and `geom_label_md()` was shifted to the right of its anchor,
+and out of the box of labels.
+
 # munch 0.0.3
 
 ## New features

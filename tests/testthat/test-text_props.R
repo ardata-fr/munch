@@ -65,3 +65,21 @@ test_that("print.text_props produces output", {
   expect_true(any(grepl("font_size", messages)))
   expect_true(any(grepl("font_family", messages)))
 })
+
+test_that("bold and italic set the default face of the text", {
+  props <- default_text_props(bold = TRUE)
+  expect_true(props$bold)
+  expect_false(props$italic)
+  ch <- md_to_chunks("a *b* `c`", text_props = props)
+  words <- ch[nzchar(trimws(ch$txt)), ]
+  expect_equal(words$bold, c(TRUE, TRUE, FALSE))
+  expect_equal(words$italic, c(FALSE, TRUE, FALSE))
+  expect_false(default_text_props()$bold)
+})
+
+test_that("element_md() uses its face", {
+  plain <- ggplot2::element_grob(element_md(), label = "Some title text")
+  bold <- ggplot2::element_grob(element_md(face = "bold"), label = "Some title text")
+  w <- function(g) grid::convertWidth(grid::grobWidth(g), "in", valueOnly = TRUE)
+  expect_gt(w(bold), w(plain))
+})

@@ -10,7 +10,9 @@ default_text_props(
   font_color = NULL,
   code_font_family = NULL,
   line_spacing = NULL,
-  img_baseline_ratio = NULL
+  img_baseline_ratio = NULL,
+  bold = NULL,
+  italic = NULL
 )
 }
 \arguments{
@@ -34,6 +36,9 @@ text baseline:
 \item \code{0.35}: image centered on text vertical center
 \item \code{0.5}: image centered on baseline
 }}
+
+\item{bold, italic}{If \code{TRUE}, the text is bold or italic by default;
+markdown emphasis adds to it. Default \code{FALSE}.}
 }
 \value{
 A list of class \code{"text_props"} with elements:
@@ -44,6 +49,7 @@ A list of class \code{"text_props"} with elements:
 \item \code{code.font.family}: Font family for code
 \item \code{line_spacing}: Line height multiplier
 \item \code{img_baseline_ratio}: Image baseline alignment ratio
+\item \code{bold}, \code{italic}: default font face of the text
 }
 
 Some element names use dot separators (\code{font.size}, \code{font.family}, etc.)
