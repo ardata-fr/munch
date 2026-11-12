@@ -47,7 +47,10 @@ test_that("default_text_props has sensible defaults", {
   props <- default_text_props()
 
   expect_equal(props$code.font.family, "mono")
-  expect_equal(props$line_spacing, flextable::get_flextable_defaults()$line_spacing)
+  expect_equal(
+    props$line_spacing,
+    flextable::get_flextable_defaults()$line_spacing
+  )
   expect_equal(props$img_baseline_ratio, 0.15)
 })
 
@@ -79,7 +82,12 @@ test_that("bold and italic set the default face of the text", {
 
 test_that("element_md() uses its face", {
   plain <- ggplot2::element_grob(element_md(), label = "Some title text")
-  bold <- ggplot2::element_grob(element_md(face = "bold"), label = "Some title text")
-  w <- function(g) grid::convertWidth(grid::grobWidth(g), "in", valueOnly = TRUE)
+  bold <- ggplot2::element_grob(
+    element_md(face = "bold"),
+    label = "Some title text"
+  )
+  w <- function(g) {
+    grid::convertWidth(grid::grobWidth(g), "in", valueOnly = TRUE)
+  }
   expect_gt(w(bold), w(plain))
 })

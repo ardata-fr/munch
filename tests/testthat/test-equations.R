@@ -15,7 +15,11 @@ test_that("an equation chunk is measured with equatags", {
   expect_equal(eq$descent, expected$depth)
   # the equation counts in the width of the grob
   without <- chunks_grob(flextable::as_paragraph("Area: ", " m"))
-  expect_equal(dim(gr)$width - dim(without)$width, expected$width, tolerance = 1e-6)
+  expect_equal(
+    dim(gr)$width - dim(without)$width,
+    expected$width,
+    tolerance = 1e-6
+  )
 })
 
 test_that("an equation is drawn on the baseline of its line", {
@@ -25,7 +29,10 @@ test_that("an equation is drawn on the baseline of its line", {
   is_eq <- grepl("^equation_", names(content$children))
   expect_equal(sum(is_eq), 1L)
   eq_grob <- content$children[[which(is_eq)]]
-  text_grob <- content$children[[which(grepl("^chunk_", names(content$children)))[1]]]
+  text_grob <- content$children[[which(grepl(
+    "^chunk_",
+    names(content$children)
+  ))[1]]]
   # same baseline as the text: y0 is the baseline when vjust is the share of
   # the depth in the height of the equation
   eq <- gr$chunks[!is.na(gr$chunks$eq_data), ]
@@ -46,7 +53,10 @@ test_that("a fraction makes its line higher", {
 test_that("an equation takes the colour and the size of its chunk", {
   gdtools::font_set_liberation()
   props <- officer::fp_text_lite(color = "red", font.size = 20)
-  gr <- chunks_grob(flextable::as_paragraph(flextable::as_equation("x^2", props = props)))
+  gr <- chunks_grob(flextable::as_paragraph(flextable::as_equation(
+    "x^2",
+    props = props
+  )))
   eq <- gr$chunks[!is.na(gr$chunks$eq_data), ]
   expect_equal(eq$color, "red")
   expect_equal(eq$width, equatags::equation_size("x^2", size = 20)$width)

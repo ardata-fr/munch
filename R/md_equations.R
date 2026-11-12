@@ -80,7 +80,9 @@ protect_md_extensions <- function(x) {
         return(NULL)
       }
       if (ch[j] == delim) {
-        if (length(content) == 0L || (delim == "~" && j < n && ch[j + 1L] == "~")) {
+        if (
+          length(content) == 0L || (delim == "~" && j < n && ch[j + 1L] == "~")
+        ) {
           return(NULL)
         }
         return(list(content = content, end = j))
@@ -108,13 +110,17 @@ protect_md_extensions <- function(x) {
     if (c1 == "`") {
       # code span: from a run of backticks to the next run of the same length
       run <- 1L
-      while (i + run <= n && ch[i + run] == "`") run <- run + 1L
+      while (i + run <= n && ch[i + run] == "`") {
+        run <- run + 1L
+      }
       j <- i + run
       end <- NA_integer_
       while (j <= n) {
         if (ch[j] == "`") {
           r <- 1L
-          while (j + r <= n && ch[j + r] == "`") r <- r + 1L
+          while (j + r <= n && ch[j + r] == "`") {
+            r <- r + 1L
+          }
           if (r == run) {
             end <- j + r - 1L
             break
@@ -174,7 +180,10 @@ protect_md_extensions <- function(x) {
         j <- j + 1L
       }
       if (!is.na(end)) {
-        content <- trimws(paste(ch[seq_len(end - i - 2L) + i + 1L], collapse = ""))
+        content <- trimws(paste(
+          ch[seq_len(end - i - 2L) + i + 1L],
+          collapse = ""
+        ))
         if (nzchar(content)) {
           add_equation(content, TRUE)
           i <- end + 2L
@@ -254,7 +263,8 @@ display_equations_on_own_line <- function(chunks) {
   if (!any(is_display)) {
     return(chunks)
   }
-  is_blank <- !is.na(chunks$txt) & grepl("^\\s*$", chunks$txt) &
+  is_blank <- !is.na(chunks$txt) &
+    grepl("^\\s*$", chunks$txt) &
     !chunks$txt %in% c("\n", "\n\n")
   keep <- rep(TRUE, nrow(chunks))
   for (k in which(is_display)) {
@@ -308,7 +318,12 @@ apply_script_markers <- function(chunks) {
     return(chunks)
   }
   pattern <- paste0(
-    "[", sup_marker_open, sup_marker_close, sub_marker_open, sub_marker_close, "]"
+    "[",
+    sup_marker_open,
+    sup_marker_close,
+    sub_marker_open,
+    sub_marker_close,
+    "]"
   )
   has_marker <- !is.na(chunks$txt) & grepl(pattern, chunks$txt, perl = TRUE)
   if (!any(has_marker)) {
@@ -328,7 +343,11 @@ apply_script_markers <- function(chunks) {
     # pieces of text and markers
     pieces <- regmatches(
       row$txt,
-      gregexpr(paste0(pattern, "|[^", substring(pattern, 2), "+"), row$txt, perl = TRUE)
+      gregexpr(
+        paste0(pattern, "|[^", substring(pattern, 2), "+"),
+        row$txt,
+        perl = TRUE
+      )
     )[[1]]
     for (piece in pieces) {
       if (piece %in% c(sup_marker_open, sub_marker_open)) {

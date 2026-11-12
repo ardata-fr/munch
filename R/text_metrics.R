@@ -158,7 +158,8 @@ calc_chunk_metrics <- function(
     is_ss <- is_text &
       (chunks$vertical.align %in% c("superscript", "subscript"))
     chunks$baseline_shift[is_ss] <- script_shift[chunks$vertical.align[is_ss]] *
-      chunks$font.size[is_ss] / 72
+      chunks$font.size[is_ss] /
+      72
     chunks$font.size[is_ss] <- chunks$font.size[is_ss] * script_size
   }
 

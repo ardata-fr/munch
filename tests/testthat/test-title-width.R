@@ -25,10 +25,13 @@ expect_title_fits <- function(table, name = "title", fits = TRUE) {
   grid::grid.draw(table)
   index <- which(table$layout$name == name)
   cell <- paste0(
-    name, ".",
+    name,
+    ".",
     paste(
-      table$layout$t[index], table$layout$r[index],
-      table$layout$b[index], table$layout$l[index],
+      table$layout$t[index],
+      table$layout$r[index],
+      table$layout$b[index],
+      table$layout$l[index],
       sep = "-"
     )
   )
@@ -61,7 +64,9 @@ test_that("the height of a title follows the width of its column", {
     ggplot2::ggplotGrob(title_plot(plot.title.position = "plot"))
   )
   expect_title_fits(
-    ggplot2::ggplotGrob(title_plot() + ggplot2::facet_wrap(ggplot2::vars(x > 2)))
+    ggplot2::ggplotGrob(
+      title_plot() + ggplot2::facet_wrap(ggplot2::vars(x > 2))
+    )
   )
 })
 
@@ -81,7 +86,10 @@ test_that("subtitles, captions and element_chunks() are handled", {
   )
   expect_title_fits(table, "caption")
 
-  chunks <- flextable::as_paragraph(flextable::as_chunk(strrep("long words ", 15)))
+  chunks <- flextable::as_paragraph(flextable::as_chunk(strrep(
+    "long words ",
+    15
+  )))
   expect_title_fits(ggplot2::ggplotGrob(title_plot(element_chunks(chunks))))
 })
 
@@ -127,7 +135,10 @@ test_that("width sets the height of a title and how it wraps", {
       )
   )
 
-  chunks <- flextable::as_paragraph(flextable::as_chunk(strrep("long words ", 15)))
+  chunks <- flextable::as_paragraph(flextable::as_chunk(strrep(
+    "long words ",
+    15
+  )))
   table <- ggplot2::ggplotGrob(title_plot(element_chunks(chunks, width = 2)))
   expect_title_fits(table)
 })
@@ -187,5 +198,7 @@ test_that("width is checked and kept when elements are merged", {
     )$width,
     2
   )
-  expect_null(ggplot2::merge_element(element_md(), ggplot2::element_text())$width)
+  expect_null(
+    ggplot2::merge_element(element_md(), ggplot2::element_text())$width
+  )
 })

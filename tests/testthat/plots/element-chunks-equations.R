@@ -11,7 +11,10 @@ title_chunks <- flextable::as_paragraph(
 
 caption_chunks <- flextable::as_paragraph(
   flextable::as_chunk("Mean ", props = red),
-  flextable::as_equation("\\bar{x} = \\frac{1}{n}\\sum_{i=1}^n x_i", props = red)
+  flextable::as_equation(
+    "\\bar{x} = \\frac{1}{n}\\sum_{i=1}^n x_i",
+    props = red
+  )
 )
 
 list(

@@ -145,7 +145,11 @@ makeContent.mdGrob <- function(x) {
       chunk <- line$chunks[[j]]
 
       # Render equation chunks, on the baseline of the line
-      if (!is.null(chunk$eq_data) && !is.na(chunk$eq_data) && nzchar(chunk$eq_data)) {
+      if (
+        !is.null(chunk$eq_data) &&
+          !is.na(chunk$eq_data) &&
+          nzchar(chunk$eq_data)
+      ) {
         eq_grob <- equation_chunk_grob(
           chunk,
           x = current_x,

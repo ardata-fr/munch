@@ -4,7 +4,11 @@
 aligned <- function(x) {
   ch <- md_to_chunks(x)
   keep <- !is.na(ch$txt)
-  data.frame(txt = ch$txt[keep], va = ch$vertical.align[keep], stringsAsFactors = FALSE)
+  data.frame(
+    txt = ch$txt[keep],
+    va = ch$vertical.align[keep],
+    stringsAsFactors = FALSE
+  )
 }
 
 test_that("superscripts and subscripts are read", {

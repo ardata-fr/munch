@@ -530,9 +530,7 @@ check_title_width <- function(width) {
   if (is.null(width)) {
     return(invisible(NULL))
   }
-  if (
-    !is.numeric(width) || length(width) != 1L || is.na(width) || width <= 0
-  ) {
+  if (!is.numeric(width) || length(width) != 1L || is.na(width) || width <= 0) {
     cli::cli_abort("{.arg width} must be a positive number, in inches.")
   }
   invisible(NULL)

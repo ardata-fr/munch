@@ -104,7 +104,12 @@ test_that("calc_chunk_metrics shrinks superscript", {
   # measured at its size
   expect_equal(
     result$width[2],
-    gdtools::strings_sizes("2", fontname = "Liberation Sans", fontsize = 12 * 0.65, kerning = TRUE)$width
+    gdtools::strings_sizes(
+      "2",
+      fontname = "Liberation Sans",
+      fontsize = 12 * 0.65,
+      kerning = TRUE
+    )$width
   )
 })
 
@@ -370,7 +375,11 @@ test_that("words are measured with the kerning of the font, as ragg draws them",
     gp = grid::gpar(fontfamily = "Liberation Sans", fontsize = 12)
   ))
   for (word in c("AVATAR", "Today,")) {
-    drawn <- grid::convertWidth(grid::stringWidth(word), "bigpts", valueOnly = TRUE)
+    drawn <- grid::convertWidth(
+      grid::stringWidth(word),
+      "bigpts",
+      valueOnly = TRUE
+    )
     measured <- grid::convertWidth(
       grid::grobWidth(md_grob(word, text_props = props)),
       "bigpts",
