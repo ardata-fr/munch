@@ -29,7 +29,8 @@ Supported markdown syntax:
 \item \code{`code`} (monospace)
 \item \verb{~~strikethrough~~}
 \item \verb{[link](url)} (underlined and colored)
-\item \verb{![alt](path)} (images)
+\item \verb{![alt](path)} (images, with a height of twice the font size, as in
+\code{\link[=md_grob]{md_grob()}}; an image that can not be read is dropped with a warning)
 \item Line breaks with \verb{\\n\\n} (paragraph) or two spaces + \verb{\\n} (hard break)
 \item Equations \verb{$...$} and \verb{$$...$$} (LaTeX), as in Pandoc; \verb{\\$} is a
 dollar. They are written as equations of 'flextable'

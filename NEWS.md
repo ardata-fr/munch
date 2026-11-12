@@ -27,6 +27,10 @@ The default line spacing is now the one of `flextable::get_flextable_defaults()`
 
 ## Bug fixes
 
+- `as_paragraph_md()` with an image (`![alt](path)`) gave a paragraph that
+`flextable::mk_par()` and `flextable::compose()` refused. Images are now given
+to 'flextable' with a height of twice the font size, as in `md_grob()`; an
+image that can not be read is dropped with a warning.
 - Equations created with `flextable::as_equation()` are now drawn by
 `chunks_grob()` and `element_chunks()`, with the colour and size of their
 chunk, if the package 'equatags' is installed (R >= 4.3). They were dropped

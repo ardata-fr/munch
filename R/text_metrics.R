@@ -183,9 +183,9 @@ calc_chunk_metrics <- function(
       target_w <- chunks$img_width[idx]
 
       if (is.na(target_h) && is.na(target_w)) {
-        # Default: image height = 2x font size in inches
-        target_h <- chunks$font.size[idx] / 72 * 2
-        target_w <- target_h * aspect
+        size <- default_image_size(img_info, chunks$font.size[idx])
+        target_h <- size$height
+        target_w <- size$width
       } else if (is.na(target_w)) {
         target_w <- target_h * aspect
       } else if (is.na(target_h)) {

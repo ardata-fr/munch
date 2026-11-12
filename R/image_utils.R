@@ -87,3 +87,16 @@ read_image_raster <- function(path, width = NULL, height = NULL) {
     }
   )
 }
+
+#' Default size of an image in a text
+#'
+#' Its height is twice the font size, its width keeps its aspect ratio.
+#'
+#' @param info Size of the image in pixels, from get_image_info().
+#' @param font_size Font size in points.
+#' @return A list with width and height in inches.
+#' @noRd
+default_image_size <- function(info, font_size) {
+  height <- font_size / 72 * 2
+  list(width = height * info$width / info$height, height = height)
+}
