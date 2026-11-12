@@ -144,6 +144,21 @@ makeContent.mdGrob <- function(x) {
     for (j in seq_along(line$chunks)) {
       chunk <- line$chunks[[j]]
 
+      # Render equation chunks, on the baseline of the line
+      if (!is.null(chunk$eq_data) && !is.na(chunk$eq_data) && nzchar(chunk$eq_data)) {
+        eq_grob <- equation_chunk_grob(
+          chunk,
+          x = current_x,
+          y = line_y,
+          name = paste0("equation_", chunk$.chunk_index)
+        )
+        if (!is.null(eq_grob)) {
+          line_grobs <- c(line_grobs, list(eq_grob))
+        }
+        current_x <- current_x + chunk$width
+        next
+      }
+
       # Render image chunks
       if (!is.null(chunk$img_path) && !is.na(chunk$img_path)) {
         img_raster <- read_image_raster(

@@ -128,7 +128,7 @@ A ggplot2 layer that can be added to a plot.
 \description{
 A ggplot2 geom for rendering markdown-formatted text. This geom is similar
 to \code{\link[ggplot2:geom_text]{ggplot2::geom_text()}} but supports basic markdown formatting
-(bold, italic, code, strikethrough, links, images).
+(bold, italic, code, strikethrough, links, images, equations).
 }
 \details{
 The geom supports the following markdown syntax:
@@ -139,6 +139,8 @@ The geom supports the following markdown syntax:
 \item \verb{~~strikethrough~~}
 \item \verb{[link](url)} (underlined and colored)
 \item \verb{![alt](path)} (images)
+\item \verb{$...$} and \verb{$$...$$} (LaTeX equations, drawn with 'equatags', see
+\link{munch-package})
 }
 
 Text properties (font size, family, color) are controlled by the

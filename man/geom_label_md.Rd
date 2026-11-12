@@ -137,7 +137,7 @@ A ggplot2 layer that can be added to a plot.
 \description{
 A ggplot2 geom for rendering markdown-formatted text with a background
 rectangle, similar to \code{\link[ggplot2:geom_label]{ggplot2::geom_label()}}. Supports basic markdown
-formatting (bold, italic, code, strikethrough, links, images).
+formatting (bold, italic, code, strikethrough, links, images, equations).
 }
 \details{
 The geom supports the same markdown syntax as \code{\link[=geom_text_md]{geom_text_md()}}.

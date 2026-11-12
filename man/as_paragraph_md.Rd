@@ -31,6 +31,9 @@ Supported markdown syntax:
 \item \verb{[link](url)} (underlined and colored)
 \item \verb{![alt](path)} (images)
 \item Line breaks with \verb{\\n\\n} (paragraph) or two spaces + \verb{\\n} (hard break)
+\item Equations \verb{$...$} and \verb{$$...$$} (LaTeX), as in Pandoc; \verb{\\$} is a
+dollar. They are written as equations of 'flextable'
+(\code{\link[flextable:as_equation]{flextable::as_equation()}}), which needs the package 'equatags'.
 }
 }
 \examples{

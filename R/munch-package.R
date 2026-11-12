@@ -2,7 +2,7 @@
 #'
 #' @description
 #' The 'munch' package renders rich inline text (bold, italic, code,
-#' links, images) in grid graphics and 'ggplot2', from markdown or
+#' links, images, equations) in grid graphics and 'ggplot2', from markdown or
 #' 'flextable' chunks.
 #'
 #' For 'ggplot2' integration, use [element_md()] and [element_chunks()] in
@@ -24,8 +24,12 @@
 #' to the device (e.g. via 'extrafont'). See `vignette("font-recipes")`
 #' for details.
 #'
-#' LaTeX and MathJax equations are not supported. For simple scientific
-#' notation, use `as_sup()` and `as_sub()` from 'flextable'.
+#' Equations, written `$...$` and `$$...$$` in markdown (as in Pandoc) or
+#' created with `flextable::as_equation()`, are drawn with the package
+#' 'equatags' (R >= 4.3); without it, their LaTeX source is written as text.
+#' A `$$...$$` equation is alone on its line, in display style. For simple
+#' scientific notation, `as_sup()` and `as_sub()` from 'flextable' are
+#' enough.
 #'
 #' Only inline formatting is supported: bold, italic, code, strikethrough,
 #' links, and images. Block elements such as headings, bullet lists, and

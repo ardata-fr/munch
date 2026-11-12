@@ -2,7 +2,7 @@
 #' @description
 #' A ggplot2 geom for rendering markdown-formatted text. This geom is similar
 #' to [ggplot2::geom_text()] but supports basic markdown formatting
-#' (bold, italic, code, strikethrough, links, images).
+#' (bold, italic, code, strikethrough, links, images, equations).
 #'
 #' @inheritParams ggplot2::geom_text
 #' @param width Maximum width for text wrapping in inches. `NA` (default)
@@ -41,6 +41,8 @@
 #' - `~~strikethrough~~`
 #' - `[link](url)` (underlined and colored)
 #' - `![alt](path)` (images)
+#' - `$...$` and `$$...$$` (LaTeX equations, drawn with 'equatags', see
+#'   [munch-package])
 #'
 #' Text properties (font size, family, color) are controlled by the
 #' `size`, `family`, and `colour` aesthetics respectively.
@@ -474,7 +476,7 @@ makeContent.MdTextAutoWrapGrob <- function(x) {
 #' @description
 #' A ggplot2 geom for rendering markdown-formatted text with a background
 #' rectangle, similar to [ggplot2::geom_label()]. Supports basic markdown
-#' formatting (bold, italic, code, strikethrough, links, images).
+#' formatting (bold, italic, code, strikethrough, links, images, equations).
 #' @inheritParams geom_text_md
 #' @param label.padding Amount of padding around label (defaults to 0.25 lines).
 #' @param label.r Radius of rounded corners (defaults to 0.15 lines).

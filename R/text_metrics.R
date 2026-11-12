@@ -29,6 +29,9 @@ calc_chunk_metrics <- function(
     return(chunks)
   }
 
+  # Equations that can not be drawn are written as LaTeX source
+  chunks <- equations_as_text(chunks)
+
   # Normalize image columns from different sources
 
   # flextable::as_image() uses img_data (a list column), while md_to_chunks() uses img_path
@@ -89,9 +92,10 @@ calc_chunk_metrics <- function(
   chunks$is_newline <- !is.na(chunks$txt) & chunks$txt %in% c("\n", "\n\n")
   chunks$is_space <- !is.na(chunks$txt) & chunks$txt == " "
 
-  # Separate image vs text chunks
+  # Separate image, equation and text chunks
   is_img <- !is.na(chunks$img_path)
-  is_text <- !is_img
+  is_eq <- !is_img & is_equation_chunk(chunks)
+  is_text <- !is_img & !is_eq
 
   # --- Text metrics ---
   if (any(is_text)) {
@@ -145,6 +149,19 @@ calc_chunk_metrics <- function(
       (chunks$vertical.align %in% c("superscript", "subscript"))
     chunks$width[is_ss] <- chunks$width[is_ss] * 0.75
     chunks$font.size[is_ss] <- chunks$font.size[is_ss] * 0.75
+  }
+
+  # --- Equation metrics ---
+  # Width, height above the baseline and depth below it, as images; the
+  # height of the line is the largest of its chunks (a fraction makes its
+  # line higher).
+  if (any(is_eq)) {
+    idx <- which(is_eq)
+    eq_metrics <- equation_metrics(chunks, idx)
+    chunks$width[idx] <- eq_metrics$width
+    chunks$ascent[idx] <- eq_metrics$height
+    chunks$descent[idx] <- eq_metrics$depth
+    chunks$height[idx] <- eq_metrics$height + eq_metrics$depth
   }
 
   # --- Image metrics ---

@@ -20,6 +20,9 @@
 #' - `[link](url)` (underlined and colored)
 #' - `![alt](path)` (images)
 #' - Line breaks with `\n\n` (paragraph) or two spaces + `\n` (hard break)
+#' - Equations `$...$` and `$$...$$` (LaTeX), as in Pandoc; `\$` is a
+#'   dollar. They are written as equations of 'flextable'
+#'   ([flextable::as_equation()]), which needs the package 'equatags'.
 #'
 #' @export
 #' @family paragraph
@@ -27,6 +30,9 @@
 as_paragraph_md <- function(x, font_family_mono = "mono") {
   props <- default_text_props(code_font_family = font_family_mono)
   chunks <- md_to_chunks(x, text_props = props)
+  # flextable chooses the style of equations itself (display when they are
+  # alone in their paragraph) and refuses unknown columns
+  chunks$eq_display <- NULL
   # Add .chunk_index for flextable ordering
   chunks$.chunk_index <- seq_len(nrow(chunks))
   structure(list(chunks), class = "paragraph")

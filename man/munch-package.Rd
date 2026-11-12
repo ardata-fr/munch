@@ -7,7 +7,7 @@
 \title{munch: Rich Inline Text for Grid Graphics and Flextable}
 \description{
 The 'munch' package renders rich inline text (bold, italic, code,
-links, images) in grid graphics and 'ggplot2', from markdown or
+links, images, equations) in grid graphics and 'ggplot2', from markdown or
 'flextable' chunks.
 
 For 'ggplot2' integration, use \code{\link[=element_md]{element_md()}} and \code{\link[=element_chunks]{element_chunks()}} in
@@ -32,8 +32,12 @@ but can still produce correct output if fonts are made available
 to the device (e.g. via 'extrafont'). See \code{vignette("font-recipes")}
 for details.
 
-LaTeX and MathJax equations are not supported. For simple scientific
-notation, use \code{as_sup()} and \code{as_sub()} from 'flextable'.
+Equations, written \verb{$...$} and \verb{$$...$$} in markdown (as in Pandoc) or
+created with \code{flextable::as_equation()}, are drawn with the package
+'equatags' (R >= 4.3); without it, their LaTeX source is written as text.
+A \verb{$$...$$} equation is alone on its line, in display style. For simple
+scientific notation, \code{as_sup()} and \code{as_sub()} from 'flextable' are
+enough.
 
 Only inline formatting is supported: bold, italic, code, strikethrough,
 links, and images. Block elements such as headings, bullet lists, and

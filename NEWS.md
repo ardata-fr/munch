@@ -1,5 +1,15 @@
 # munch 0.0.4
 
+## New features
+
+- Markdown text can contain LaTeX equations, written `$...$` (inline) and
+`$$...$$` (alone on their line, in display style) as in Pandoc and R Markdown:
+`md_grob()`, `element_md()`, `geom_text_md()` and `geom_label_md()` draw them
+with the colour and size of the text around them, and `as_paragraph_md()`
+gives them to 'flextable' as equations. A dollar that is not an equation
+(`5$ and 10$`, or `\$`) stays a dollar. Drawing needs the package 'equatags'
+(R >= 4.3); without it, the LaTeX source is written as text.
+
 ## Changes
 
 - Words are measured with the kerning of their font
@@ -17,6 +27,10 @@ The default line spacing is now the one of `flextable::get_flextable_defaults()`
 
 ## Bug fixes
 
+- Equations created with `flextable::as_equation()` are now drawn by
+`chunks_grob()` and `element_chunks()`, with the colour and size of their
+chunk, if the package 'equatags' is installed (R >= 4.3). They were dropped
+without a message. Without 'equatags', their LaTeX source is written as text.
 - `element_md()` now uses its argument `face` ("bold", "italic",
 "bold.italic"): it was ignored (#4). Markdown emphasis adds to it.
 `default_text_props()` has new arguments `bold` and `italic`.

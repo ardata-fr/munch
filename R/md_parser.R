@@ -2,6 +2,7 @@
 #' @description
 #' Converts markdown text to a chunk data.frame using commonmark.
 #' Supports: bold (**), italic (*), code (`), strikethrough (~~),
+#' equations ($...$ and $$...$$, see protect_equations()),
 #' images, and line breaks.
 #'
 #' @param md_text Character string with markdown formatting.
@@ -38,8 +39,14 @@ md_to_chunks <- function(md_text, text_props = NULL) {
     vertical.align = "baseline"
   )
 
+  # Equations are replaced by markers before commonmark reads the text (see
+  # protect_equations()), and become equation chunks in the text nodes
+  # (several strings are one text, as commonmark joins them)
+  protected <- protect_equations(paste(md_text, collapse = "\n"))
+  defaults$equations <- protected
+
   # Parse markdown to XML
-  xml_str <- commonmark::markdown_xml(md_text, extensions = TRUE)
+  xml_str <- commonmark::markdown_xml(protected$text, extensions = TRUE)
   doc <- xml2::read_xml(xml_str)
 
   # Get namespace
@@ -59,6 +66,7 @@ md_to_chunks <- function(md_text, text_props = NULL) {
   all_chunks <- lapply(seq_along(paragraphs), function(i) {
     p <- paragraphs[[i]]
     chunks <- parse_md_node(p, defaults, ns)
+    chunks <- display_equations_on_own_line(chunks)
 
     # Add paragraph break between paragraphs (except last)
     if (i < length(paragraphs) && nrow(chunks) > 0) {
@@ -104,18 +112,20 @@ parse_md_node <- function(node, props, ns) {
   # Handle terminal nodes
   if (name == "text") {
     txt <- xml2::xml_text(node)
-    return(chunk_dataframe(
-      txt = txt,
-      font.size = new_props$font.size,
-      bold = new_props$bold,
-      italic = new_props$italic,
-      underlined = new_props$underlined,
-      strike = new_props$strike,
-      color = new_props$font.color,
-      shading.color = new_props$shading.color,
-      font.family = new_props$font.family,
-      vertical.align = new_props$vertical.align
-    ))
+    if (length(new_props$equations$tex) > 0) {
+      pieces <- split_equation_markers(txt)
+      if (length(pieces) > 1 || is.integer(pieces[[1]])) {
+        rows <- lapply(pieces, function(piece) {
+          if (is.integer(piece)) {
+            equation_md_chunk(piece, new_props)
+          } else {
+            text_md_chunk(piece, new_props)
+          }
+        })
+        return(do.call(rbind_chunks, rows))
+      }
+    }
+    return(text_md_chunk(txt, new_props))
   }
 
   if (name == "softbreak") {
@@ -159,6 +169,38 @@ parse_md_node <- function(node, props, ns) {
 
   # Empty node
   NULL
+}
+
+# A text chunk with the properties in effect.
+text_md_chunk <- function(txt, props) {
+  chunk_dataframe(
+    txt = txt,
+    font.size = props$font.size,
+    bold = props$bold,
+    italic = props$italic,
+    underlined = props$underlined,
+    strike = props$strike,
+    color = props$font.color,
+    shading.color = props$shading.color,
+    font.family = props$font.family,
+    vertical.align = props$vertical.align
+  )
+}
+
+# The chunk of equation number `k` of the text (see protect_equations()),
+# with the size and the colour in effect; bold and italic do not apply to
+# equations. Display equations are put on their own line by
+# display_equations_on_own_line().
+equation_md_chunk <- function(k, props) {
+  chunk <- chunk_dataframe(
+    txt = NA_character_,
+    eq_data = props$equations$tex[k],
+    font.size = props$font.size,
+    color = props$font.color,
+    font.family = props$font.family
+  )
+  chunk$eq_display <- props$equations$display[k]
+  chunk
 }
 
 #' Parse inline markdown elements
