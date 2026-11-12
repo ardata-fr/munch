@@ -1,6 +1,6 @@
 Package: munch
 Title: Rich Inline Text for 'grid' Graphics and 'flextable'
-Version: 0.0.4.002
+Version: 0.0.4.003
 Authors@R: c(
     person("David", "Gohel", , "david.gohel@ardata.fr", role = c("aut", "cre")),
     person("ArData", role = "cph")
@@ -37,6 +37,8 @@ Suggests:
     svglite,
     testthat (>= 3.0.0),
     withr
+Remotes:
+    davidgohel/gdtools
 VignetteBuilder: 
     knitr,
     rmarkdown

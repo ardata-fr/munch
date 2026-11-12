@@ -298,6 +298,16 @@ test_that("an image is not decoded again when a grob is drawn again", {
   magick::image_write(magick::image_blank(20, 10, "red"), path, format = "png")
   gr <- md_grob(paste0("a ![](", path, ") b"))
 
+  # count the decodings of the file
+  image_read <- magick::image_read
+  n_read <- 0
+  local_mocked_bindings(
+    image_read = function(...) {
+      n_read <<- n_read + 1
+      image_read(...)
+    },
+    .package = "magick"
+  )
   find_raster <- function(x) {
     Filter(function(z) inherits(z, "rastergrob"), grid::makeContent(x)$children)
   }
@@ -305,13 +315,8 @@ test_that("an image is not decoded again when a grob is drawn again", {
   second <- find_raster(gr)[[1]]$raster
 
   expect_s3_class(first, "nativeRaster")
-  # tracemem() returns the address: same address, same raster
-  address <- function(x) {
-    res <- tracemem(x)
-    untracemem(x)
-    res
-  }
-  expect_identical(address(second), address(first))
+  expect_identical(second, first)
+  expect_equal(n_read, 1)
 })
 
 test_that("an SVG image is rendered at the size it is drawn", {
