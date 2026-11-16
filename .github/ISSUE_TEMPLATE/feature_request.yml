@@ -1,0 +1,29 @@
+name: Feature request
+description: Describe a problem munch does not let you solve
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please describe **the problem you ran into**, not the API you would like to see. One request per issue. See [CONTRIBUTING.md](https://github.com/ardata-fr/munch/blob/main/CONTRIBUTING.md).
+
+  - type: textarea
+    id: task
+    attributes:
+      label: The task you were trying to accomplish
+    validations:
+      required: true
+
+  - type: textarea
+    id: code
+    attributes:
+      label: The code you wrote and where it stopped working
+      render: r
+    validations:
+      required: true
+
+  - type: textarea
+    id: workaround
+    attributes:
+      label: What you did instead, and why it is not good enough
+      description: Optional. If there was a workaround.
