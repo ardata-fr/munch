@@ -23,6 +23,32 @@ test_that("check_device_compatibility passes with ragg", {
   })
 })
 
+with_cairo_pdf <- function(code) {
+  testthat::skip_if_not(capabilities("cairo"))
+  path <- tempfile(fileext = ".pdf")
+  grDevices::cairo_pdf(path)
+  on.exit({
+    dev.off()
+    unlink(path)
+  })
+  force(code)
+}
+
+test_that("cairo_pdf() is accepted when R draws its text with Pango", {
+  local_mocked_bindings(cairo_has_pango = function() TRUE)
+  with_cairo_pdf({
+    expect_no_warning(munch:::check_device_compatibility())
+  })
+})
+
+test_that("cairo_pdf() without Pango warns that it does not kern", {
+  local_mocked_bindings(cairo_has_pango = function() FALSE)
+  withr::local_options(rlib_warning_verbosity = "verbose")
+  with_cairo_pdf({
+    expect_warning(munch:::check_device_compatibility(), "does not kern")
+  })
+})
+
 # --- makeContent.mdGrob ---
 
 test_that("makeContent.mdGrob renders text", {

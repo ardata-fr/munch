@@ -39,12 +39,12 @@ the section "Alignment accuracy" of `vignette("using-ggplot2")`.
 
 ## Which devices agree with measurement?
 
-| Device family | Font lookup | Agrees with measurement? |
-|---------------|-------------|--------------------------|
-| ragg, svglite, ggiraph | 'systemfonts' | Always, same lookup on both sides |
-| `cairo_pdf()`, `png(type = "cairo")` | fontconfig | Only for system-installed fonts |
-| `pdf()` | Own engine | No guarantee, needs 'extrafont' |
-| `png()`, `jpeg()` (default type) | Depends on the system | Only for system-installed fonts |
+| Device family | Font lookup | Kerning | Agrees with measurement? |
+|---------------|-------------|---------|--------------------------|
+| ragg, svglite, ggiraph | 'systemfonts' | Yes | Always, same lookup on both sides |
+| `cairo_pdf()`, `png(type = "cairo")` | fontconfig | Yes, except on Windows | Only for system-installed fonts, and not on Windows |
+| `pdf()` | Own engine | No | No guarantee, needs 'extrafont' |
+| `png()`, `jpeg()` (default type) | Depends on the system | No on macOS (Quartz) | Only for system-installed fonts |
 
 ### systemfonts devices (recommended)
 
@@ -119,6 +119,14 @@ font_family_exists("sans")
 # Installed at the system level?
 font_family_exists("sans", system_only = TRUE)
 ```
+
+Cairo devices kern the text only when R draws it with the library
+'Pango', which is the case of R on macOS and, usually, on Linux. The
+builds of R for Windows do not have 'Pango': Cairo devices draw the text
+without kerning, so words such as "AVATAR" are drawn wider than measured
+(up to about 7%). Check it with `grDevices::grSoftVersion()["pango"]`,
+empty without 'Pango'. 'munch' warns when `cairo_pdf()` is used without
+'Pango'; prefer 'ragg' on Windows.
 
 'munch' recognizes `cairo_pdf()`, but not `png(type = "cairo")`: its
 device name, `"png"`, is the same as with other types. Set

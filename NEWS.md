@@ -24,6 +24,9 @@ texts slightly:
 and 'ggiraph' draw them: spaces after kerned words are no longer too wide,
 right-aligned lines end exactly at the right edge, and lines can hold slightly
 more words.
+- `cairo_pdf()` gives a warning on Windows, where R draws its text without
+the library 'Pango' and without kerning: words are drawn wider than measured.
+It is still accepted on macOS and Linux, where it kerns as 'ragg' does.
 - The height of a line is the line height of its font, the single line
 spacing of Word; a larger line spacing adds its space below the line. Lines
 almost touched each other with a line spacing of 1. The default line spacing

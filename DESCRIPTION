@@ -1,6 +1,6 @@
 Package: munch
 Title: Rich Inline Text for 'grid' Graphics and 'flextable'
-Version: 0.0.4.008
+Version: 0.0.4.009
 Authors@R: c(
     person("David", "Gohel", , "david.gohel@ardata.fr", role = c("aut", "cre")),
     person("ArData", role = "cph")
@@ -10,7 +10,8 @@ Description: Renders rich inline text (bold, italic, code, links, images)
     Provides grobs, theme elements, and geometry layers for styled text rendering.
     Only works with graphics devices that support 'systemfonts', such as
     those provided by 'ragg', 'svglite', or 'ggiraph'. The 'cairo_pdf'
-    device is also supported when fonts are installed at the system level.
+    device is also supported when fonts are installed at the system level,
+    except on Windows, where it does not apply the kerning of the fonts.
 License: MIT + file LICENSE
 URL: https://ardata-fr.github.io/munch/
 BugReports: https://github.com/ardata-fr/munch/issues

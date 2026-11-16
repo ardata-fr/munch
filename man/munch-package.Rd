@@ -26,7 +26,9 @@ and custom colors not available in markdown).
 
 Only graphics devices that support 'systemfonts' are compatible:
 'ragg', 'svglite', or 'ggiraph'. The \code{\link[=cairo_pdf]{cairo_pdf()}} device is also
-supported when fonts are installed at the system level.
+supported when fonts are installed at the system level, except on
+Windows, where it does not apply the kerning of the fonts: words are
+drawn wider than measured.
 Standard R devices (\code{\link[=pdf]{pdf()}}, \code{\link[=png]{png()}}, \code{\link[=jpeg]{jpeg()}}) are not compatible
 but can still produce correct output if fonts are made available
 to the device (e.g. via 'extrafont'). See \code{vignette("font-recipes")}
