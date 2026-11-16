@@ -24,7 +24,10 @@ test_that("check_device_compatibility passes with ragg", {
 })
 
 with_cairo_pdf <- function(code) {
-  testthat::skip_if_not(capabilities("cairo"))
+  # capabilities("cairo") is fixed when R is built; grSoftVersion() loads
+  # the cairo module of R, which fails on macOS without XQuartz
+  cairo_loads <- suppressWarnings(nzchar(grDevices::grSoftVersion()[["cairo"]]))
+  testthat::skip_if_not(cairo_loads, "the cairo module of R can not be loaded")
   path <- tempfile(fileext = ".pdf")
   grDevices::cairo_pdf(path)
   on.exit({
