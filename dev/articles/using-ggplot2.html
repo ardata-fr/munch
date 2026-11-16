@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">munch</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.4.007</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.4.009</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -460,7 +460,10 @@ not measured: a word using them can be drawn slightly narrower than
 measured.</p>
 <p>The default <code><a href="https://rdrr.io/r/grDevices/png.html" class="external-link">png()</a></code> device of macOS (Quartz) does not
 kern: words such as “AVATAR” are drawn wider than measured (up to about
-7%), and can touch the next word. Use ‘ragg’ instead.</p>
+7%), and can touch the next word. The Cairo devices
+<code><a href="https://rdrr.io/r/grDevices/cairo.html" class="external-link">cairo_pdf()</a></code> and <code>png(type = "cairo")</code> do not
+kern on Windows either, where R draws their text without the library
+‘Pango’. Use ‘ragg’ instead.</p>
 </div>
 <div class="section level2">
 <h2 id="choosing-the-right-approach">Choosing the right approach<a class="anchor" aria-label="anchor" href="#choosing-the-right-approach"></a>

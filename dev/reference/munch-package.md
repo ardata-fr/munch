@@ -28,8 +28,10 @@ and custom colors not available in markdown).
 Only graphics devices that support 'systemfonts' are compatible: 'ragg',
 'svglite', or 'ggiraph'. The
 [`cairo_pdf()`](https://rdrr.io/r/grDevices/cairo.html) device is also
-supported when fonts are installed at the system level. Standard R
-devices ([`pdf()`](https://rdrr.io/r/grDevices/pdf.html),
+supported when fonts are installed at the system level, except on
+Windows, where it does not apply the kerning of the fonts: words are
+drawn wider than measured. Standard R devices
+([`pdf()`](https://rdrr.io/r/grDevices/pdf.html),
 [`png()`](https://rdrr.io/r/grDevices/png.html),
 [`jpeg()`](https://rdrr.io/r/grDevices/png.html)) are not compatible but
 can still produce correct output if fonts are made available to the

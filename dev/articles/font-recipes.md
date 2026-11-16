@@ -32,12 +32,12 @@ see the section “Alignment accuracy” of
 
 ## Which devices agree with measurement?
 
-| Device family | Font lookup | Agrees with measurement? |
-|----|----|----|
-| ragg, svglite, ggiraph | ‘systemfonts’ | Always, same lookup on both sides |
-| [`cairo_pdf()`](https://rdrr.io/r/grDevices/cairo.html), `png(type = "cairo")` | fontconfig | Only for system-installed fonts |
-| [`pdf()`](https://rdrr.io/r/grDevices/pdf.html) | Own engine | No guarantee, needs ‘extrafont’ |
-| [`png()`](https://rdrr.io/r/grDevices/png.html), [`jpeg()`](https://rdrr.io/r/grDevices/png.html) (default type) | Depends on the system | Only for system-installed fonts |
+| Device family | Font lookup | Kerning | Agrees with measurement? |
+|----|----|----|----|
+| ragg, svglite, ggiraph | ‘systemfonts’ | Yes | Always, same lookup on both sides |
+| [`cairo_pdf()`](https://rdrr.io/r/grDevices/cairo.html), `png(type = "cairo")` | fontconfig | Yes, except on Windows | Only for system-installed fonts, and not on Windows |
+| [`pdf()`](https://rdrr.io/r/grDevices/pdf.html) | Own engine | No | No guarantee, needs ‘extrafont’ |
+| [`png()`](https://rdrr.io/r/grDevices/png.html), [`jpeg()`](https://rdrr.io/r/grDevices/png.html) (default type) | Depends on the system | No on macOS (Quartz) | Only for system-installed fonts |
 
 ### systemfonts devices (recommended)
 
@@ -125,6 +125,15 @@ font_family_exists("sans")
 font_family_exists("sans", system_only = TRUE)
 #> [1] TRUE
 ```
+
+Cairo devices kern the text only when R draws it with the library
+‘Pango’, which is the case of R on macOS and, usually, on Linux. The
+builds of R for Windows do not have ‘Pango’: Cairo devices draw the text
+without kerning, so words such as “AVATAR” are drawn wider than measured
+(up to about 7%). Check it with `grDevices::grSoftVersion()["pango"]`,
+empty without ‘Pango’. ‘munch’ warns when
+[`cairo_pdf()`](https://rdrr.io/r/grDevices/cairo.html) is used without
+‘Pango’; prefer ‘ragg’ on Windows.
 
 ‘munch’ recognizes
 [`cairo_pdf()`](https://rdrr.io/r/grDevices/cairo.html), but not

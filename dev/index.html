@@ -12,8 +12,8 @@
 <link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Rich Inline Text for grid Graphics and flextable">
-<meta name="description" content="Renders rich inline text (bold, italic, code, links, images) in grid graphics and ggplot2, from markdown or flextable chunks. Provides grobs, theme elements, and geometry layers for styled text rendering. Only works with graphics devices that support systemfonts, such as those provided by ragg, svglite, or ggiraph. The cairo_pdf device is also supported when fonts are installed at the system level.">
-<meta property="og:description" content="Renders rich inline text (bold, italic, code, links, images) in grid graphics and ggplot2, from markdown or flextable chunks. Provides grobs, theme elements, and geometry layers for styled text rendering. Only works with graphics devices that support systemfonts, such as those provided by ragg, svglite, or ggiraph. The cairo_pdf device is also supported when fonts are installed at the system level.">
+<meta name="description" content="Renders rich inline text (bold, italic, code, links, images) in grid graphics and ggplot2, from markdown or flextable chunks. Provides grobs, theme elements, and geometry layers for styled text rendering. Only works with graphics devices that support systemfonts, such as those provided by ragg, svglite, or ggiraph. The cairo_pdf device is also supported when fonts are installed at the system level, except on Windows, where it does not apply the kerning of the fonts.">
+<meta property="og:description" content="Renders rich inline text (bold, italic, code, links, images) in grid graphics and ggplot2, from markdown or flextable chunks. Provides grobs, theme elements, and geometry layers for styled text rendering. Only works with graphics devices that support systemfonts, such as those provided by ragg, svglite, or ggiraph. The cairo_pdf device is also supported when fonts are installed at the system level, except on Windows, where it does not apply the kerning of the fonts.">
 <meta property="og:image" content="https://ardata-fr.github.io/munch/logo.png">
 <meta name="robots" content="noindex">
 </head>
@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="index.html">munch</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.4.007</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.4.009</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -126,7 +126,7 @@
 <div class="section level2">
 <h2 id="supported-graphics-devices">Supported graphics devices<a class="anchor" aria-label="anchor" href="#supported-graphics-devices"></a>
 </h2>
-<p>‘munch’ requires graphics devices that support ‘systemfonts’: <a href="https://ragg.r-lib.org/" class="external-link">‘ragg’</a>, <a href="https://svglite.r-lib.org/" class="external-link">‘svglite’</a>, or <a href="https://davidgohel.github.io/ggiraph/" class="external-link">‘ggiraph’</a>. ‘cairo’ devices are also supported when fonts are installed at the system level. See <code><a href="articles/font-recipes.html">vignette("font-recipes")</a></code> for font configuration, alternative devices, and troubleshooting.</p>
+<p>‘munch’ requires graphics devices that support ‘systemfonts’: <a href="https://ragg.r-lib.org/" class="external-link">‘ragg’</a>, <a href="https://svglite.r-lib.org/" class="external-link">‘svglite’</a>, or <a href="https://davidgohel.github.io/ggiraph/" class="external-link">‘ggiraph’</a>. ‘cairo’ devices are also supported when fonts are installed at the system level, except on Windows, where they draw words without kerning, wider than measured. See <code><a href="articles/font-recipes.html">vignette("font-recipes")</a></code> for font configuration, alternative devices, and troubleshooting.</p>
 </div>
 <div class="section level2">
 <h2 id="quick-start">Quick start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
@@ -366,7 +366,7 @@
 </h3>
 <p><a href="https://marquee.r-lib.org/" class="external-link">‘marquee’</a> by Thomas Lin Pedersen offers more markdown features (headings, lists, code blocks, custom spans). ‘munch’ focuses first on integration with ‘flextable’ chunks and advanced formatting not available in markdown.</p>
 <ul>
-<li>‘munch’ works with ‘ragg’, ‘svglite’, ‘ggiraph’, <code><a href="https://rdrr.io/r/grDevices/cairo.html" class="external-link">cairo_pdf()</a></code>, <code>png(type = "cairo")</code>, and possibly <code><a href="https://rdrr.io/r/grDevices/pdf.html" class="external-link">pdf()</a></code> with some care (see <code><a href="articles/font-recipes.html">vignette("font-recipes")</a></code>).</li>
+<li>‘munch’ works with ‘ragg’, ‘svglite’, ‘ggiraph’, <code><a href="https://rdrr.io/r/grDevices/cairo.html" class="external-link">cairo_pdf()</a></code> and <code>png(type = "cairo")</code> (except on Windows), and possibly <code><a href="https://rdrr.io/r/grDevices/pdf.html" class="external-link">pdf()</a></code> with some care (see <code><a href="articles/font-recipes.html">vignette("font-recipes")</a></code>).</li>
 <li>‘marquee’ works on a wide range of R devices but not yet with ‘svglite’ or ‘ggiraph’.</li>
 <li>With markdown, ‘munch’ only handles inline formatting (paragraphs are separated by an empty line), while ‘marquee’ also handles blocks such as headings, lists and code blocks.</li>
 </ul>
@@ -391,6 +391,12 @@
 </ul>
 </div>
 
+<div class="community">
+<h2 data-toc-skip>Community</h2>
+<ul class="list-unstyled">
+<li><a href="CONTRIBUTING.html">Contributing guide</a></li>
+</ul>
+</div>
 
 <div class="citation">
 <h2 data-toc-skip>Citation</h2>

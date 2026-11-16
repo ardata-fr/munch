@@ -397,8 +397,10 @@ measured.
 
 The default [`png()`](https://rdrr.io/r/grDevices/png.html) device of
 macOS (Quartz) does not kern: words such as “AVATAR” are drawn wider
-than measured (up to about 7%), and can touch the next word. Use ‘ragg’
-instead.
+than measured (up to about 7%), and can touch the next word. The Cairo
+devices [`cairo_pdf()`](https://rdrr.io/r/grDevices/cairo.html) and
+`png(type = "cairo")` do not kern on Windows either, where R draws their
+text without the library ‘Pango’. Use ‘ragg’ instead.
 
 ## Choosing the right approach
 
