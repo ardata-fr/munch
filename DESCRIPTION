@@ -38,9 +38,6 @@ Suggests:
     svglite,
     testthat (>= 3.0.0),
     withr
-Remotes:
-    davidgohel/gdtools,
-    ardata-fr/equatags
 VignetteBuilder: 
     knitr,
     rmarkdown
