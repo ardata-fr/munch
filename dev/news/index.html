@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">munch</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.4.010</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.4.011</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -65,6 +65,7 @@
 <code><a href="../reference/as_paragraph_md.html">as_paragraph_md()</a></code> with an image (<code>![alt](path)</code>) gave a paragraph that <code><a href="https://davidgohel.github.io/flextable/reference/compose.html" class="external-link">flextable::mk_par()</a></code> and <code><a href="https://davidgohel.github.io/flextable/reference/compose.html" class="external-link">flextable::compose()</a></code> refused. Images now have a height of twice the font size, as in <code><a href="../reference/md_grob.html">md_grob()</a></code>; an image that can not be read is dropped with a warning.</li>
 <li>
 <code><a href="../reference/element_md.html">element_md()</a></code> ignored its argument <code>face</code> (<a href="https://github.com/ardata-fr/munch/issues/4" class="external-link">#4</a>). Markdown emphasis now adds to it, and <code><a href="../reference/default_text_props.html">default_text_props()</a></code> has new arguments <code>bold</code> and <code>italic</code>.</li>
+<li>The width of <code><a href="../reference/element_md.html">element_md()</a></code> and <code><a href="../reference/element_chunks.html">element_chunks()</a></code> given to ‘ggplot2’ includes their left and right margins, as with the titles of ‘ggplot2’. Used for <code>legend.text</code>, the widest labels were wrapped and drawn over the next key; the title of the y axis is now spaced from the axis by its margin.</li>
 <li>With <code>width</code> and <code>hjust</code> &gt; 0, the text of <code><a href="../reference/md_grob.html">md_grob()</a></code>, <code><a href="../reference/chunks_grob.html">chunks_grob()</a></code>, <code><a href="../reference/geom_text_md.html">geom_text_md()</a></code> and <code><a href="../reference/geom_label_md.html">geom_label_md()</a></code> was shifted to the right of its anchor, and out of the box of labels.</li>
 </ul></div>
 <div class="section level3">

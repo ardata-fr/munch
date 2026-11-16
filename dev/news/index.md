@@ -72,6 +72,14 @@ texts slightly:
   emphasis now adds to it, and
   [`default_text_props()`](https://ardata-fr.github.io/munch/dev/reference/default_text_props.md)
   has new arguments `bold` and `italic`.
+- The width of
+  [`element_md()`](https://ardata-fr.github.io/munch/dev/reference/element_md.md)
+  and
+  [`element_chunks()`](https://ardata-fr.github.io/munch/dev/reference/element_chunks.md)
+  given to ‘ggplot2’ includes their left and right margins, as with the
+  titles of ‘ggplot2’. Used for `legend.text`, the widest labels were
+  wrapped and drawn over the next key; the title of the y axis is now
+  spaced from the axis by its margin.
 - With `width` and `hjust` \> 0, the text of
   [`md_grob()`](https://ardata-fr.github.io/munch/dev/reference/md_grob.md),
   [`chunks_grob()`](https://ardata-fr.github.io/munch/dev/reference/chunks_grob.md),
