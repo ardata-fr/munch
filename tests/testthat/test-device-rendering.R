@@ -388,6 +388,36 @@ test_that("widthDetails.mdTitleGrob auto_wrap returns natural content width in i
   })
 })
 
+test_that("the width of a title includes its left and right margins", {
+  # legends size the column of their labels with this width; without the
+  # margins, the widest label wrapped and overflowed on the next key
+  with_ragg({
+    margin <- ggplot2::margin(0, 10, 0, 20, unit = "pt")
+    titles <- list(
+      ggplot2::element_grob(
+        element_md(size = 12, margin = margin),
+        label = "A legend label",
+        margin_x = TRUE,
+        margin_y = TRUE
+      ),
+      ggplot2::element_grob(
+        element_chunks(
+          flextable::as_paragraph(flextable::as_chunk("A legend label")),
+          margin = margin
+        ),
+        label = "",
+        margin_x = TRUE,
+        margin_y = TRUE
+      )
+    )
+    for (gr in titles) {
+      w <- grid::convertWidth(grid::widthDetails(gr), "pt", valueOnly = TRUE)
+      content_w <- grid::convertWidth(gr$content_w, "pt", valueOnly = TRUE)
+      expect_equal(w - content_w, 30, tolerance = 1e-6)
+    }
+  })
+})
+
 test_that("heightDetails.mdTitleGrob no auto_wrap", {
   with_ragg({
     el <- element_md(size = 12)

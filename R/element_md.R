@@ -373,7 +373,27 @@ widthDetails.mdTitleGrob <- function(x) {
   # (makeContent rewraps text to the available width); returning unit(1, "npc")
   # here causes ggplot2 to allocate the full plot width for legend label
   # columns, collapsing the plot panel.
-  x$content_w %||% sum(x$widths)
+  title_natural_width(x)
+}
+
+#' Natural width of a title, with its left and right margins
+#'
+#' The margins are included as in the titles of 'ggplot2': legends size the
+#' column of their labels with this width, and the text wraps to the width of
+#' the column minus the margins. Without them, the widest label wrapped and
+#' overflowed on the next key.
+#' @param x A title grob.
+#' @return A unit, in inches.
+#' @noRd
+title_natural_width <- function(x) {
+  if (is.null(x$content_w)) {
+    return(sum(x$widths))
+  }
+  width <- x$content_w
+  if (length(x$widths) == 3L && !is.null(x$margin)) {
+    width <- x$margin[4] + width + x$margin[2]
+  }
+  unit(convertWidth(width, "inches", valueOnly = TRUE), "inches")
 }
 
 #' @export
@@ -962,7 +982,7 @@ element_grob.element_chunks <- function(
 #' @export
 widthDetails.chunksGrob <- function(x) {
   # Always report the natural content width. See widthDetails.mdTitleGrob.
-  x$content_w %||% sum(x$widths)
+  title_natural_width(x)
 }
 
 #' @export

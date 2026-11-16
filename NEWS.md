@@ -47,6 +47,10 @@ height of twice the font size, as in `md_grob()`; an image that can not be
 read is dropped with a warning.
 - `element_md()` ignored its argument `face` (#4). Markdown emphasis now adds
 to it, and `default_text_props()` has new arguments `bold` and `italic`.
+- The width of `element_md()` and `element_chunks()` given to 'ggplot2'
+includes their left and right margins, as with the titles of 'ggplot2'. Used
+for `legend.text`, the widest labels were wrapped and drawn over the next
+key; the title of the y axis is now spaced from the axis by its margin.
 - With `width` and `hjust` > 0, the text of `md_grob()`, `chunks_grob()`,
 `geom_text_md()` and `geom_label_md()` was shifted to the right of its anchor,
 and out of the box of labels.
