@@ -717,3 +717,39 @@ test_that("an empty font family of the theme gives the flextable font", {
     }
   })
 })
+
+test_that("titles are placed as element_text() titles", {
+  skip_if_not_installed("ragg")
+  gdtools::font_set_liberation()
+  withr::local_options(munch.skip_device_check = TRUE)
+  dat <- data.frame(x = c(1, 2), y = c(1, 2), g = c("aa", "bb"))
+  p <- ggplot2::ggplot(dat, ggplot2::aes(x, y, colour = g)) +
+    ggplot2::geom_point() +
+    ggplot2::labs(x = "X title", y = "Y title", colour = "A legend title") +
+    ggplot2::theme_grey(base_family = "Liberation Sans")
+  same_place <- function(slot, args) {
+    args$colour <- "red"
+    text <- red_ink_box(
+      p + ggplot2::theme(!!slot := do.call(ggplot2::element_text, args))
+    )
+    md <- red_ink_box(p + ggplot2::theme(!!slot := do.call(element_md, args)))
+    # horizontal place; vertical metrics follow Word and differ slightly
+    expect_lte(max(abs(md[1:2] - text[1:2])), 2, label = slot)
+  }
+  # hjust of axis titles, whose layout has the size of the text
+  same_place("axis.title.x", list(hjust = 1))
+  same_place("axis.title.x", list(hjust = 0))
+  # the title of a legend is not wrapped, even wider than the keys and labels
+  same_place("legend.title", list())
+  same_place("legend.title", list(hjust = 1))
+
+  # the y axis title is rotated: hjust moves it vertically
+  args <- list(colour = "red", hjust = 1)
+  text <- red_ink_box(
+    p + ggplot2::theme(axis.title.y = do.call(ggplot2::element_text, args))
+  )
+  md <- red_ink_box(
+    p + ggplot2::theme(axis.title.y = do.call(element_md, args))
+  )
+  expect_lte(max(abs(md[3:4] - text[3:4])), 2)
+})

@@ -44,6 +44,10 @@ kerning: words are wider than measured. Use 'ragg' instead.
 
 ## Bug fixes
 
+- `hjust` had no effect on axis titles made with `element_md()` or
+`element_chunks()`: they stayed centred.
+- The title of a legend made with `element_md()` or `element_chunks()` was
+wrapped when it was wider than the keys and labels (`Legen` / `d`).
 - `geom_text_md()` with an `angle` drew the text away from its point, or
 outside the panel (`angle = 30`).
 - `element_md()` ignored its argument `face` (#4).

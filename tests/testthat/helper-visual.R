@@ -67,3 +67,17 @@ visual_renderers <- list(
   #   tolerance = 0.001
   # )
 )
+
+# pixel box (columns, then rows) of the pure red ink of a plot, drawn by ragg
+red_ink_box <- function(p, width = 500, height = 400) {
+  cap <- ragg::agg_capture(width = width, height = height, units = "px")
+  print(p)
+  img <- cap(native = FALSE)
+  grDevices::dev.off()
+  rgb <- grDevices::col2rgb(img)
+  red <- matrix(
+    rgb["red", ] > 150 & rgb["green", ] < 110 & rgb["blue", ] < 110,
+    nrow = nrow(img)
+  )
+  c(range(which(colSums(red) > 0)), range(which(rowSums(red) > 0)))
+}

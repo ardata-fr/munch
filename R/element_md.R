@@ -271,12 +271,16 @@ element_grob.element_md <- function(
     }
   } else {
     # No explicit position: use layout viewports (titles, captions, axes)
+    # The layout has the size of the text in a direction without margins:
+    # justify it in its cell, as titleGrob() of ggplot2 places its text at
+    # hjust and vjust. Centred, hjust of an axis title had no effect.
     layout_vp <- viewport(
       layout = grid.layout(
         nrow = nrow_layout,
         ncol = ncol_layout,
         widths = widths,
-        heights = heights
+        heights = heights,
+        just = rotate_text_just(hj, vj, angle)
       )
     )
     cell_vp <- viewport(
@@ -505,6 +509,11 @@ title_height <- function(x) {
   if (!isTRUE(x$auto_wrap)) {
     return(sum(x$heights))
   }
+  if (is_legend_title(x)) {
+    # not wrapped: the height of its single line, the content row is "null"
+    margin <- x$margin %||% ggplot2::margin()
+    return(margin[1] + x$content_h + margin[3])
+  }
 
   available <- tryCatch(gtable_column_width(x), error = function(e) NULL)
   wrap_width <- title_wrap_width(x, available %||% viewport_width())
@@ -531,6 +540,20 @@ title_height <- function(x) {
 title_set_wrap_width <- function(x) {
   if (!isTRUE(x$auto_wrap)) {
     return(x)
+  }
+  if (is_legend_title(x)) {
+    # not wrapped: placed at hjust in its cell and overflowing it, as
+    # titleGrob() of ggplot2
+    md_gr <- x$children[[1]]
+    md_gr$vp <- vpStack(
+      md_gr$vp,
+      viewport(
+        x = unit(md_gr$hjust, "npc"),
+        width = x$content_w,
+        just = c(md_gr$hjust, 0.5)
+      )
+    )
+    return(setChildren(x, gList(md_gr)))
   }
 
   wrap_width <- title_wrap_width(x, viewport_width())
@@ -904,12 +927,16 @@ element_grob.element_chunks <- function(
     }
   } else {
     # No explicit position: use layout viewports (titles, captions, axes)
+    # The layout has the size of the text in a direction without margins:
+    # justify it in its cell, as titleGrob() of ggplot2 places its text at
+    # hjust and vjust. Centred, hjust of an axis title had no effect.
     layout_vp <- viewport(
       layout = grid.layout(
         nrow = nrow_layout,
         ncol = ncol_layout,
         widths = widths,
-        heights = heights
+        heights = heights,
+        just = rotate_text_just(hj, vj, angle)
       )
     )
     cell_vp <- viewport(
@@ -1052,4 +1079,37 @@ merge_element.element_chunks <- function(new, old) {
     }
   }
   new
+}
+
+#' Justification of a rotated text in its cell
+#'
+#' The horizontal and vertical justification of the box of a text rotated by
+#' `angle`, as `rotate_just()` of 'ggplot2' for right angles.
+#' @param hjust,vjust Justification of the text.
+#' @param angle Rotation angle in degrees.
+#' @return A numeric vector of length 2.
+#' @noRd
+rotate_text_just <- function(hjust, vjust, angle) {
+  angle <- angle %% 360
+  if (angle >= 270) {
+    c(vjust, 1 - hjust)
+  } else if (angle >= 180) {
+    c(1 - hjust, 1 - vjust)
+  } else if (angle >= 90) {
+    c(1 - vjust, hjust)
+  } else {
+    c(hjust, vjust)
+  }
+}
+
+#' Is a title the title of a legend?
+#'
+#' The title of a legend does not wrap: 'ggplot2' gives it a cell as wide as
+#' the keys and labels, adds empty columns when the title is wider, and lets
+#' the text overflow its cell. ggplot2 names this grob "guide.title".
+#' @param x A title grob.
+#' @return A logical.
+#' @noRd
+is_legend_title <- function(x) {
+  startsWith(x$name %||% "", "guide.title")
 }
