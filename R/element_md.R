@@ -605,6 +605,12 @@ merge_element.element_md <- function(new, old) {
 #' A theme element that renders 'flextable' chunks directly in plot titles,
 #' subtitles, captions, and other text positions. This allows using
 #' superscripts, subscripts, and other formatting not available in markdown.
+#'
+#' The format of each chunk comes from the chunk itself, for example
+#' `as_chunk(props = fp_text_lite(font.size = 14))`; what the chunk does not
+#' set comes from the theme (size, font family, colour and face, as for other
+#' texts of the plot, or `size` of the element), and what the theme does not
+#' set comes from [flextable::set_flextable_defaults()].
 #' @param chunks A paragraph object created with [flextable::as_paragraph()]
 #'   containing chunks such as [flextable::as_chunk()], [flextable::as_sup()],
 #'   [flextable::as_sub()], etc.
@@ -621,7 +627,8 @@ merge_element.element_md <- function(new, old) {
 #'   with an explicit position.
 #' @param debug Show debug rectangles.
 #' @param inherit.blank Should this element inherit blank elements.
-#' @param size font size
+#' @param size Font size in points of the chunks that do not set theirs. By
+#'   default, the size of the theme.
 #'
 #' @return An element of class `c("element_chunks", "element_text", "element")`.
 #' @export
@@ -706,6 +713,11 @@ element_chunks <- function(
   structure(
     list(
       chunks = chunks,
+      # not arguments: the format comes from the chunks, these fields receive
+      # the values of the theme when the element is merged with it
+      family = NULL,
+      face = NULL,
+      colour = NULL,
       hjust = hjust,
       vjust = vjust,
       angle = angle,
@@ -758,11 +770,23 @@ element_grob.element_chunks <- function(
     chunks_df <- chunks
   }
 
-  # Get base defaults from text_props.
-  # Size resolution order: ggplot2 theme-resolved size (passed by calc_element)
-  # > element$size (explicitly set by user) > flextable defaults.
-  resolved_size <- size %||% element$size
-  base_props <- default_text_props(font_size = resolved_size)
+  # The format of each chunk comes from the chunk, else from the element and
+  # its theme (size, family, colour, face), else from the flextable defaults.
+  # An empty family, the default of the themes, does not set the font.
+  base_props <- default_text_props()
+  family <- family %||% element$family
+  if (!is.null(family) && !nzchar(family)) {
+    family <- NULL
+  }
+  face <- face %||% element$face %||% "plain"
+  text_props <- default_text_props(
+    font_size = size %||% element$size,
+    font_family = family,
+    font_color = colour %||% element$colour,
+    bold = face %in% c("bold", "bold.italic", 2, 4),
+    italic = face %in% c("italic", "bold.italic", 3, 4)
+  )
+  chunks_df <- apply_defaults(chunks_df, text_props)
 
   # Resolve properties (parameter > element > text_props defaults)
   hj <- hjust %||% element$hjust %||% 0.5
@@ -1006,6 +1030,9 @@ makeContent.chunksGrob <- function(x) {
 merge_element.element_chunks <- function(new, old) {
   props_names <- c(
     "chunks",
+    "family",
+    "face",
+    "colour",
     "hjust",
     "vjust",
     "angle",

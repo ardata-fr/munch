@@ -387,6 +387,18 @@ test_that("lines follow the rules of flextable::layout_lines()", {
   expect_equal(lines[[2]]$height, 0.2)
   expect_equal(lines[[2]]$width, 0)
 
+  # the space that fits but ends a line broken automatically is neither
+  # measured nor drawn, so that right-aligned lines end at the edge
+  chunks <- make_chunks(c("ab", " ", "cd"), c(1, .2, 1))
+  lines <- arrange_chunks_into_lines(chunks, 1.5)
+  expect_equal(line_text(lines), c("ab", "cd"))
+  expect_equal(lines[[1]]$width, 1)
+  # a line ended by a line break of the text keeps its spaces
+  chunks <- make_chunks(c("ab", " ", "\n", "cd"), c(1, .2, 0, 1))
+  lines <- arrange_chunks_into_lines(chunks, 3)
+  expect_equal(line_text(lines), c("ab ", "cd"))
+  expect_equal(lines[[1]]$width, 1.2)
+
   # spaces written after a line break are kept
   chunks <- make_chunks(c("a", "\n", " ", "b"), c(1, 0, .2, 1))
   expect_equal(
@@ -430,7 +442,8 @@ test_that("a word wider than a line starts on a new line", {
   word <- strrep("b", 50)
   lines <- word_line_text(word_lines(paste("a", word, "c"), 1))
 
-  expect_identical(lines[1], "a ")
+  # the space before the automatic line break is not drawn
+  expect_identical(lines[1], "a")
   expect_gt(nchar(lines[2]), 1L)
   expect_identical(paste(lines[-1], collapse = ""), paste(word, "c"))
 })

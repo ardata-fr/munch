@@ -632,3 +632,53 @@ test_that("element_md with rotation renders in ggplot with ragg", {
     expect_no_error(print(p))
   })
 })
+
+test_that("element_chunks() takes the format of the chunks, then of the theme", {
+  with_ragg({
+    old <- flextable::set_flextable_defaults(
+      font.size = 10,
+      font.family = "Liberation Mono",
+      font.color = "black"
+    )
+    withr::defer(do.call(flextable::set_flextable_defaults, old))
+    chunks <- flextable::as_paragraph(
+      flextable::as_chunk("a"),
+      flextable::as_chunk(
+        "b",
+        props = officer::fp_text_lite(
+          font.size = 40,
+          font.family = "Liberation Sans",
+          color = "green",
+          bold = FALSE
+        )
+      )
+    )
+    title_chunks <- function(element, theme) {
+      theme <- theme + ggplot2::theme(plot.title = element)
+      el <- ggplot2::calc_element("plot.title", theme)
+      ggplot2::element_grob(el, label = "")$children[[1]]$chunks
+    }
+    th <- ggplot2::theme_minimal(
+      base_size = 20,
+      base_family = "Liberation Serif"
+    ) +
+      ggplot2::theme(
+        plot.title = ggplot2::element_text(colour = "red", face = "bold")
+      )
+
+    # the theme fills what the chunk does not set
+    ch <- title_chunks(element_chunks(chunks), th)
+    expect_equal(ch$font.size, c(24, 40))
+    expect_equal(ch$font.family, c("Liberation Serif", "Liberation Sans"))
+    expect_equal(ch$color, c("red", "green"))
+    expect_equal(ch$bold, c(TRUE, FALSE))
+
+    # size of the element before the theme
+    ch <- title_chunks(element_chunks(chunks, size = 30), th)
+    expect_equal(ch$font.size, c(30, 40))
+
+    # an empty family, the default of the themes, keeps the flextable default
+    ch <- title_chunks(element_chunks(chunks), ggplot2::theme_minimal())
+    expect_equal(ch$font.family, c("Liberation Mono", "Liberation Sans"))
+  })
+})

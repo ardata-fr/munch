@@ -386,10 +386,25 @@ arrange_chunks_into_lines <- function(chunks, max_width = NULL) {
   attr(columns, "row.names") <- NULL
   chunk_at <- function(i) lapply(columns, `[`, i)
 
+  is_space <- chunks$is_space %in% TRUE
+
   kept <- which(line_index > 0L)
-  lapply(unname(split(kept, line_index[kept])), function(index) {
+  lines <- unname(split(kept, line_index[kept]))
+  lapply(seq_along(lines), function(k) {
+    index <- lines[[k]]
     # a line with only a line break is an empty line: it gives the height
     drawn <- index[!is_newline[index]]
+    # as in Word, the spaces that end a line broken automatically are neither
+    # measured nor drawn: right-aligned lines end at the edge. A line ended by
+    # a line break of the text keeps its spaces, as they were written.
+    last <- max(index)
+    ended_by_newline <- any(is_newline[index]) ||
+      (last < length(is_newline) && is_newline[last + 1L])
+    if (k < length(lines) && !ended_by_newline) {
+      while (length(drawn) > 1L && is_space[drawn[length(drawn)]]) {
+        drawn <- drawn[-length(drawn)]
+      }
+    }
     list(
       chunks = lapply(drawn, chunk_at),
       width = sum(chunks$width[drawn]),
