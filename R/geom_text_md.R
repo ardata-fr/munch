@@ -392,10 +392,14 @@ GeomTextMd <- ggplot2::ggproto(
       )
 
       # Handle rotation
+      # rotate the viewport of the text around its anchor; it keeps the size
+      # of the text, a viewport of the panel size moved the text away
       if (row$angle != 0) {
         gr$vp <- grid::viewport(
           x = grid::unit(row$x, "npc"),
           y = grid::unit(row$y, "npc"),
+          width = gr$vp$width,
+          height = gr$vp$height,
           angle = row$angle,
           just = c(row$hjust, row$vjust)
         )
@@ -461,10 +465,13 @@ makeContent.MdTextAutoWrapGrob <- function(x) {
       text_props = props
     )
 
+    # see draw_panel(): the rotated viewport keeps the size of the text
     if (row$angle != 0) {
       gr$vp <- grid::viewport(
         x = unit(row$x, "npc"),
         y = unit(row$y, "npc"),
+        width = gr$vp$width,
+        height = gr$vp$height,
         angle = row$angle,
         just = c(row$hjust, row$vjust)
       )

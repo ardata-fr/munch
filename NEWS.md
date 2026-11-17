@@ -44,6 +44,8 @@ kerning: words are wider than measured. Use 'ragg' instead.
 
 ## Bug fixes
 
+- `geom_text_md()` with an `angle` drew the text away from its point, or
+outside the panel (`angle = 30`).
 - `element_md()` ignored its argument `face` (#4).
 - `element_md()` and `element_chunks()` ignored their left and right margins
 in their width: used as `legend.text`, the widest labels were wrapped and

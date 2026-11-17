@@ -456,3 +456,34 @@ test_that("default size, font, colour and fill come from the theme, as geom_text
   expect_equal(aes_of(geom_label_md()), aes_of(ggplot2::geom_label()))
   expect_equal(aes_of(geom_text_md())$size, 20 / ggplot2::.pt)
 })
+
+test_that("rotated texts are drawn around their point, as geom_text()", {
+  skip_if_not_installed("ragg")
+  gdtools::font_set_liberation()
+  withr::local_options(munch.skip_device_check = TRUE)
+  dat <- data.frame(x = 0, y = 0, label = "Hello")
+  # pixel box of the red ink of a plot
+  red_box <- function(layer) {
+    p <- ggplot2::ggplot(dat, ggplot2::aes(x, y, label = label)) +
+      layer +
+      ggplot2::xlim(-1, 1) +
+      ggplot2::ylim(-1, 1) +
+      ggplot2::theme_void(base_family = "Liberation Sans")
+    cap <- ragg::agg_capture(width = 300, height = 300, units = "px")
+    print(p)
+    img <- cap(native = FALSE)
+    grDevices::dev.off()
+    rgb <- grDevices::col2rgb(img)
+    red <- matrix(
+      rgb["red", ] > 150 & rgb["green", ] < 110 & rgb["blue", ] < 110,
+      nrow = nrow(img)
+    )
+    c(range(which(colSums(red) > 0)), range(which(rowSums(red) > 0)))
+  }
+  for (args in list(list(angle = 30), list(angle = 90, hjust = 0))) {
+    args$colour <- "red"
+    md <- red_box(do.call(geom_text_md, args))
+    txt <- red_box(do.call(ggplot2::geom_text, args))
+    expect_lte(max(abs(md - txt)), 3)
+  }
+})
