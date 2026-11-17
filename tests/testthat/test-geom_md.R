@@ -304,7 +304,6 @@ test_that("GeomLabelMd has correct default aesthetics", {
   # size, family and colour come from the theme, see the test below
   defaults <- GeomLabelMd$default_aes
 
-  expect_equal(defaults$fill, "white")
   expect_equal(defaults$angle, 0)
   expect_equal(defaults$hjust, 0.5)
   expect_equal(defaults$vjust, 0.5)
@@ -438,12 +437,20 @@ test_that("element_chunks accepts angle", {
   expect_no_error(ggplot2::ggplotGrob(p))
 })
 
-test_that("default size, font and colour come from the theme, as geom_text()", {
+test_that("default size, font, colour and fill come from the theme, as geom_text()", {
   dat <- data.frame(x = 0, y = 0, label = "a")
-  th <- ggplot2::theme_grey(base_size = 20, base_family = "serif", ink = "navy")
+  th <- ggplot2::theme_grey(
+    base_size = 20,
+    base_family = "serif",
+    ink = "navy",
+    paper = "ivory"
+  )
   aes_of <- function(geom) {
     p <- ggplot2::ggplot(dat, ggplot2::aes(x, y, label = label)) + geom + th
-    ggplot2::layer_data(p)[c("size", "family", "colour")]
+    ggplot2::layer_data(p)[intersect(
+      c("size", "family", "colour", "fill"),
+      names(ggplot2::layer_data(p))
+    )]
   }
   expect_equal(aes_of(geom_text_md()), aes_of(ggplot2::geom_text()))
   expect_equal(aes_of(geom_label_md()), aes_of(ggplot2::geom_label()))

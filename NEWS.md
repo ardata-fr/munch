@@ -22,7 +22,8 @@ texts slightly:
 
 - `geom_text_md()` and `geom_label_md()` take their default size, font
 family and colour from the theme, as `geom_text()` and `geom_label()` in
-'ggplot2' 4.0: the size follows `base_size` (it was 3.88 mm, 11.04 pt).
+'ggplot2' 4.0: the size follows `base_size` (it was 3.88 mm, 11.04 pt). The
+fill of `geom_label_md()` is the paper colour of the theme, white by default.
 - Words are measured with the kerning of their font, as 'ragg', 'svglite'
 and 'ggiraph' draw them: spaces after kerned words are no longer too wide,
 right-aligned lines end exactly at the right edge, and lines can hold slightly

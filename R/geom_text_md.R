@@ -561,7 +561,7 @@ GeomLabelMd <- ggplot2::ggproto(
   # as geom_label(): size, font and colour come from the theme
   default_aes = ggplot2::aes(
     colour = ggplot2::from_theme(colour %||% ink),
-    fill = "white",
+    fill = ggplot2::from_theme(fill %||% paper),
     size = ggplot2::from_theme(fontsize),
     angle = 0,
     hjust = 0.5,
