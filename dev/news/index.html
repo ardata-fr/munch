@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">munch</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.4.011</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.4.013</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -60,7 +60,10 @@
 </ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-0-0-4">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-0-4"></a></h3>
-<ul><li>Equations created with <code><a href="https://davidgohel.github.io/flextable/reference/as_equation.html" class="external-link">flextable::as_equation()</a></code> were dropped without a message by <code><a href="../reference/chunks_grob.html">chunks_grob()</a></code> and <code><a href="../reference/element_chunks.html">element_chunks()</a></code>; they are now drawn.</li>
+<ul><li>The space that ends a line broken automatically is no longer measured nor drawn, as in Word: right-aligned lines of wrapped text stopped one space before the edge, and centred lines were shifted by half a space.</li>
+<li>
+<code><a href="../reference/element_chunks.html">element_chunks()</a></code> used neither its argument <code>size</code> nor the size, font, colour and face of the theme: chunks that do not set them were drawn with the defaults of ‘flextable’. They now take them from the element and the theme, as other texts of the plot, and from the defaults of ‘flextable’ only when the theme does not set them (an empty font family). Titles made with <code><a href="../reference/element_chunks.html">element_chunks()</a></code> change size, for example with <code>base_size</code>.</li>
+<li>Equations created with <code><a href="https://davidgohel.github.io/flextable/reference/as_equation.html" class="external-link">flextable::as_equation()</a></code> were dropped without a message by <code><a href="../reference/chunks_grob.html">chunks_grob()</a></code> and <code><a href="../reference/element_chunks.html">element_chunks()</a></code>; they are now drawn.</li>
 <li>
 <code><a href="../reference/as_paragraph_md.html">as_paragraph_md()</a></code> with an image (<code>![alt](path)</code>) gave a paragraph that <code><a href="https://davidgohel.github.io/flextable/reference/compose.html" class="external-link">flextable::mk_par()</a></code> and <code><a href="https://davidgohel.github.io/flextable/reference/compose.html" class="external-link">flextable::compose()</a></code> refused. Images now have a height of twice the font size, as in <code><a href="../reference/md_grob.html">md_grob()</a></code>; an image that can not be read is dropped with a warning.</li>
 <li>

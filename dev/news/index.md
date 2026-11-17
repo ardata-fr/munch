@@ -51,6 +51,18 @@ texts slightly:
 
 ### Bug fixes
 
+- The space that ends a line broken automatically is no longer measured
+  nor drawn, as in Word: right-aligned lines of wrapped text stopped one
+  space before the edge, and centred lines were shifted by half a space.
+- [`element_chunks()`](https://ardata-fr.github.io/munch/dev/reference/element_chunks.md)
+  used neither its argument `size` nor the size, font, colour and face
+  of the theme: chunks that do not set them were drawn with the defaults
+  of ‘flextable’. They now take them from the element and the theme, as
+  other texts of the plot, and from the defaults of ‘flextable’ only
+  when the theme does not set them (an empty font family). Titles made
+  with
+  [`element_chunks()`](https://ardata-fr.github.io/munch/dev/reference/element_chunks.md)
+  change size, for example with `base_size`.
 - Equations created with
   [`flextable::as_equation()`](https://davidgohel.github.io/flextable/reference/as_equation.html)
   were dropped without a message by
