@@ -15,7 +15,7 @@ theme elements, or geom_text_md() and geom_label_md() for annotations."><meta pr
 
     <a class="navbar-brand me-2" href="../index.html">munch</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.4.014</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.4.018</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -93,6 +93,20 @@ links, images, superscripts (<code>^2^</code>), subscripts (<code>~2~</code>) an
 Superscripts, subscripts and equations follow the markdown of Pandoc
 (R Markdown, Quarto). Block elements such as headings, bullet lists, and
 numbered lists are not available.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="text-format">Text format<a class="anchor" aria-label="anchor" href="#text-format"></a></h2>
+
+
+
+<p>The format of a text (size, font family, colour, bold, italic) comes from
+its chunk or its markdown, then from the element or the aesthetic and the
+'ggplot2' theme, then from <code><a href="https://davidgohel.github.io/flextable/reference/set_flextable_defaults.html" class="external-link">flextable::set_flextable_defaults()</a></code>. An empty
+font family, the default of the themes, does not set the font: the font of
+the flextable defaults is used. Texts drawn by 'ggplot2' itself, such as
+axis labels, then use the default font of the device; give a font to the
+theme, for example <code>theme_minimal(base_family = "Liberation Sans")</code>, so
+that all texts of the plot use the same font.</p>
     </div>
     <div class="section level2">
     <h2 id="options">Options<a class="anchor" aria-label="anchor" href="#options"></a></h2>

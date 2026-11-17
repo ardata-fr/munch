@@ -4,115 +4,100 @@
 
 ### New features
 
-- Markdown text can contain LaTeX equations, written as in R Markdown
-  and Quarto: `$...$` in the text, `$$...$$` alone on its line in
-  display style. They take the colour and size of the text around them.
-  [`md_grob()`](https://ardata-fr.github.io/munch/dev/reference/md_grob.md),
-  [`element_md()`](https://ardata-fr.github.io/munch/dev/reference/element_md.md),
-  [`geom_text_md()`](https://ardata-fr.github.io/munch/dev/reference/geom_text_md.md)
-  and
-  [`geom_label_md()`](https://ardata-fr.github.io/munch/dev/reference/geom_label_md.md)
-  draw them, and
-  [`as_paragraph_md()`](https://ardata-fr.github.io/munch/dev/reference/as_paragraph_md.md)
-  gives them to ‘flextable’ as equations. A dollar that does not open an
-  equation stays a dollar (`5$ and 10$`), and `\$` is always a dollar.
-- Markdown text can contain superscripts and subscripts, written as in R
-  Markdown and Quarto: `m^2^`, `H~2~O`. They contain no space, unless it
-  is escaped (`^a\ b^`); `~~text~~` is still a strikethrough.
-- Drawing equations needs the package ‘equatags’ and R \>= 4.3. Without
-  them, the LaTeX source of equations is written as text, with a
-  warning.
+- Markdown text can contain LaTeX equations, as in R Markdown and
+  Quarto: `$...$` in the text, `$$...$$` alone on its line. They take
+  the colour and size of the surrounding text. `\$` and a dollar that
+  does not open an equation (`5$ and 10$`) stay dollars. Equations need
+  the package ‘equatags’ and R \>= 4.3; without them, their LaTeX source
+  is written as text, with a warning.
+- Markdown text can contain superscripts and subscripts, as in R
+  Markdown and Quarto: `m^2^`, `H~2~O`.
+- [`default_text_props()`](https://ardata-fr.github.io/munch/dev/reference/default_text_props.md)
+  has new arguments `bold` and `italic`.
 
 ### Changes
 
-These changes make the text look like Word, and move or resize existing
-texts slightly:
+These changes move or resize existing texts slightly.
 
+Text is laid out as in Word:
+
+- Words are measured with the kerning of their font, as ‘ragg’,
+  ‘svglite’ and ‘ggiraph’ draw them: right-aligned lines end at the edge
+  and lines hold slightly more words.
+- A line has the height of its font, the single line spacing of Word.
+  The default line spacing is now 1 instead of 1.2, as in ‘flextable’.
+- Superscripts and subscripts are 65% of the font size, placed as in
+  Word.
+
+Texts follow the ‘ggplot2’ theme:
+
+- [`element_chunks()`](https://ardata-fr.github.io/munch/dev/reference/element_chunks.md)
+  takes the size, font, colour and face of the theme for the chunks that
+  do not set them, as
+  [`element_md()`](https://ardata-fr.github.io/munch/dev/reference/element_md.md)
+  does. Its argument `size` now works.
 - [`geom_text_md()`](https://ardata-fr.github.io/munch/dev/reference/geom_text_md.md)
   and
   [`geom_label_md()`](https://ardata-fr.github.io/munch/dev/reference/geom_label_md.md)
-  take their default size, font family and colour from the theme, as
+  take their default size, font, colour and fill from the theme, as
   [`geom_text()`](https://ggplot2.tidyverse.org/reference/geom_text.html)
   and
   [`geom_label()`](https://ggplot2.tidyverse.org/reference/geom_text.html)
-  in ‘ggplot2’ 4.0: the size follows `base_size` (it was 3.88 mm, 11.04
-  pt).
-- Words are measured with the kerning of their font, as ‘ragg’,
-  ‘svglite’ and ‘ggiraph’ draw them: spaces after kerned words are no
-  longer too wide, right-aligned lines end exactly at the right edge,
-  and lines can hold slightly more words.
+  do in ‘ggplot2’ 4.0.
+- When the theme has no font family (the default), munch uses the font
+  of
+  [`flextable::set_flextable_defaults()`](https://davidgohel.github.io/flextable/reference/set_flextable_defaults.html)
+  instead of `"sans"`. Set `base_family` in the theme so that all texts
+  of the plot share the same font.
+
+Devices:
+
 - [`cairo_pdf()`](https://rdrr.io/r/grDevices/cairo.html) gives a
-  warning on Windows, where R draws its text without the library ‘Pango’
-  and without kerning: words are drawn wider than measured. It is still
-  accepted on macOS and Linux, where it kerns as ‘ragg’ does.
-- The height of a line is the line height of its font, the single line
-  spacing of Word; a larger line spacing adds its space below the line.
-  Lines almost touched each other with a line spacing of 1. The default
-  line spacing is now 1, the default of ‘flextable’, instead of 1.2,
-  also for the `lineheight` of
-  [`geom_text_md()`](https://ardata-fr.github.io/munch/dev/reference/geom_text_md.md)
-  and
-  [`geom_label_md()`](https://ardata-fr.github.io/munch/dev/reference/geom_label_md.md):
-  texts are a bit more spaced than before.
-- Superscripts and subscripts are 65% of the font size, raised by 0.34
-  or lowered by 0.07 of the font size, as in Word with Arial or
-  Liberation Sans. Subscripts were barely below the baseline.
+  warning on Windows, where it draws text without kerning: words are
+  wider than measured. Use ‘ragg’ instead.
 
 ### Bug fixes
 
-- The space that ends a line broken automatically is no longer measured
-  nor drawn, as in Word: right-aligned lines of wrapped text stopped one
-  space before the edge, and centred lines were shifted by half a space.
-- [`element_chunks()`](https://ardata-fr.github.io/munch/dev/reference/element_chunks.md)
-  used neither its argument `size` nor the size, font, colour and face
-  of the theme: chunks that do not set them were drawn with the defaults
-  of ‘flextable’. They now take them from the element and the theme, as
-  other texts of the plot, and from the defaults of ‘flextable’ only
-  when the theme does not set them (an empty font family). Titles made
-  with
+- `hjust` had no effect on axis titles made with
+  [`element_md()`](https://ardata-fr.github.io/munch/dev/reference/element_md.md)
+  or
+  [`element_chunks()`](https://ardata-fr.github.io/munch/dev/reference/element_chunks.md):
+  they stayed centred.
+- The title of a legend made with
+  [`element_md()`](https://ardata-fr.github.io/munch/dev/reference/element_md.md)
+  or
   [`element_chunks()`](https://ardata-fr.github.io/munch/dev/reference/element_chunks.md)
-  change size, for example with `base_size`.
-- Equations created with
-  [`flextable::as_equation()`](https://davidgohel.github.io/flextable/reference/as_equation.html)
-  were dropped without a message by
-  [`chunks_grob()`](https://ardata-fr.github.io/munch/dev/reference/chunks_grob.md)
-  and
-  [`element_chunks()`](https://ardata-fr.github.io/munch/dev/reference/element_chunks.md);
-  they are now drawn.
-- [`as_paragraph_md()`](https://ardata-fr.github.io/munch/dev/reference/as_paragraph_md.md)
-  with an image (`![alt](path)`) gave a paragraph that
-  [`flextable::mk_par()`](https://davidgohel.github.io/flextable/reference/compose.html)
-  and
-  [`flextable::compose()`](https://davidgohel.github.io/flextable/reference/compose.html)
-  refused. Images now have a height of twice the font size, as in
-  [`md_grob()`](https://ardata-fr.github.io/munch/dev/reference/md_grob.md);
-  an image that can not be read is dropped with a warning.
+  was wrapped when it was wider than the keys and labels (`Legen` /
+  `d`).
+- [`geom_text_md()`](https://ardata-fr.github.io/munch/dev/reference/geom_text_md.md)
+  with an `angle` drew the text away from its point, or outside the
+  panel (`angle = 30`).
 - [`element_md()`](https://ardata-fr.github.io/munch/dev/reference/element_md.md)
   ignored its argument `face`
-  ([\#4](https://github.com/ardata-fr/munch/issues/4)). Markdown
-  emphasis now adds to it, and
-  [`default_text_props()`](https://ardata-fr.github.io/munch/dev/reference/default_text_props.md)
-  has new arguments `bold` and `italic`.
-- The width of
-  [`element_md()`](https://ardata-fr.github.io/munch/dev/reference/element_md.md)
+  ([\#4](https://github.com/ardata-fr/munch/issues/4)).
+- [`element_md()`](https://ardata-fr.github.io/munch/dev/reference/element_md.md)
   and
   [`element_chunks()`](https://ardata-fr.github.io/munch/dev/reference/element_chunks.md)
-  given to ‘ggplot2’ includes their left and right margins, as with the
-  titles of ‘ggplot2’. Used for `legend.text`, the widest labels were
-  wrapped and drawn over the next key; the title of the y axis is now
-  spaced from the axis by its margin.
-- With `width` and `hjust` \> 0, the text of
-  [`md_grob()`](https://ardata-fr.github.io/munch/dev/reference/md_grob.md),
-  [`chunks_grob()`](https://ardata-fr.github.io/munch/dev/reference/chunks_grob.md),
-  [`geom_text_md()`](https://ardata-fr.github.io/munch/dev/reference/geom_text_md.md)
+  ignored their left and right margins in their width: used as
+  `legend.text`, the widest labels were wrapped and drawn over the next
+  key. The y axis title is now spaced by its margin.
+- Right-aligned and centred lines of wrapped text were shifted by the
+  space that ends them.
+- With `width` and `hjust` \> 0, texts were shifted to the right of
+  their anchor, and out of the box of labels.
+- Equations created with
+  [`flextable::as_equation()`](https://davidgohel.github.io/flextable/reference/as_equation.html)
+  were dropped by
+  [`chunks_grob()`](https://ardata-fr.github.io/munch/dev/reference/chunks_grob.md)
   and
-  [`geom_label_md()`](https://ardata-fr.github.io/munch/dev/reference/geom_label_md.md)
-  was shifted to the right of its anchor, and out of the box of labels.
+  [`element_chunks()`](https://ardata-fr.github.io/munch/dev/reference/element_chunks.md).
+- [`as_paragraph_md()`](https://ardata-fr.github.io/munch/dev/reference/as_paragraph_md.md)
+  with an image gave a paragraph that ‘flextable’ refused. An image that
+  can not be read is now dropped with a warning.
 
 ### Dependencies
 
-- ‘gdtools’ \>= 0.6.0 is required.
-- ‘ggplot2’ \>= 4.0.0 is required.
+- ‘ggplot2’ \>= 4.0.0 and ‘gdtools’ \>= 0.6.0 are required.
 - ‘equatags’ \>= 0.4.0 is suggested, to draw equations.
 
 ## munch 0.0.3

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">munch</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.4.014</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.4.018</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,38 +45,48 @@
 <h2 class="pkg-version" data-toc-text="0.0.4" id="munch-004">munch 0.0.4<a class="anchor" aria-label="anchor" href="#munch-004"></a></h2>
 <div class="section level3">
 <h3 id="new-features-0-0-4">New features<a class="anchor" aria-label="anchor" href="#new-features-0-0-4"></a></h3>
-<ul><li>Markdown text can contain LaTeX equations, written as in R Markdown and Quarto: <code>$...$</code> in the text, <code>$$...$$</code> alone on its line in display style. They take the colour and size of the text around them. <code><a href="../reference/md_grob.html">md_grob()</a></code>, <code><a href="../reference/element_md.html">element_md()</a></code>, <code><a href="../reference/geom_text_md.html">geom_text_md()</a></code> and <code><a href="../reference/geom_label_md.html">geom_label_md()</a></code> draw them, and <code><a href="../reference/as_paragraph_md.html">as_paragraph_md()</a></code> gives them to ‘flextable’ as equations. A dollar that does not open an equation stays a dollar (<code>5$ and 10$</code>), and <code>\$</code> is always a dollar.</li>
-<li>Markdown text can contain superscripts and subscripts, written as in R Markdown and Quarto: <code>m^2^</code>, <code>H~2~O</code>. They contain no space, unless it is escaped (<code>^a\ b^</code>); <code>~~text~~</code> is still a strikethrough.</li>
-<li>Drawing equations needs the package ‘equatags’ and R &gt;= 4.3. Without them, the LaTeX source of equations is written as text, with a warning.</li>
+<ul><li>Markdown text can contain LaTeX equations, as in R Markdown and Quarto: <code>$...$</code> in the text, <code>$$...$$</code> alone on its line. They take the colour and size of the surrounding text. <code>\$</code> and a dollar that does not open an equation (<code>5$ and 10$</code>) stay dollars. Equations need the package ‘equatags’ and R &gt;= 4.3; without them, their LaTeX source is written as text, with a warning.</li>
+<li>Markdown text can contain superscripts and subscripts, as in R Markdown and Quarto: <code>m^2^</code>, <code>H~2~O</code>.</li>
+<li>
+<code><a href="../reference/default_text_props.html">default_text_props()</a></code> has new arguments <code>bold</code> and <code>italic</code>.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="changes-0-0-4">Changes<a class="anchor" aria-label="anchor" href="#changes-0-0-4"></a></h3>
-<p>These changes make the text look like Word, and move or resize existing texts slightly:</p>
+<p>These changes move or resize existing texts slightly.</p>
+<p>Text is laid out as in Word:</p>
+<ul><li>Words are measured with the kerning of their font, as ‘ragg’, ‘svglite’ and ‘ggiraph’ draw them: right-aligned lines end at the edge and lines hold slightly more words.</li>
+<li>A line has the height of its font, the single line spacing of Word. The default line spacing is now 1 instead of 1.2, as in ‘flextable’.</li>
+<li>Superscripts and subscripts are 65% of the font size, placed as in Word.</li>
+</ul><p>Texts follow the ‘ggplot2’ theme:</p>
 <ul><li>
-<code><a href="../reference/geom_text_md.html">geom_text_md()</a></code> and <code><a href="../reference/geom_label_md.html">geom_label_md()</a></code> take their default size, font family and colour from the theme, as <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_text()</a></code> and <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label()</a></code> in ‘ggplot2’ 4.0: the size follows <code>base_size</code> (it was 3.88 mm, 11.04 pt).</li>
-<li>Words are measured with the kerning of their font, as ‘ragg’, ‘svglite’ and ‘ggiraph’ draw them: spaces after kerned words are no longer too wide, right-aligned lines end exactly at the right edge, and lines can hold slightly more words.</li>
+<code><a href="../reference/element_chunks.html">element_chunks()</a></code> takes the size, font, colour and face of the theme for the chunks that do not set them, as <code><a href="../reference/element_md.html">element_md()</a></code> does. Its argument <code>size</code> now works.</li>
 <li>
-<code><a href="https://rdrr.io/r/grDevices/cairo.html" class="external-link">cairo_pdf()</a></code> gives a warning on Windows, where R draws its text without the library ‘Pango’ and without kerning: words are drawn wider than measured. It is still accepted on macOS and Linux, where it kerns as ‘ragg’ does.</li>
-<li>The height of a line is the line height of its font, the single line spacing of Word; a larger line spacing adds its space below the line. Lines almost touched each other with a line spacing of 1. The default line spacing is now 1, the default of ‘flextable’, instead of 1.2, also for the <code>lineheight</code> of <code><a href="../reference/geom_text_md.html">geom_text_md()</a></code> and <code><a href="../reference/geom_label_md.html">geom_label_md()</a></code>: texts are a bit more spaced than before.</li>
-<li>Superscripts and subscripts are 65% of the font size, raised by 0.34 or lowered by 0.07 of the font size, as in Word with Arial or Liberation Sans. Subscripts were barely below the baseline.</li>
+<code><a href="../reference/geom_text_md.html">geom_text_md()</a></code> and <code><a href="../reference/geom_label_md.html">geom_label_md()</a></code> take their default size, font, colour and fill from the theme, as <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_text()</a></code> and <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label()</a></code> do in ‘ggplot2’ 4.0.</li>
+<li>When the theme has no font family (the default), munch uses the font of <code><a href="https://davidgohel.github.io/flextable/reference/set_flextable_defaults.html" class="external-link">flextable::set_flextable_defaults()</a></code> instead of <code>"sans"</code>. Set <code>base_family</code> in the theme so that all texts of the plot share the same font.</li>
+</ul><p>Devices:</p>
+<ul><li>
+<code><a href="https://rdrr.io/r/grDevices/cairo.html" class="external-link">cairo_pdf()</a></code> gives a warning on Windows, where it draws text without kerning: words are wider than measured. Use ‘ragg’ instead.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-0-0-4">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-0-4"></a></h3>
-<ul><li>The space that ends a line broken automatically is no longer measured nor drawn, as in Word: right-aligned lines of wrapped text stopped one space before the edge, and centred lines were shifted by half a space.</li>
+<ul><li>
+<code>hjust</code> had no effect on axis titles made with <code><a href="../reference/element_md.html">element_md()</a></code> or <code><a href="../reference/element_chunks.html">element_chunks()</a></code>: they stayed centred.</li>
+<li>The title of a legend made with <code><a href="../reference/element_md.html">element_md()</a></code> or <code><a href="../reference/element_chunks.html">element_chunks()</a></code> was wrapped when it was wider than the keys and labels (<code>Legen</code> / <code>d</code>).</li>
 <li>
-<code><a href="../reference/element_chunks.html">element_chunks()</a></code> used neither its argument <code>size</code> nor the size, font, colour and face of the theme: chunks that do not set them were drawn with the defaults of ‘flextable’. They now take them from the element and the theme, as other texts of the plot, and from the defaults of ‘flextable’ only when the theme does not set them (an empty font family). Titles made with <code><a href="../reference/element_chunks.html">element_chunks()</a></code> change size, for example with <code>base_size</code>.</li>
-<li>Equations created with <code><a href="https://davidgohel.github.io/flextable/reference/as_equation.html" class="external-link">flextable::as_equation()</a></code> were dropped without a message by <code><a href="../reference/chunks_grob.html">chunks_grob()</a></code> and <code><a href="../reference/element_chunks.html">element_chunks()</a></code>; they are now drawn.</li>
+<code><a href="../reference/geom_text_md.html">geom_text_md()</a></code> with an <code>angle</code> drew the text away from its point, or outside the panel (<code>angle = 30</code>).</li>
 <li>
-<code><a href="../reference/as_paragraph_md.html">as_paragraph_md()</a></code> with an image (<code>![alt](path)</code>) gave a paragraph that <code><a href="https://davidgohel.github.io/flextable/reference/compose.html" class="external-link">flextable::mk_par()</a></code> and <code><a href="https://davidgohel.github.io/flextable/reference/compose.html" class="external-link">flextable::compose()</a></code> refused. Images now have a height of twice the font size, as in <code><a href="../reference/md_grob.html">md_grob()</a></code>; an image that can not be read is dropped with a warning.</li>
+<code><a href="../reference/element_md.html">element_md()</a></code> ignored its argument <code>face</code> (<a href="https://github.com/ardata-fr/munch/issues/4" class="external-link">#4</a>).</li>
 <li>
-<code><a href="../reference/element_md.html">element_md()</a></code> ignored its argument <code>face</code> (<a href="https://github.com/ardata-fr/munch/issues/4" class="external-link">#4</a>). Markdown emphasis now adds to it, and <code><a href="../reference/default_text_props.html">default_text_props()</a></code> has new arguments <code>bold</code> and <code>italic</code>.</li>
-<li>The width of <code><a href="../reference/element_md.html">element_md()</a></code> and <code><a href="../reference/element_chunks.html">element_chunks()</a></code> given to ‘ggplot2’ includes their left and right margins, as with the titles of ‘ggplot2’. Used for <code>legend.text</code>, the widest labels were wrapped and drawn over the next key; the title of the y axis is now spaced from the axis by its margin.</li>
-<li>With <code>width</code> and <code>hjust</code> &gt; 0, the text of <code><a href="../reference/md_grob.html">md_grob()</a></code>, <code><a href="../reference/chunks_grob.html">chunks_grob()</a></code>, <code><a href="../reference/geom_text_md.html">geom_text_md()</a></code> and <code><a href="../reference/geom_label_md.html">geom_label_md()</a></code> was shifted to the right of its anchor, and out of the box of labels.</li>
+<code><a href="../reference/element_md.html">element_md()</a></code> and <code><a href="../reference/element_chunks.html">element_chunks()</a></code> ignored their left and right margins in their width: used as <code>legend.text</code>, the widest labels were wrapped and drawn over the next key. The y axis title is now spaced by its margin.</li>
+<li>Right-aligned and centred lines of wrapped text were shifted by the space that ends them.</li>
+<li>With <code>width</code> and <code>hjust</code> &gt; 0, texts were shifted to the right of their anchor, and out of the box of labels.</li>
+<li>Equations created with <code><a href="https://davidgohel.github.io/flextable/reference/as_equation.html" class="external-link">flextable::as_equation()</a></code> were dropped by <code><a href="../reference/chunks_grob.html">chunks_grob()</a></code> and <code><a href="../reference/element_chunks.html">element_chunks()</a></code>.</li>
+<li>
+<code><a href="../reference/as_paragraph_md.html">as_paragraph_md()</a></code> with an image gave a paragraph that ‘flextable’ refused. An image that can not be read is now dropped with a warning.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="dependencies-0-0-4">Dependencies<a class="anchor" aria-label="anchor" href="#dependencies-0-0-4"></a></h3>
-<ul><li>‘gdtools’ &gt;= 0.6.0 is required.</li>
-<li>‘ggplot2’ &gt;= 4.0.0 is required.</li>
+<ul><li>‘ggplot2’ &gt;= 4.0.0 and ‘gdtools’ &gt;= 0.6.0 are required.</li>
 <li>‘equatags’ &gt;= 0.4.0 is suggested, to draw equations.</li>
 </ul></div>
 </div>

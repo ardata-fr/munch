@@ -56,6 +56,19 @@ Superscripts, subscripts and equations follow the markdown of Pandoc (R
 Markdown, Quarto). Block elements such as headings, bullet lists, and
 numbered lists are not available.
 
+## Text format
+
+The format of a text (size, font family, colour, bold, italic) comes
+from its chunk or its markdown, then from the element or the aesthetic
+and the 'ggplot2' theme, then from
+[`flextable::set_flextable_defaults()`](https://davidgohel.github.io/flextable/reference/set_flextable_defaults.html).
+An empty font family, the default of the themes, does not set the font:
+the font of the flextable defaults is used. Texts drawn by 'ggplot2'
+itself, such as axis labels, then use the default font of the device;
+give a font to the theme, for example
+`theme_minimal(base_family = "Liberation Sans")`, so that all texts of
+the plot use the same font.
+
 ## Options
 
 - `munch.skip_device_check`:

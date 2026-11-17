@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">munch</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.4.014</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.4.018</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -95,6 +95,13 @@ device, or vice versa.</p></li>
 <p>When both steps find the same font, the output is correct. When they
 disagree, text is positioned using one font’s metrics but drawn with
 another, leading to overlapping, clipping or misaligned labels.</p>
+<p>The font of a text comes from its chunk or its markdown, then from
+the theme (<code>base_family</code>), then from
+<code><a href="https://davidgohel.github.io/flextable/reference/set_flextable_defaults.html" class="external-link">flextable::set_flextable_defaults()</a></code>. The themes of
+‘ggplot2’ have no font by default: munch then uses the font of the
+flextable defaults, while ‘ggplot2’ draws its own texts, such as axis
+labels, with the default font of the device. Give a font to the theme so
+that all texts of the plot use the same font.</p>
 <p>Measurement applies the kerning of the font, as devices that kern do;
 see the section “Alignment accuracy” of
 <code><a href="../articles/using-ggplot2.html">vignette("using-ggplot2")</a></code>.</p>
