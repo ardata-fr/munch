@@ -136,12 +136,10 @@ element_grob.element_md <- function(
   margin <- margin %||% element$margin %||% ggplot2::margin()
   size <- size %||% element$size %||% base_props$font.size
   colour <- colour %||% element$colour %||% base_props$font.color
-  family <- family %||% element$family %||% base_props$font.family
+  # an empty family, the default of the themes, does not set the font
+  family <- theme_font_family(family %||% element$family) %||%
+    base_props$font.family
   lineheight <- lineheight %||% element$lineheight %||% base_props$line_spacing
-
-  if (is.null(family) || !nzchar(family)) {
-    family <- "sans"
-  }
 
   # Handle rotation angle (not from text_props - it's a layout property)
   angle <- angle %||% element$angle %||% 0
@@ -774,10 +772,7 @@ element_grob.element_chunks <- function(
   # its theme (size, family, colour, face), else from the flextable defaults.
   # An empty family, the default of the themes, does not set the font.
   base_props <- default_text_props()
-  family <- family %||% element$family
-  if (!is.null(family) && !nzchar(family)) {
-    family <- NULL
-  }
+  family <- theme_font_family(family %||% element$family)
   face <- face %||% element$face %||% "plain"
   text_props <- default_text_props(
     font_size = size %||% element$size,

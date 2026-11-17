@@ -48,6 +48,19 @@ Superscripts, subscripts and equations follow the markdown of Pandoc
 numbered lists are not available.
 }
 
+\section{Text format}{
+
+
+The format of a text (size, font family, colour, bold, italic) comes from
+its chunk or its markdown, then from the element or the aesthetic and the
+'ggplot2' theme, then from \code{\link[flextable:set_flextable_defaults]{flextable::set_flextable_defaults()}}. An empty
+font family, the default of the themes, does not set the font: the font of
+the flextable defaults is used. Texts drawn by 'ggplot2' itself, such as
+axis labels, then use the default font of the device; give a font to the
+theme, for example \code{theme_minimal(base_family = "Liberation Sans")}, so
+that all texts of the plot use the same font.
+}
+
 \section{Options}{
 
 

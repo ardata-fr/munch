@@ -682,3 +682,38 @@ test_that("element_chunks() takes the format of the chunks, then of the theme", 
     expect_equal(ch$font.family, c("Liberation Mono", "Liberation Sans"))
   })
 })
+
+test_that("an empty font family of the theme gives the flextable font", {
+  with_ragg({
+    old <- flextable::set_flextable_defaults(font.family = "Liberation Mono")
+    withr::defer(do.call(flextable::set_flextable_defaults, old))
+    th <- ggplot2::theme_minimal()
+    expect_identical(th$text$family, "")
+
+    drawn_families <- function(x) {
+      if (!is.null(x$chunks)) {
+        return(unique(x$chunks$font.family))
+      }
+      unique(unlist(lapply(x$children, drawn_families)))
+    }
+    title_family <- function(element) {
+      el <- ggplot2::calc_element(
+        "plot.title",
+        th + ggplot2::theme(plot.title = element)
+      )
+      drawn_families(ggplot2::element_grob(el, label = "a"))
+    }
+    expect_equal(title_family(element_md()), "Liberation Mono")
+    expect_equal(
+      title_family(element_chunks(flextable::as_paragraph("a"))),
+      "Liberation Mono"
+    )
+
+    dat <- data.frame(x = 0, y = 0, label = "a")
+    for (geom in list(geom_text_md(), geom_label_md())) {
+      p <- ggplot2::ggplot(dat, ggplot2::aes(x, y, label = label)) + geom + th
+      grob <- ggplot2::layer_grob(p)[[1]]
+      expect_equal(drawn_families(grob), "Liberation Mono")
+    }
+  })
+})

@@ -99,3 +99,19 @@ print.text_props <- function(x, ...) {
   ))
   invisible(x)
 }
+
+#' Font family set by a theme or an aesthetic
+#'
+#' The themes of 'ggplot2' have an empty font family by default: it does not
+#' set the font, and the font of the flextable defaults is used, as for the
+#' other properties that the theme does not set.
+#'
+#' @param family A font family, possibly `NULL`, `NA` or `""`.
+#' @return The font family, or `NULL` when it does not set the font.
+#' @noRd
+theme_font_family <- function(family) {
+  if (length(family) != 1L || is.na(family) || !nzchar(family)) {
+    return(NULL)
+  }
+  family
+}

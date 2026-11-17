@@ -370,7 +370,7 @@ GeomTextMd <- ggplot2::ggproto(
       # Create text properties
       props <- default_text_props(
         font_size = fontsize[i],
-        font_family = if (nzchar(row$family)) row$family else "sans",
+        font_family = theme_font_family(row$family),
         font_color = colour[i],
         code_font_family = code_font_family,
         line_spacing = row$lineheight
@@ -444,7 +444,7 @@ makeContent.MdTextAutoWrapGrob <- function(x) {
 
     props <- default_text_props(
       font_size = x$fontsize[i],
-      font_family = if (nzchar(row$family)) row$family else "sans",
+      font_family = theme_font_family(row$family),
       font_color = x$colour[i],
       code_font_family = x$code_font_family,
       line_spacing = row$lineheight
@@ -619,7 +619,7 @@ GeomLabelMd <- ggplot2::ggproto(
       # Create text properties
       props <- default_text_props(
         font_size = fontsize[i],
-        font_family = if (nzchar(row$family)) row$family else "sans",
+        font_family = theme_font_family(row$family),
         font_color = text_colour[i],
         code_font_family = code_font_family,
         line_spacing = row$lineheight
