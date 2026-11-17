@@ -46,7 +46,9 @@
 #'   [munch-package])
 #'
 #' Text properties (font size, family, color) are controlled by the
-#' `size`, `family`, and `colour` aesthetics respectively.
+#' `size`, `family`, and `colour` aesthetics respectively. As with
+#' [ggplot2::geom_text()], their default values come from the theme: its base
+#' size, font family and ink colour.
 #'
 #' @export
 #' @examplesIf require("ggiraph", quietly = TRUE, character.only = TRUE)
@@ -307,14 +309,15 @@ GeomTextMd <- ggplot2::ggproto(
 
   required_aes = c("x", "y", "label"),
 
+  # as geom_text(): size, font and colour come from the theme
   default_aes = ggplot2::aes(
-    colour = "black",
-    size = 3.88,
+    colour = ggplot2::from_theme(colour %||% ink),
+    size = ggplot2::from_theme(fontsize),
     angle = 0,
     hjust = 0.5,
     vjust = 0.5,
     alpha = NA,
-    family = "",
+    family = ggplot2::from_theme(family),
     lineheight = 1
   ),
 
@@ -555,15 +558,16 @@ GeomLabelMd <- ggplot2::ggproto(
 
   required_aes = c("x", "y", "label"),
 
+  # as geom_label(): size, font and colour come from the theme
   default_aes = ggplot2::aes(
-    colour = "black",
+    colour = ggplot2::from_theme(colour %||% ink),
     fill = "white",
-    size = 3.88,
+    size = ggplot2::from_theme(fontsize),
     angle = 0,
     hjust = 0.5,
     vjust = 0.5,
     alpha = NA,
-    family = "",
+    family = ggplot2::from_theme(family),
     lineheight = 1
   ),
 

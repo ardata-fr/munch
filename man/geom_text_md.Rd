@@ -145,7 +145,9 @@ The geom supports the following markdown syntax:
 }
 
 Text properties (font size, family, color) are controlled by the
-\code{size}, \code{family}, and \code{colour} aesthetics respectively.
+\code{size}, \code{family}, and \code{colour} aesthetics respectively. As with
+\code{\link[ggplot2:geom_text]{ggplot2::geom_text()}}, their default values come from the theme: its base
+size, font family and ink colour.
 }
 \section{Aesthetics}{
 

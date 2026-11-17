@@ -20,6 +20,9 @@ the LaTeX source of equations is written as text, with a warning.
 These changes make the text look like Word, and move or resize existing
 texts slightly:
 
+- `geom_text_md()` and `geom_label_md()` take their default size, font
+family and colour from the theme, as `geom_text()` and `geom_label()` in
+'ggplot2' 4.0: the size follows `base_size` (it was 3.88 mm, 11.04 pt).
 - Words are measured with the kerning of their font, as 'ragg', 'svglite'
 and 'ggiraph' draw them: spaces after kerned words are no longer too wide,
 right-aligned lines end exactly at the right edge, and lines can hold slightly
@@ -67,6 +70,7 @@ and out of the box of labels.
 ## Dependencies
 
 - 'gdtools' >= 0.6.0 is required.
+- 'ggplot2' >= 4.0.0 is required.
 - 'equatags' >= 0.4.0 is suggested, to draw equations.
 
 # munch 0.0.3
@@ -107,6 +111,7 @@ without decoding them: about 15 times faster.
 
 - 'munch' now requires 'flextable' >= 0.10.4, 'officer' >= 0.7.8 and 'gdtools'
 >= 0.5.3.
+- 'munch' now requires 'ggplot2' >= 4.0.0.
 
 # munch 0.0.2
 
