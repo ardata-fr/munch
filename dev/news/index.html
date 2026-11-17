@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">munch</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.4.013</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.4.014</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,7 +52,9 @@
 <div class="section level3">
 <h3 id="changes-0-0-4">Changes<a class="anchor" aria-label="anchor" href="#changes-0-0-4"></a></h3>
 <p>These changes make the text look like Word, and move or resize existing texts slightly:</p>
-<ul><li>Words are measured with the kerning of their font, as ‘ragg’, ‘svglite’ and ‘ggiraph’ draw them: spaces after kerned words are no longer too wide, right-aligned lines end exactly at the right edge, and lines can hold slightly more words.</li>
+<ul><li>
+<code><a href="../reference/geom_text_md.html">geom_text_md()</a></code> and <code><a href="../reference/geom_label_md.html">geom_label_md()</a></code> take their default size, font family and colour from the theme, as <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_text()</a></code> and <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label()</a></code> in ‘ggplot2’ 4.0: the size follows <code>base_size</code> (it was 3.88 mm, 11.04 pt).</li>
+<li>Words are measured with the kerning of their font, as ‘ragg’, ‘svglite’ and ‘ggiraph’ draw them: spaces after kerned words are no longer too wide, right-aligned lines end exactly at the right edge, and lines can hold slightly more words.</li>
 <li>
 <code><a href="https://rdrr.io/r/grDevices/cairo.html" class="external-link">cairo_pdf()</a></code> gives a warning on Windows, where R draws its text without the library ‘Pango’ and without kerning: words are drawn wider than measured. It is still accepted on macOS and Linux, where it kerns as ‘ragg’ does.</li>
 <li>The height of a line is the line height of its font, the single line spacing of Word; a larger line spacing adds its space below the line. Lines almost touched each other with a line spacing of 1. The default line spacing is now 1, the default of ‘flextable’, instead of 1.2, also for the <code>lineheight</code> of <code><a href="../reference/geom_text_md.html">geom_text_md()</a></code> and <code><a href="../reference/geom_label_md.html">geom_label_md()</a></code>: texts are a bit more spaced than before.</li>
@@ -74,6 +76,7 @@
 <div class="section level3">
 <h3 id="dependencies-0-0-4">Dependencies<a class="anchor" aria-label="anchor" href="#dependencies-0-0-4"></a></h3>
 <ul><li>‘gdtools’ &gt;= 0.6.0 is required.</li>
+<li>‘ggplot2’ &gt;= 4.0.0 is required.</li>
 <li>‘equatags’ &gt;= 0.4.0 is suggested, to draw equations.</li>
 </ul></div>
 </div>
@@ -104,6 +107,7 @@
 <div class="section level3">
 <h3 id="dependencies-0-0-3">Dependencies<a class="anchor" aria-label="anchor" href="#dependencies-0-0-3"></a></h3>
 <ul><li>‘munch’ now requires ‘flextable’ &gt;= 0.10.4, ‘officer’ &gt;= 0.7.8 and ‘gdtools’ &gt;= 0.5.3.</li>
+<li>‘munch’ now requires ‘ggplot2’ &gt;= 4.0.0.</li>
 </ul></div>
 </div>
     <div class="section level2">
