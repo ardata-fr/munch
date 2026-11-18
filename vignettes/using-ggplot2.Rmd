@@ -36,7 +36,7 @@ annotations using 'munch'.
 ## Simple markdown with element_md()
 
 `element_md()` replaces `element_text()` to render markdown in titles,
-subtitles, captions, and axis labels.
+subtitles, captions, axis titles, axis tick labels and legends.
 
 ```{r md-titles, message=FALSE}
 ggplot(mtcars, aes(mpg, wt)) +
@@ -97,6 +97,94 @@ library(patchwork)
 
 p <- p + theme(plot.title = element_md(width = 2.5))
 p | p
+```
+
+### Axis tick labels
+
+The labels of axis ticks are markdown too: give them with the `labels` of the
+scale. Each label is placed as `element_text()` places it, with its angle and
+justification.
+
+```{r md-ticks, message=FALSE, fig.height=3}
+species <- aggregate(Sepal.Length ~ Species, data = iris, FUN = mean)
+
+ggplot(species, aes(Species, Sepal.Length)) +
+  geom_col(fill = "grey70") +
+  scale_x_discrete(
+    labels = c("*Iris setosa*", "*Iris versicolor*", "*Iris virginica*")
+  ) +
+  theme(axis.text.x = element_md(angle = 30, hjust = 1))
+```
+
+This works for all labels that 'ggplot2' draws as a set: axis ticks, labels
+of colour bars, polar axes. `element_chunks()` can not be used there: it
+draws one fixed text.
+
+### Legends
+
+`legend.text` and `legend.title` accept `element_md()`, for keys as for
+colour bars:
+
+```{r md-legend, message=FALSE, fig.height=3}
+ggplot(mtcars, aes(wt, mpg, colour = hp)) +
+  geom_point() +
+  labs(colour = "**Power**") +
+  scale_colour_continuous(labels = function(x) paste0("**", x, "** hp")) +
+  theme(
+    legend.title = element_md(),
+    legend.text = element_md()
+  )
+```
+
+Legend labels do not wrap, as with `element_text()`: a long label is written
+on one line. Write a line break in the label (two spaces then `\n`, or a
+backslash then `\n`) to put it on several lines:
+
+```{r md-legend-lines, message=FALSE, fig.height=3}
+cyl_labels <- c(
+  "**4** cylinders",
+  "**6** cylinders  \n*few cars*",
+  "**8** cylinders"
+)
+
+p <- ggplot(mtcars, aes(wt, mpg, colour = factor(cyl))) +
+  geom_point() +
+  scale_colour_discrete(labels = cyl_labels) +
+  theme(legend.text = element_md())
+p
+```
+
+The keys are then unevenly spaced. This comes from 'ggplot2', with
+`element_text()` too: a row of the legend has the height of its key
+(`legend.key.size`) or of its label, whichever is larger. A label on one line
+is lower than the key and is centred in the row; a label on two lines is
+higher and fills its row. For even spacing, make the keys lower than a line,
+so that each row has the height of its label, and set the space between rows:
+
+```{r md-legend-spacing, message=FALSE, fig.height=3}
+p + theme(
+  legend.key.height = unit(1, "lines"),
+  legend.key.spacing.y = unit(4, "pt")
+)
+```
+
+### All texts of a plot
+
+Set `element_md()` on the root element `text` to render all texts of the plot
+as markdown: titles, axes, legends and strips.
+
+```{r md-all, message=FALSE, fig.height=3}
+ggplot(mtcars, aes(wt, mpg, colour = factor(am))) +
+  geom_point() +
+  facet_wrap(~ paste0("**", cyl, "** cylinders")) +
+  labs(
+    title = "*Weight* and **consumption**",
+    x = "Weight (*1000 lbs*)",
+    y = "Miles per gallon",
+    colour = "*Transmission*"
+  ) +
+  scale_colour_discrete(labels = c("**automatic**", "**manual**")) +
+  theme(text = element_md())
 ```
 
 ## Advanced formatting with element_chunks()
@@ -357,8 +445,8 @@ kern on Windows either, where R draws their text without the library
 |---------|----------------|---------------------|----------------|
 | Bold / Italic | `**text**` / `*text*` | `as_b()` / `as_i()` | `**text**` / `*text*` |
 | Inline code | `` `text` `` | x | `` `text` `` |
-| Superscript | x | `as_sup()` | x |
-| Subscript | x | `as_sub()` | x |
+| Superscript | `x^2^` | `as_sup()` | `x^2^` |
+| Subscript | `H~2~O` | `as_sub()` | `H~2~O` |
 | Colors | x | `colorize()` | x |
 | Highlighting | x | `as_highlight()` | x |
 | Use case | Theme elements | Theme elements | Text annotations |
