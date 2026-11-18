@@ -528,3 +528,18 @@ test_that("the split follows a width changed after the creation", {
   expect_gt(dim(gr)$height, height_large)
   expect_lte(dim(gr)$width, 1)
 })
+
+test_that("the line spacing is only between lines", {
+  gdtools::font_set_liberation()
+  height <- function(text, line_spacing) {
+    props <- default_text_props(font_family = "Liberation Sans", line_spacing = line_spacing)
+    dim(md_grob(text, text_props = props))$height
+  }
+  # one line: the line spacing has no effect, as in grid
+  expect_equal(height("Hello", 2), height("Hello", 1))
+  expect_equal(height("Hello", 0.9), height("Hello", 1))
+  # two lines: the space between them is multiplied, not the space below
+  one <- height("Hello", 1)
+  expect_equal(height("Hello  \nWorld", 2), 3 * one)
+  expect_equal(height("Hello  \nWorld", 1), 2 * one)
+})

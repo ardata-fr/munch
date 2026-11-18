@@ -387,6 +387,7 @@ arrange_chunks_into_lines <- function(chunks, max_width = NULL) {
   chunk_at <- function(i) lapply(columns, `[`, i)
 
   is_space <- chunks$is_space %in% TRUE
+  line_gap <- chunks$line_gap %||% rep(0, nrow(chunks))
 
   kept <- which(line_index > 0L)
   lines <- unname(split(kept, line_index[kept]))
@@ -405,12 +406,17 @@ arrange_chunks_into_lines <- function(chunks, max_width = NULL) {
         drawn <- drawn[-length(drawn)]
       }
     }
+    descent <- chunks$descent[index]
+    if (k == length(lines)) {
+      # the line spacing is between lines: no space below the last one
+      descent <- descent - line_gap[index]
+    }
     list(
       chunks = lapply(drawn, chunk_at),
       width = sum(chunks$width[drawn]),
-      height = max(chunks$ascent[index]) + max(chunks$descent[index]),
+      height = max(chunks$ascent[index]) + max(descent),
       ascent = max(chunks$ascent[index]),
-      descent = max(chunks$descent[index]),
+      descent = max(descent),
       max_ascend = max(chunks$max_ascend[index]),
       max_descend = max(chunks$max_descend[index])
     )

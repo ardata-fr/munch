@@ -1,6 +1,6 @@
 Package: munch
 Title: Rich Inline Text for 'grid' Graphics and 'flextable'
-Version: 0.0.4.018
+Version: 0.0.4.025
 Authors@R: c(
     person("David", "Gohel", , "david.gohel@ardata.fr", role = c("aut", "cre")),
     person("ArData", role = "cph")
@@ -20,10 +20,10 @@ Imports:
     commonmark,
     flextable (>= 0.10.4),
     patchwork,
+    S7,
     gdtools (>= 0.6.0),
-    ggplot2 (>= 4.0.0),
+    ggplot2 (>= 4.0.4),
     grid,
-    methods,
     officer (>= 0.7.8),
     systemfonts,
     xml2

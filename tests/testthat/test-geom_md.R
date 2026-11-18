@@ -339,7 +339,7 @@ test_that("element_chunks stores chunks", {
   )
   el <- element_chunks(chunks)
 
-  expect_true("chunks" %in% names(el))
+  expect_true(S7::prop_exists(el, "chunks"))
   expect_s3_class(el$chunks, "paragraph")
 })
 
@@ -479,4 +479,21 @@ test_that("rotated texts are drawn around their point, as geom_text()", {
     txt <- red_box(do.call(ggplot2::geom_text, args))
     expect_lte(max(abs(md - txt)), 3)
   }
+})
+
+test_that("nudge_x and nudge_y move the labels, as in ggplot2", {
+  withr::local_options(munch.skip_device_check = TRUE)
+  dat <- data.frame(x = 0, y = 0, l = "a")
+  p <- ggplot2::ggplot(dat, ggplot2::aes(x, y, label = l))
+  where <- function(layer) {
+    unlist(ggplot2::layer_data(p + layer)[c("x", "y")])
+  }
+  expect_no_warning(
+    md <- where(geom_text_md(nudge_x = 0.3, nudge_y = 0.2))
+  )
+  expect_equal(md, where(ggplot2::geom_text(nudge_x = 0.3, nudge_y = 0.2)))
+  expect_equal(
+    where(geom_label_md(nudge_x = 0.3, nudge_y = 0.2)),
+    where(ggplot2::geom_label(nudge_x = 0.3, nudge_y = 0.2))
+  )
 })

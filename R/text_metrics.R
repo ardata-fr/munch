@@ -22,6 +22,7 @@ calc_chunk_metrics <- function(
     chunks$height <- numeric(0)
     chunks$ascent <- numeric(0)
     chunks$descent <- numeric(0)
+    chunks$line_gap <- numeric(0)
     chunks$max_ascend <- numeric(0)
     chunks$max_descend <- numeric(0)
     chunks$baseline_shift <- numeric(0)
@@ -86,6 +87,7 @@ calc_chunk_metrics <- function(
   chunks$height <- 0
   chunks$ascent <- 0
   chunks$descent <- 0
+  chunks$line_gap <- 0
   chunks$max_ascend <- 0
   chunks$max_descend <- 0
   chunks$baseline_shift <- 0
@@ -141,6 +143,9 @@ calc_chunk_metrics <- function(
       0
     )
     chunks$height[is_text] <- (chunks$ascent[is_text] + chunks$descent[is_text])
+    # the space added below the line by the line spacing: not kept under the
+    # last line, so that the line spacing is only between lines, as in grid
+    chunks$line_gap[is_text] <- chunks$descent[is_text] - ref_metrics$descent
 
     # Font-level max glyph extents from systemfonts (used for highlight rects).
     # gdtools/Cairo ascent can be smaller than the actual glyph extent that

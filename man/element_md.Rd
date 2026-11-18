@@ -6,7 +6,7 @@
 \usage{
 element_md(
   family = NULL,
-  code_font_family = NULL,
+  code_font_family = NA_character_,
   face = NULL,
   colour = NULL,
   size = NULL,
@@ -18,13 +18,14 @@ element_md(
   margin = NULL,
   debug = FALSE,
   inherit.blank = FALSE,
-  width = NULL
+  width = NA_real_
 )
 }
 \arguments{
 \item{family}{Font family.}
 
-\item{code_font_family}{Font family for inline code. Defaults to \code{"mono"}.}
+\item{code_font_family}{Font family for inline code. \code{NA}, the default,
+takes the font of the theme element it inherits from, else \code{"mono"}.}
 
 \item{face}{Font face ("plain", "bold", "italic", "bold.italic").}
 
@@ -51,10 +52,11 @@ captions, which wrap to their available width by default. With 'patchwork' or a
 fixed aspect ratio, the available width is not known when the height of the
 title is computed: the text may need more lines than the space kept for it,
 and setting \code{width} solves this. It is ignored for rotated text and for text
-with an explicit position.}
+with an explicit position. \code{NA}, the default, sets no width.}
 }
 \value{
-An element of class \code{c("element_md", "element_text", "element")}.
+An S7 element of class \code{element_md}, which extends
+\code{\link[ggplot2:element_text]{ggplot2::element_text()}}.
 }
 \description{
 A theme element that renders text labels as markdown.

@@ -753,3 +753,94 @@ test_that("titles are placed as element_text() titles", {
   )
   expect_lte(max(abs(md[3:4] - text[3:4])), 2)
 })
+
+test_that("sets of labels are placed as element_text() labels", {
+  skip_if_not_installed("ragg")
+  gdtools::font_set_liberation()
+  withr::local_options(munch.skip_device_check = TRUE)
+  p <- ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg, colour = hp)) +
+    ggplot2::geom_point() +
+    ggplot2::theme_grey(base_family = "Liberation Sans")
+  same_place <- function(p, slot, args = list()) {
+    args$colour <- "red"
+    text <- red_ink_box(
+      p + ggplot2::theme(!!slot := do.call(ggplot2::element_text, args))
+    )
+    md <- red_ink_box(p + ggplot2::theme(!!slot := do.call(element_md, args)))
+    expect_lte(max(abs(md - text)), 2, label = slot)
+  }
+  # axis ticks: one call to element_grob() with a label per tick
+  same_place(p, "axis.text.x")
+  same_place(p, "axis.text.y")
+  same_place(p, "axis.text.y", list(margin = ggplot2::margin(r = 15)))
+  same_place(p, "axis.text.x", list(angle = 45, hjust = 1, vjust = 1))
+  same_place(p, "axis.text.x", list(angle = 90, hjust = 1, vjust = 0.5))
+  same_place(p + ggplot2::scale_x_continuous(breaks = 3), "axis.text.x")
+  # labels of colour bars and bins
+  same_place(p, "legend.text")
+  same_place(p + ggplot2::theme(legend.position = "bottom"), "legend.text")
+  same_place(p + ggplot2::guides(colour = ggplot2::guide_bins()), "legend.text")
+  # polar axes
+  same_place(p + ggplot2::coord_radial(), "axis.text.theta")
+  # properties that ggplot2 reads from S7 elements: the angle set by
+  # guide_axis(), the margin of the labels of polar axes
+  same_place(
+    p + ggplot2::guides(x = ggplot2::guide_axis(angle = 90)),
+    "axis.text.x"
+  )
+  bars <- ggplot2::ggplot(mtcars, ggplot2::aes(factor(cyl))) +
+    ggplot2::geom_bar() +
+    ggplot2::scale_x_discrete(labels = c("4 cyl", "6 cyl", "8 cyl")) +
+    ggplot2::coord_radial() +
+    ggplot2::theme_grey(base_family = "Liberation Sans")
+  same_place(bars, "axis.text.theta")
+})
+
+test_that("element_chunks() refuses sets of labels", {
+  withr::local_options(munch.skip_device_check = TRUE)
+  el <- element_chunks(flextable::as_paragraph("a"))
+  expect_error(
+    ggplot2::element_grob(el, label = c("1", "2"), x = grid::unit(1:2, "native")),
+    "can not label axis ticks"
+  )
+})
+
+test_that("legend labels are not wrapped", {
+  withr::local_options(munch.skip_device_check = TRUE)
+  gdtools::font_set_liberation()
+  label_height <- function(label) {
+    gr <- ggplot2::element_grob(
+      element_md(family = "Liberation Sans"),
+      label = label,
+      margin_x = TRUE,
+      margin_y = TRUE
+    )
+    gr$name <- "guide.label"
+    grDevices::pdf(NULL, width = 2, height = 2)
+    on.exit(grDevices::dev.off())
+    grid::convertHeight(grid::grobHeight(gr), "in", valueOnly = TRUE)
+  }
+  # wider than the device: one line, as with element_text()
+  expect_equal(label_height(strrep("blah ", 40)), label_height("blah"))
+})
+
+test_that("texts at an angle that is not a right angle are placed as element_text()", {
+  skip_if_not_installed("ragg")
+  gdtools::font_set_liberation()
+  withr::local_options(munch.skip_device_check = TRUE)
+  p <- ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg)) +
+    ggplot2::geom_point() +
+    ggplot2::labs(title = "Title", x = "X title") +
+    ggplot2::theme_grey(base_family = "Liberation Sans")
+  for (slot in c("plot.title", "axis.title.x")) {
+    for (hjust in c(0, 1)) {
+      args <- list(colour = "red", angle = 45, hjust = hjust)
+      text <- red_ink_box(
+        p + ggplot2::theme(!!slot := do.call(ggplot2::element_text, args))
+      )
+      md <- red_ink_box(p + ggplot2::theme(!!slot := do.call(element_md, args)))
+      # rotated around the anchor, in a cell of the rotated size
+      expect_lte(max(abs(md - text)), 3, label = paste(slot, hjust))
+    }
+  }
+})

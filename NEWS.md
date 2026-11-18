@@ -3,61 +3,60 @@
 ## New features
 
 - Markdown text can contain LaTeX equations, as in R Markdown and Quarto:
-`$...$` in the text, `$$...$$` alone on its line. They take the colour and
-size of the surrounding text. `\$` and a dollar that does not open an
-equation (`5$ and 10$`) stay dollars. Equations need the package 'equatags'
-and R >= 4.3; without them, their LaTeX source is written as text, with a
-warning.
-- Markdown text can contain superscripts and subscripts, as in R Markdown and
-Quarto: `m^2^`, `H~2~O`.
+`$...$` in the text, `$$...$$` alone on its line. A dollar that does not
+open an equation stays a dollar. Equations need the package 'equatags' and
+R >= 4.3; without them, their LaTeX source is written, with a warning.
+- Markdown text can contain superscripts and subscripts: `m^2^`, `H~2~O`.
+- `element_md()` can be used for all texts of a plot: axis tick labels,
+labels of colour bars, polar axes, and the whole theme with
+`theme(text = element_md())`.
 - `default_text_props()` has new arguments `bold` and `italic`.
 
 ## Changes
 
 These changes move or resize existing texts slightly.
 
-Text is laid out as in Word:
-
-- Words are measured with the kerning of their font, as 'ragg', 'svglite' and
-'ggiraph' draw them: right-aligned lines end at the edge and lines hold
-slightly more words.
-- A line has the height of its font, the single line spacing of Word. The
-default line spacing is now 1 instead of 1.2, as in 'flextable'.
-- Superscripts and subscripts are 65% of the font size, placed as in Word.
-
-Texts follow the 'ggplot2' theme:
-
-- `element_chunks()` takes the size, font, colour and face of the theme for
-the chunks that do not set them, as `element_md()` does. Its argument `size`
-now works.
-- `geom_text_md()` and `geom_label_md()` take their default size, font,
-colour and fill from the theme, as `geom_text()` and `geom_label()` do in
-'ggplot2' 4.0.
-- When the theme has no font family (the default), munch uses the font of
-`flextable::set_flextable_defaults()` instead of `"sans"`. Set `base_family`
-in the theme so that all texts of the plot share the same font.
-
-Devices:
-
+- Text is laid out as in Word: words are measured with the kerning of their
+font, a line has the height of its font (the default line spacing is now 1
+instead of 1.2, as in 'flextable'), superscripts and subscripts are 65% of
+the font size.
+- `lineheight` is only applied between lines, as in 'ggplot2'.
+- Texts follow the 'ggplot2' theme: `element_chunks()` takes its size, font,
+colour and face for the chunks that do not set them, `geom_text_md()` and
+`geom_label_md()` their default size, font, colour and fill. When the theme
+has no font family, munch uses the font of
+`flextable::set_flextable_defaults()`.
+- `element_md()` and `element_chunks()` are S7 elements extending
+`ggplot2::element_text()`, as the elements of 'ggplot2' 4.0. Their arguments
+do not change; `code_font_family` and `width` default to `NA` (unset).
 - `cairo_pdf()` gives a warning on Windows, where it draws text without
-kerning: words are wider than measured. Use 'ragg' instead.
+kerning. Use 'ragg' instead.
 
 ## Bug fixes
 
-- `hjust` had no effect on axis titles made with `element_md()` or
-`element_chunks()`: they stayed centred.
-- The title of a legend made with `element_md()` or `element_chunks()` was
-wrapped when it was wider than the keys and labels (`Legen` / `d`).
-- `geom_text_md()` with an `angle` drew the text away from its point, or
-outside the panel (`angle = 30`).
+Texts made with `element_md()` or `element_chunks()` are now placed as with
+`element_text()`:
+
+- axis titles follow `hjust`;
+- titles at an angle that is not a right angle (`angle = 45`) are rotated
+around their anchor;
+- legend titles and labels are not wrapped: long ones were broken or no
+longer aligned with their key;
+- left and right margins are counted in the width: legend labels were drawn
+over the next key;
+- the margin of the labels of polar axes and `guide_axis(angle =)` are
+applied;
+- `theme(axis.text = element_md())` applies to `axis.text.x` and
+`axis.text.y`.
+
+Other fixes:
+
+- `geom_text_md()` with an `angle` drew the text away from its point.
+- `nudge_x` and `nudge_y` were ignored by `geom_text_md()` and
+`geom_label_md()`.
 - `element_md()` ignored its argument `face` (#4).
-- `element_md()` and `element_chunks()` ignored their left and right margins
-in their width: used as `legend.text`, the widest labels were wrapped and
-drawn over the next key. The y axis title is now spaced by its margin.
-- Right-aligned and centred lines of wrapped text were shifted by the space
-that ends them.
-- With `width` and `hjust` > 0, texts were shifted to the right of their
-anchor, and out of the box of labels.
+- Wrapped text: right-aligned and centred lines were shifted by their final
+space, and with `width` and `hjust` > 0 texts were shifted to the right.
 - Equations created with `flextable::as_equation()` were dropped by
 `chunks_grob()` and `element_chunks()`.
 - `as_paragraph_md()` with an image gave a paragraph that 'flextable'
@@ -65,7 +64,7 @@ refused. An image that can not be read is now dropped with a warning.
 
 ## Dependencies
 
-- 'ggplot2' >= 4.0.0 and 'gdtools' >= 0.6.0 are required.
+- 'ggplot2' >= 4.0.4, 'S7' and 'gdtools' >= 0.6.0 are required.
 - 'equatags' >= 0.4.0 is suggested, to draw equations.
 
 # munch 0.0.3

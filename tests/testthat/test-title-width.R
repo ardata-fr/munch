@@ -198,7 +198,9 @@ test_that("width is checked and kept when elements are merged", {
     )$width,
     2
   )
-  expect_null(
-    ggplot2::merge_element(element_md(), ggplot2::element_text())$width
+  # unset: NA, as the root element `text` can not have NULL properties
+  expect_identical(
+    ggplot2::merge_element(element_md(), ggplot2::element_text())$width,
+    NA_real_
   )
 })

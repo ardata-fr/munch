@@ -71,7 +71,6 @@
 #' @importFrom grid nullGrob widthDetails heightDetails rectGrob rasterGrob
 #' @importFrom grid vpStack unit.c unitType
 #' @importFrom gdtools strings_sizes
-#' @importFrom methods slot
 ## usethis namespace: end
 NULL
 

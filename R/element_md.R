@@ -5,7 +5,8 @@
 #' subtitles, captions, axis labels, etc.
 #'
 #' @param family Font family.
-#' @param code_font_family Font family for inline code. Defaults to `"mono"`.
+#' @param code_font_family Font family for inline code. `NA`, the default,
+#'   takes the font of the theme element it inherits from, else `"mono"`.
 #' @param face Font face ("plain", "bold", "italic", "bold.italic").
 #' @param colour,color Text color.
 #' @param size Font size in points.
@@ -19,11 +20,12 @@
 #'   fixed aspect ratio, the available width is not known when the height of the
 #'   title is computed: the text may need more lines than the space kept for it,
 #'   and setting `width` solves this. It is ignored for rotated text and for text
-#'   with an explicit position.
+#'   with an explicit position. `NA`, the default, sets no width.
 #' @param debug Show debug rectangles.
 #' @param inherit.blank Should this element inherit blank elements.
 #'
-#' @return An element of class `c("element_md", "element_text", "element")`.
+#' @return An S7 element of class `element_md`, which extends
+#'   [ggplot2::element_text()].
 #' @export
 #' @examplesIf require("ggiraph", quietly = TRUE, character.only = TRUE)
 #' library(ggplot2)
@@ -61,45 +63,61 @@
 #'   ggobj = p2,
 #'   check_fonts_dependencies = TRUE
 #' )
-element_md <- function(
-  family = NULL,
-  code_font_family = NULL,
-  face = NULL,
-  colour = NULL,
-  size = NULL,
-  hjust = NULL,
-  vjust = NULL,
-  angle = NULL,
-  lineheight = NULL,
-  color = NULL,
-  margin = NULL,
-  debug = FALSE,
-  inherit.blank = FALSE,
-  width = NULL
-) {
-  if (!is.null(color)) {
-    colour <- color
-  }
-  check_title_width(width)
-  structure(
-    list(
-      family = family,
+element_md <- S7::new_class(
+  "element_md",
+  parent = ggplot2::element_text,
+  package = NULL,
+  properties = list(
+    code_font_family = S7::new_union(NULL, S7::class_character),
+    width = S7::new_union(NULL, S7::class_numeric)
+  ),
+  constructor = function(
+    family = NULL,
+    code_font_family = NA_character_,
+    face = NULL,
+    colour = NULL,
+    size = NULL,
+    hjust = NULL,
+    vjust = NULL,
+    angle = NULL,
+    lineheight = NULL,
+    color = NULL,
+    margin = NULL,
+    debug = FALSE,
+    inherit.blank = FALSE,
+    width = NA_real_
+  ) {
+    if (!is.null(color)) {
+      colour <- color
+    }
+    check_title_width(width)
+    # NULL and NA both mean unset: the root element `text` of a theme can not
+    # have NULL properties
+    if (is_unset_value(width)) {
+      width <- NA_real_
+    }
+    if (is_unset_value(code_font_family)) {
+      code_font_family <- NA_character_
+    }
+    S7::new_object(
+      ggplot2::element_text(
+        family = family,
+        face = face,
+        colour = colour,
+        size = size,
+        hjust = hjust,
+        vjust = vjust,
+        angle = angle,
+        lineheight = lineheight,
+        margin = margin,
+        debug = debug,
+        inherit.blank = inherit.blank
+      ),
       code_font_family = code_font_family,
-      face = face,
-      colour = colour,
-      size = size,
-      hjust = hjust,
-      vjust = vjust,
-      angle = angle,
-      lineheight = lineheight,
-      margin = margin,
-      debug = debug,
-      inherit.blank = inherit.blank,
       width = width
-    ),
-    class = c("element_md", "element_text", "element")
-  )
-}
+    )
+  }
+)
 
 #' @importFrom ggplot2 element_grob
 #' @export
@@ -152,11 +170,29 @@ element_grob.element_md <- function(
     font_size = size,
     font_family = family,
     font_color = colour,
-    code_font_family = element$code_font_family,
+    code_font_family = unset_as_null(element$code_font_family),
     line_spacing = lineheight,
     bold = face %in% c("bold", "bold.italic", 2, 4),
     italic = face %in% c("italic", "bold.italic", 3, 4)
   )
+
+  # Several labels at given positions (axis ticks, colour bars, polar axes),
+  # and texts with an angle that is not a right angle: drawn as titleGrob()
+  # of 'ggplot2', rotated around their anchor in a cell of their rotated size
+  if (is_label_set(label, x, y, margin_x, margin_y) || angle %% 90 != 0) {
+    return(md_labels_grob(
+      label = label,
+      x = x,
+      y = y,
+      hjust = hj,
+      vjust = vj,
+      angle = angle,
+      text_props = props,
+      margin = margin,
+      margin_x = margin_x,
+      margin_y = margin_y
+    ))
+  }
 
   # Detect explicit positioning (e.g. plot.tag with location = "plot"/"panel")
   has_position <- !is.null(x) || !is.null(y)
@@ -364,7 +400,7 @@ element_grob.element_md <- function(
     content_h = report_h,
     margin = margin,
     auto_wrap = auto_wrap,
-    wrap_width = element$width,
+    wrap_width = unset_as_null(element$width),
     cl = "mdTitleGrob"
   )
 }
@@ -509,7 +545,7 @@ title_height <- function(x) {
   if (!isTRUE(x$auto_wrap)) {
     return(sum(x$heights))
   }
-  if (is_legend_title(x)) {
+  if (is_legend_text(x)) {
     # not wrapped: the height of its single line, the content row is "null"
     margin <- x$margin %||% ggplot2::margin()
     return(margin[1] + x$content_h + margin[3])
@@ -541,7 +577,7 @@ title_set_wrap_width <- function(x) {
   if (!isTRUE(x$auto_wrap)) {
     return(x)
   }
-  if (is_legend_title(x)) {
+  if (is_legend_text(x)) {
     # not wrapped: placed at hjust in its cell and overflowing it, as
     # titleGrob() of ggplot2
     md_gr <- x$children[[1]]
@@ -568,7 +604,7 @@ title_set_wrap_width <- function(x) {
 
 #' @noRd
 check_title_width <- function(width) {
-  if (is.null(width)) {
+  if (is_unset_value(width)) {
     return(invisible(NULL))
   }
   if (!is.numeric(width) || length(width) != 1L || is.na(width) || width <= 0) {
@@ -577,46 +613,6 @@ check_title_width <- function(width) {
   invisible(NULL)
 }
 
-#' @title Merge element_md with Another Element
-#' @description
-#' Merges an element_md object with another element.
-#' @param new New element_md.
-#' @param old Old element to merge with.
-#' @return Merged element.
-#' @exportS3Method ggplot2::merge_element
-#' @keywords internal
-merge_element.element_md <- function(new, old) {
-  props_names <- c(
-    "family",
-    "code_font_family",
-    "face",
-    "colour",
-    "size",
-    "hjust",
-    "vjust",
-    "angle",
-    "lineheight",
-    "margin",
-    "debug",
-    "inherit.blank",
-    "width"
-  )
-  for (nm in props_names) {
-    if (is.null(new[[nm]])) {
-      # Try slot (S7/S4) then list access (S3)
-      old_val <- tryCatch(
-        slot(old, nm),
-        error = function(e) {
-          tryCatch(old[[nm]], error = function(e2) NULL)
-        }
-      )
-      if (!is.null(old_val)) {
-        new[[nm]] <- old_val
-      }
-    }
-  }
-  new
-}
 
 #' @noRd
 `%||%` <- function(a, b) if (!is.null(a)) a else b
@@ -645,13 +641,14 @@ merge_element.element_md <- function(new, old) {
 #'   fixed aspect ratio, the available width is not known when the height of the
 #'   title is computed: the text may need more lines than the space kept for it,
 #'   and setting `width` solves this. It is ignored for rotated text and for text
-#'   with an explicit position.
+#'   with an explicit position. `NA`, the default, sets no width.
 #' @param debug Show debug rectangles.
 #' @param inherit.blank Should this element inherit blank elements.
 #' @param size Font size in points of the chunks that do not set theirs. By
 #'   default, the size of the theme.
 #'
-#' @return An element of class `c("element_chunks", "element_text", "element")`.
+#' @return An S7 element of class `element_chunks`, which extends
+#'   [ggplot2::element_text()].
 #' @export
 #' @examplesIf require("ggiraph", quietly = TRUE, character.only = TRUE)
 #' library(ggplot2)
@@ -712,46 +709,54 @@ merge_element.element_md <- function(new, old) {
 #' )
 #'
 #' x
-element_chunks <- function(
-  chunks,
-  hjust = NULL,
-  vjust = NULL,
-  angle = NULL,
-  lineheight = NULL,
-  size = NULL,
-  margin = NULL,
-  debug = FALSE,
-  inherit.blank = FALSE,
-  width = NULL
-) {
-  check_title_width(width)
-  if (!inherits(chunks, c("paragraph", "chunk"))) {
-    cli::cli_abort(
-      "{.arg chunks} must be a paragraph or chunk object from 'flextable'"
+element_chunks <- S7::new_class(
+  "element_chunks",
+  parent = ggplot2::element_text,
+  package = NULL,
+  properties = list(
+    chunks = S7::class_any,
+    width = S7::new_union(NULL, S7::class_numeric)
+  ),
+  constructor = function(
+    chunks,
+    hjust = NULL,
+    vjust = NULL,
+    angle = NULL,
+    lineheight = NULL,
+    size = NULL,
+    margin = NULL,
+    debug = FALSE,
+    inherit.blank = FALSE,
+    width = NA_real_
+  ) {
+    check_title_width(width)
+    if (is_unset_value(width)) {
+      width <- NA_real_
+    }
+    if (!inherits(chunks, c("paragraph", "chunk"))) {
+      cli::cli_abort(
+        "{.arg chunks} must be a paragraph or chunk object from 'flextable'"
+      )
+    }
+    # family, face and colour are not arguments: the format comes from the
+    # chunks, these properties receive the values of the theme when the
+    # element is merged with it
+    S7::new_object(
+      ggplot2::element_text(
+        hjust = hjust,
+        vjust = vjust,
+        angle = angle,
+        lineheight = lineheight,
+        size = size,
+        margin = margin,
+        debug = debug,
+        inherit.blank = inherit.blank
+      ),
+      chunks = chunks,
+      width = width
     )
   }
-
-  structure(
-    list(
-      chunks = chunks,
-      # not arguments: the format comes from the chunks, these fields receive
-      # the values of the theme when the element is merged with it
-      family = NULL,
-      face = NULL,
-      colour = NULL,
-      hjust = hjust,
-      vjust = vjust,
-      angle = angle,
-      lineheight = lineheight,
-      size = size,
-      margin = margin,
-      debug = debug,
-      inherit.blank = inherit.blank,
-      width = width
-    ),
-    class = c("element_chunks", "element_text", "element")
-  )
-}
+)
 
 #' @export
 element_grob.element_chunks <- function(
@@ -777,6 +782,13 @@ element_grob.element_chunks <- function(
   chunks <- element$chunks
   if (is.null(chunks)) {
     return(ggplot2::zeroGrob())
+  }
+  if (is_label_set(label, x, y, margin_x, margin_y)) {
+    cli::cli_abort(c(
+      "{.fn element_chunks} draws one fixed text and can not label axis ticks,
+      colour bars or polar axes.",
+      "i" = "Use {.fn element_md} for these labels."
+    ))
   }
 
   # Convert chunk to paragraph if needed
@@ -1020,7 +1032,7 @@ element_grob.element_chunks <- function(
     content_h = report_h,
     margin = margin,
     auto_wrap = auto_wrap,
-    wrap_width = element$width,
+    wrap_width = unset_as_null(element$width),
     cl = "chunksGrob"
   )
 }
@@ -1041,45 +1053,6 @@ makeContent.chunksGrob <- function(x) {
   title_set_wrap_width(x)
 }
 
-#' @title Merge element_chunks with Another Element
-#' @description
-#' Merges an element_chunks object with another element.
-#' @param new New element_chunks.
-#' @param old Old element to merge with.
-#' @return Merged element.
-#' @exportS3Method ggplot2::merge_element
-#' @keywords internal
-merge_element.element_chunks <- function(new, old) {
-  props_names <- c(
-    "chunks",
-    "family",
-    "face",
-    "colour",
-    "hjust",
-    "vjust",
-    "angle",
-    "lineheight",
-    "size",
-    "margin",
-    "debug",
-    "inherit.blank",
-    "width"
-  )
-  for (nm in props_names) {
-    if (is.null(new[[nm]])) {
-      old_val <- tryCatch(
-        slot(old, nm),
-        error = function(e) {
-          tryCatch(old[[nm]], error = function(e2) NULL)
-        }
-      )
-      if (!is.null(old_val)) {
-        new[[nm]] <- old_val
-      }
-    }
-  }
-  new
-}
 
 #' Justification of a rotated text in its cell
 #'
@@ -1102,14 +1075,242 @@ rotate_text_just <- function(hjust, vjust, angle) {
   }
 }
 
-#' Is a title the title of a legend?
+#' Is a title the title or a label of a legend?
 #'
-#' The title of a legend does not wrap: 'ggplot2' gives it a cell as wide as
-#' the keys and labels, adds empty columns when the title is wider, and lets
-#' the text overflow its cell. ggplot2 names this grob "guide.title".
+#' The title and the labels of a legend do not wrap. 'ggplot2' gives a label
+#' a cell as wide as its text. It gives the title a cell as wide as the keys
+#' and labels, adds empty columns when the title is wider, and lets the text
+#' overflow its cell. ggplot2 names these grobs "guide.title" and
+#' "guide.label".
 #' @param x A title grob.
 #' @return A logical.
 #' @noRd
-is_legend_title <- function(x) {
-  startsWith(x$name %||% "", "guide.title")
+is_legend_text <- function(x) {
+  name <- x$name %||% ""
+  startsWith(name, "guide.title") || startsWith(name, "guide.label")
 }
+
+#' Is a call to element_grob() a set of labels?
+#'
+#' 'ggplot2' draws the labels of axis ticks, colour bars and polar axes with
+#' one call to `element_grob()`: `label` holds a text per label and `x` or `y`
+#' their positions. A single tick label has a position and one margin side; a
+#' tag has a position and both margin sides.
+#' @noRd
+is_label_set <- function(label, x, y, margin_x, margin_y) {
+  length(label) > 1L ||
+    length(x) > 1L ||
+    length(y) > 1L ||
+    ((!is.null(x) || !is.null(y)) && !(isTRUE(margin_x) && isTRUE(margin_y)))
+}
+
+#' Grob of a set of markdown labels
+#'
+#' The markdown version of `titleGrob()` of 'ggplot2' for vectors: each label
+#' is a markdown text drawn at its position, rotated by `angle` around its
+#' anchor, with its justification. The grob has the size of the union of the
+#' labels in the direction without position, plus the margins.
+#' @noRd
+md_labels_grob <- function(
+  label,
+  x,
+  y,
+  hjust,
+  vjust,
+  angle,
+  text_props,
+  margin,
+  margin_x,
+  margin_y
+) {
+  label <- as.character(label)
+  n <- max(length(label), length(x), length(y), 1L)
+  label <- rep_len(label, n)
+  hjust <- rep_len(hjust, n)
+  vjust <- rep_len(vjust, n)
+  angle <- rep_len(angle, n)
+
+  just <- rotate_label_just(hjust, vjust, angle)
+  x <- x %||% unit(just$hjust, "npc")
+  y <- y %||% unit(just$vjust, "npc")
+  if (!grid::is.unit(x)) x <- unit(x, "npc")
+  if (!grid::is.unit(y)) y <- unit(y, "npc")
+  x <- rep(x, length.out = n)
+  y <- rep(y, length.out = n)
+
+  # the box of each label relative to its anchor, after rotation, in inches
+  grobs <- vector("list", n)
+  x_min <- x_max <- y_min <- y_max <- numeric(n)
+  for (i in seq_len(n)) {
+    if (is.na(label[i]) || !nzchar(label[i])) next
+    gr <- md_grob(
+      label[i],
+      x = hjust[i],
+      y = vjust[i],
+      hjust = hjust[i],
+      vjust = vjust[i],
+      text_props = text_props
+    )
+    dims <- dim(gr)
+    rad <- angle[i] * pi / 180
+    cx <- c(-hjust[i], 1 - hjust[i], 1 - hjust[i], -hjust[i]) * dims$width
+    cy <- c(-vjust[i], -vjust[i], 1 - vjust[i], 1 - vjust[i]) * dims$height
+    rx <- cx * cos(rad) - cy * sin(rad)
+    ry <- cx * sin(rad) + cy * cos(rad)
+    x_min[i] <- min(rx)
+    x_max[i] <- max(rx)
+    y_min[i] <- min(ry)
+    y_max[i] <- max(ry)
+    gr$dims <- dims
+    grobs[[i]] <- gr
+  }
+  drawn <- !vapply(grobs, is.null, logical(1))
+  if (!any(drawn)) {
+    return(ggplot2::zeroGrob())
+  }
+  width <- unit(max(x_max[drawn]) - min(x_min[drawn]), "inches")
+  height <- unit(max(y_max[drawn]) - min(y_min[drawn]), "inches")
+
+  # margins, as titleGrob() of 'ggplot2'
+  new_width <- NULL
+  new_height <- NULL
+  if (isTRUE(margin_x)) {
+    new_width <- unit.c(margin[4], width, margin[2])
+    x <- x - margin[2] * just$hjust + margin[4] * (1 - just$hjust)
+  }
+  if (isTRUE(margin_y)) {
+    new_height <- unit.c(margin[1], height, margin[3])
+    y <- y - margin[1] * just$vjust + margin[3] * (1 - just$vjust)
+  }
+  if (xor(isTRUE(margin_x), isTRUE(margin_y))) {
+    new_width <- new_width %||% unit(1, "null")
+    new_height <- new_height %||% unit(1, "null")
+  }
+
+  for (i in which(drawn)) {
+    dims <- grobs[[i]]$dims
+    grobs[[i]]$dims <- NULL
+    grobs[[i]]$vp <- viewport(
+      x = x[i],
+      y = y[i],
+      width = unit(dims$width, "inches"),
+      height = unit(dims$height, "inches"),
+      just = c(hjust[i], vjust[i]),
+      angle = angle[i]
+    )
+  }
+
+  gTree(
+    children = do.call(gList, grobs[drawn]),
+    widths = new_width %||% width,
+    heights = new_height %||% height,
+    cl = "mdLabelsGrob"
+  )
+}
+
+#' @export
+widthDetails.mdLabelsGrob <- function(x) {
+  sum(x$widths)
+}
+
+#' @export
+heightDetails.mdLabelsGrob <- function(x) {
+  sum(x$heights)
+}
+
+#' Justification of rotated labels
+#'
+#' Vectorised `rotate_just()` of 'ggplot2': the justification of the box of
+#' each label, rotated by its angle.
+#' @noRd
+rotate_label_just <- function(hjust, vjust, angle) {
+  angle <- angle %% 360
+  case <- findInterval(angle, c(0, 90, 180, 270, 360))
+  hnew <- hjust
+  vnew <- vjust
+  i <- case == 2
+  hnew[i] <- 1 - vjust[i]
+  vnew[i] <- hjust[i]
+  i <- case == 3
+  hnew[i] <- 1 - hjust[i]
+  vnew[i] <- 1 - vjust[i]
+  i <- case == 4
+  hnew[i] <- vjust[i]
+  vnew[i] <- 1 - hjust[i]
+  list(hjust = hnew, vjust = vnew)
+}
+
+#' Merge a munch element with the element it inherits from
+#'
+#' The properties that `new` does not set are taken from `old`, for the
+#' properties they share: `old` is usually an `element_text()` of the theme,
+#' which has no `code_font_family`, `width` or `chunks`.
+#' @param new An `element_md()` or `element_chunks()`.
+#' @param old The element it inherits from.
+#' @return The merged element.
+#' @noRd
+merge_munch_element <- function(new, old, ...) {
+  if (S7::S7_inherits(old)) {
+    old_props <- S7::props(old)
+  } else if (is.list(old)) {
+    old_props <- unclass(old)
+  } else {
+    return(new)
+  }
+  new_props <- S7::props(new)
+  is_unset <- vapply(new_props, is_unset_value, logical(1))
+  idx <- intersect(names(new_props)[is_unset], names(old_props))
+  idx <- idx[!vapply(old_props[idx], is_unset_value, logical(1))]
+  if (length(idx)) {
+    S7::props(new)[idx] <- old_props[idx]
+  }
+  new
+}
+
+#' Merge an element_text() into a munch element
+#'
+#' 'ggplot2' merges an `element_text()` into the root element `text` to set
+#' defaults, for example for the titles and labels of legends. When the root
+#' is an `element_md()`, the properties set by the `element_text()` replace
+#' its own and the result stays an `element_md()`.
+#' @noRd
+merge_text_into_munch_element <- function(new, old, ...) {
+  new_props <- S7::props(new)
+  set <- new_props[lengths(new_props) > 0]
+  set <- set[intersect(names(set), names(S7::props(old)))]
+  if (length(set)) {
+    S7::props(old)[names(set)] <- set
+  }
+  old
+}
+
+#' Is a property of an element unset?
+#'
+#' `NULL`, or `NA` for `code_font_family` and `width`: as the root element
+#' `text` must have all its properties, these have `NA` as default value.
+#' @noRd
+is_unset_value <- function(x) {
+  is.null(x) || (length(x) == 1L && is.atomic(x) && is.na(x))
+}
+
+#' @noRd
+unset_as_null <- function(x) {
+  if (is_unset_value(x)) NULL else x
+}
+
+# registered by S7::methods_register() in .onLoad()
+S7::`method<-`(
+  ggplot2::merge_element,
+  list(element_md, S7::class_any),
+  value = merge_munch_element
+)
+S7::`method<-`(
+  ggplot2::merge_element,
+  list(element_chunks, S7::class_any),
+  value = merge_munch_element
+)
+S7::`method<-`(
+  ggplot2::merge_element,
+  list(ggplot2::element_text, element_md),
+  value = merge_text_into_munch_element
+)
