@@ -42,6 +42,8 @@ Texts made with `element_md()` or `element_chunks()` are now placed as with
 around their anchor;
 - legend titles and labels are not wrapped: long ones were broken or no
 longer aligned with their key;
+- texts are placed at `vjust` in a cell higher than them: legend labels were
+drawn at the bottom of their row, below their key;
 - left and right margins are counted in the width: legend labels were drawn
 over the next key;
 - the margin of the labels of polar axes and `guide_axis(angle =)` are

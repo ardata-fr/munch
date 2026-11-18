@@ -143,8 +143,8 @@ backslash then `\n`) to put it on several lines:
 ```{r md-legend-lines, message=FALSE, fig.height=3}
 cyl_labels <- c(
   "**4** cylinders",
-  "**6** cylinders  \n*few cars*",
-  "**8** cylinders"
+  "**6** cylinders",
+  "**8** cylinders  \n*the most powerful*"
 )
 
 p <- ggplot(mtcars, aes(wt, mpg, colour = factor(cyl))) +
@@ -158,12 +158,12 @@ The keys are then unevenly spaced. This comes from 'ggplot2', with
 `element_text()` too: a row of the legend has the height of its key
 (`legend.key.size`) or of its label, whichever is larger. A label on one line
 is lower than the key and is centred in the row; a label on two lines is
-higher and fills its row. For even spacing, make the keys lower than a line,
+higher and fills its row. For even spacing, make the keys lower than a label,
 so that each row has the height of its label, and set the space between rows:
 
 ```{r md-legend-spacing, message=FALSE, fig.height=3}
 p + theme(
-  legend.key.height = unit(1, "lines"),
+  legend.key.height = unit(0.5, "lines"),
   legend.key.spacing.y = unit(4, "pt")
 )
 ```

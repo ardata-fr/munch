@@ -577,28 +577,34 @@ title_set_wrap_width <- function(x) {
   if (!isTRUE(x$auto_wrap)) {
     return(x)
   }
+  md_gr <- x$children[[1]]
   if (is_legend_text(x)) {
-    # not wrapped: placed at hjust in its cell and overflowing it, as
-    # titleGrob() of ggplot2
-    md_gr <- x$children[[1]]
+    # not wrapped: placed at hjust and vjust in its cell and overflowing it,
+    # as titleGrob() of ggplot2
     md_gr$vp <- vpStack(
       md_gr$vp,
       viewport(
         x = unit(md_gr$hjust, "npc"),
+        y = unit(md_gr$vjust, "npc"),
         width = x$content_w,
-        just = c(md_gr$hjust, 0.5)
+        height = x$content_h,
+        just = c(md_gr$hjust, md_gr$vjust)
       )
     )
     return(setChildren(x, gList(md_gr)))
   }
 
-  wrap_width <- title_wrap_width(x, viewport_width())
-  if (is.null(wrap_width)) {
-    return(x)
-  }
-
-  md_gr <- x$children[[1]]
-  md_gr$max_width <- wrap_width
+  md_gr$max_width <- title_wrap_width(x, viewport_width())
+  # placed at vjust in its cell, as titleGrob() of ggplot2: the cell can be
+  # higher than the text (a strip, the row of a legend with a higher key)
+  md_gr$vp <- vpStack(
+    md_gr$vp,
+    viewport(
+      y = unit(md_gr$vjust, "npc"),
+      height = unit(dim(md_gr)$height, "inches"),
+      just = c(0.5, md_gr$vjust)
+    )
+  )
   setChildren(x, gList(md_gr))
 }
 

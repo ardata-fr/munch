@@ -844,3 +844,22 @@ test_that("texts at an angle that is not a right angle are placed as element_tex
     }
   }
 })
+
+test_that("texts are placed at vjust in a cell higher than them", {
+  skip_if_not_installed("ragg")
+  gdtools::font_set_liberation()
+  withr::local_options(munch.skip_device_check = TRUE)
+  p <- ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg, colour = factor(cyl))) +
+    ggplot2::geom_point() +
+    ggplot2::theme_grey(base_family = "Liberation Sans")
+  same_place <- function(slot) {
+    args <- list(colour = "red")
+    text <- red_ink_box(
+      p + ggplot2::theme(!!slot := do.call(ggplot2::element_text, args))
+    )
+    md <- red_ink_box(p + ggplot2::theme(!!slot := do.call(element_md, args)))
+    expect_lte(max(abs(md - text)), 1, label = slot)
+  }
+  # the row of a legend has the height of the key, higher than the label
+  same_place("legend.text")
+})
