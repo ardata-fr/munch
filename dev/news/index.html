@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">munch</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.4.025</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.4.027</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,6 +70,7 @@
 <ul><li>axis titles follow <code>hjust</code>;</li>
 <li>titles at an angle that is not a right angle (<code>angle = 45</code>) are rotated around their anchor;</li>
 <li>legend titles and labels are not wrapped: long ones were broken or no longer aligned with their key;</li>
+<li>texts are placed at <code>vjust</code> in a cell higher than them: legend labels were drawn at the bottom of their row, below their key;</li>
 <li>left and right margins are counted in the width: legend labels were drawn over the next key;</li>
 <li>the margin of the labels of polar axes and <code>guide_axis(angle =)</code> are applied;</li>
 <li>

@@ -18,7 +18,8 @@ annotations using ‘munch’.
 [`element_md()`](https://ardata-fr.github.io/munch/dev/reference/element_md.md)
 replaces
 [`element_text()`](https://ggplot2.tidyverse.org/reference/element.html)
-to render markdown in titles, subtitles, captions, and axis labels.
+to render markdown in titles, subtitles, captions, axis titles, axis
+tick labels and legends.
 
 ``` r
 
@@ -93,6 +94,118 @@ p | p
 ```
 
 ![](using-ggplot2_files/figure-html/long-title-patchwork-1.png)
+
+### Axis tick labels
+
+The labels of axis ticks are markdown too: give them with the `labels`
+of the scale. Each label is placed as
+[`element_text()`](https://ggplot2.tidyverse.org/reference/element.html)
+places it, with its angle and justification.
+
+``` r
+
+species <- aggregate(Sepal.Length ~ Species, data = iris, FUN = mean)
+
+ggplot(species, aes(Species, Sepal.Length)) +
+  geom_col(fill = "grey70") +
+  scale_x_discrete(
+    labels = c("*Iris setosa*", "*Iris versicolor*", "*Iris virginica*")
+  ) +
+  theme(axis.text.x = element_md(angle = 30, hjust = 1))
+```
+
+![](using-ggplot2_files/figure-html/md-ticks-1.png)
+
+This works for all labels that ‘ggplot2’ draws as a set: axis ticks,
+labels of colour bars, polar axes.
+[`element_chunks()`](https://ardata-fr.github.io/munch/dev/reference/element_chunks.md)
+can not be used there: it draws one fixed text.
+
+### Legends
+
+`legend.text` and `legend.title` accept
+[`element_md()`](https://ardata-fr.github.io/munch/dev/reference/element_md.md),
+for keys as for colour bars:
+
+``` r
+
+ggplot(mtcars, aes(wt, mpg, colour = hp)) +
+  geom_point() +
+  labs(colour = "**Power**") +
+  scale_colour_continuous(labels = function(x) paste0("**", x, "** hp")) +
+  theme(
+    legend.title = element_md(),
+    legend.text = element_md()
+  )
+```
+
+![](using-ggplot2_files/figure-html/md-legend-1.png)
+
+Legend labels do not wrap, as with
+[`element_text()`](https://ggplot2.tidyverse.org/reference/element.html):
+a long label is written on one line. Write a line break in the label
+(two spaces then `\n`, or a backslash then `\n`) to put it on several
+lines:
+
+``` r
+
+cyl_labels <- c(
+  "**4** cylinders",
+  "**6** cylinders",
+  "**8** cylinders  \n*the most powerful*"
+)
+
+p <- ggplot(mtcars, aes(wt, mpg, colour = factor(cyl))) +
+  geom_point() +
+  scale_colour_discrete(labels = cyl_labels) +
+  theme(legend.text = element_md())
+p
+```
+
+![](using-ggplot2_files/figure-html/md-legend-lines-1.png)
+
+The keys are then unevenly spaced. This comes from ‘ggplot2’, with
+[`element_text()`](https://ggplot2.tidyverse.org/reference/element.html)
+too: a row of the legend has the height of its key (`legend.key.size`)
+or of its label, whichever is larger. A label on one line is lower than
+the key and is centred in the row; a label on two lines is higher and
+fills its row. For even spacing, make the keys lower than a label, so
+that each row has the height of its label, and set the space between
+rows:
+
+``` r
+
+p + theme(
+  legend.key.height = unit(0.5, "lines"),
+  legend.key.spacing.y = unit(4, "pt")
+)
+```
+
+![](using-ggplot2_files/figure-html/md-legend-spacing-1.png)
+
+### All texts of a plot
+
+Set
+[`element_md()`](https://ardata-fr.github.io/munch/dev/reference/element_md.md)
+on the root element `text` to render all texts of the plot as markdown:
+titles, axes, legends and strips.
+
+``` r
+
+ggplot(mtcars, aes(wt, mpg, colour = factor(am))) +
+  geom_point() +
+  facet_wrap(~ paste0("**", cyl, "** cylinders")) +
+  labs(
+    title = "*Weight* and **consumption**",
+    x = "Weight (*1000 lbs*)",
+    y = "Miles per gallon",
+    colour = "*Transmission*"
+  ) +
+  scale_colour_discrete(labels = c("**automatic**", "**manual**")) +
+  theme(text = element_md())
+```
+
+![](using-ggplot2_files/figure-html/md-all-1.png)
 
 ## Advanced formatting with element_chunks()
 
@@ -408,8 +521,8 @@ text without the library ‘Pango’. Use ‘ragg’ instead.
 |----|----|----|----|
 | Bold / Italic | `**text**` / `*text*` | [`as_b()`](https://davidgohel.github.io/flextable/reference/as_b.html) / [`as_i()`](https://davidgohel.github.io/flextable/reference/as_i.html) | `**text**` / `*text*` |
 | Inline code | `` `text` `` | x | `` `text` `` |
-| Superscript | x | [`as_sup()`](https://davidgohel.github.io/flextable/reference/as_sup.html) | x |
-| Subscript | x | [`as_sub()`](https://davidgohel.github.io/flextable/reference/as_sub.html) | x |
+| Superscript | `x^2^` | [`as_sup()`](https://davidgohel.github.io/flextable/reference/as_sup.html) | `x^2^` |
+| Subscript | `H~2~O` | [`as_sub()`](https://davidgohel.github.io/flextable/reference/as_sub.html) | `H~2~O` |
 | Colors | x | [`colorize()`](https://davidgohel.github.io/flextable/reference/colorize.html) | x |
 | Highlighting | x | [`as_highlight()`](https://davidgohel.github.io/flextable/reference/as_highlight.html) | x |
 | Use case | Theme elements | Theme elements | Text annotations |
