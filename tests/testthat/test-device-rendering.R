@@ -863,3 +863,31 @@ test_that("texts are placed at vjust in a cell higher than them", {
   # the row of a legend has the height of the key, higher than the label
   same_place("legend.text")
 })
+
+test_that("texts rotated by -90 degrees have the size of a vertical text", {
+  skip_if_not_installed("ragg")
+  gdtools::font_set_liberation()
+  withr::local_options(munch.skip_device_check = TRUE)
+  # ggplot2 rotates strip.text.y by -90 degrees
+  lab <- ggplot2::labeller(am = function(x) ifelse(x == 0, "automatic", "manual"))
+  p <- ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg)) +
+    ggplot2::geom_point() +
+    ggplot2::facet_grid(am ~ cyl, labeller = lab) +
+    ggplot2::theme_grey(base_family = "Liberation Sans")
+  strip_width <- function(p) {
+    ragg::agg_capture()
+    on.exit(grDevices::dev.off())
+    g <- ggplot2::ggplotGrob(p)
+    col <- g$layout$l[grep("strip-r", g$layout$name)[1]]
+    grid::convertWidth(g$widths[col], "pt", valueOnly = TRUE)
+  }
+  text <- strip_width(p)
+  md <- strip_width(p + ggplot2::theme(strip.text = element_md()))
+  chunks <- strip_width(
+    p + ggplot2::theme(strip.text.y = element_chunks(flextable::as_paragraph("automatic")))
+  )
+  # the width of one line, not the length of "automatic"; munch lines are
+  # slightly higher than those of element_text()
+  expect_lt(abs(md - text), 3)
+  expect_lt(abs(chunks - text), 3)
+})

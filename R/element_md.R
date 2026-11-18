@@ -212,7 +212,7 @@ element_grob.element_md <- function(
   content_h <- unit(dims$height, "inches")
 
   # For rotated text, swap width/height for layout
-  if (angle == 90 || angle == 270) {
+  if (angle %% 180 == 90) {
     layout_w <- content_h
     layout_h <- content_w
   } else {
@@ -384,7 +384,7 @@ element_grob.element_md <- function(
   }
 
   # For sizing, report rotated dimensions so grobWidth/grobHeight are correct
-  if (angle == 90 || angle == 270) {
+  if (angle %% 180 == 90) {
     report_w <- content_h
     report_h <- content_w
   } else {
@@ -852,7 +852,7 @@ element_grob.element_chunks <- function(
   content_h <- unit(dims$height, "inches")
 
   # For rotated text, swap width/height for layout
-  if (angle == 90 || angle == 270) {
+  if (angle %% 180 == 90) {
     layout_w <- content_h
     layout_h <- content_w
   } else {
@@ -1022,7 +1022,7 @@ element_grob.element_chunks <- function(
   }
 
   # For sizing, report rotated dimensions so grobWidth/grobHeight are correct
-  if (angle == 90 || angle == 270) {
+  if (angle %% 180 == 90) {
     report_w <- content_h
     report_h <- content_w
   } else {

@@ -57,6 +57,8 @@ applied;
 
 Other fixes:
 
+- Texts rotated by -90 degrees, such as the labels of the right strips of
+`facet_grid()`, had the width of their length: the strips were too wide.
 - `geom_text_md()` with an `angle` drew the text away from its point.
 - `nudge_x` and `nudge_y` were ignored by `geom_text_md()` and
 `geom_label_md()`.
