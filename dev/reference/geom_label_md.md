@@ -13,7 +13,7 @@ geom_label_md(
   mapping = NULL,
   data = NULL,
   stat = "identity",
-  position = "identity",
+  position = "nudge",
   ...,
   width = NA,
   code_font_family = NULL,
