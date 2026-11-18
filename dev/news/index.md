@@ -80,6 +80,10 @@ are now placed as with
 
 Other fixes:
 
+- Texts rotated by -90 degrees, such as the labels of the right strips
+  of
+  [`facet_grid()`](https://ggplot2.tidyverse.org/reference/facet_grid.html),
+  had the width of their length: the strips were too wide.
 - [`geom_text_md()`](https://ardata-fr.github.io/munch/dev/reference/geom_text_md.md)
   with an `angle` drew the text away from its point.
 - `nudge_x` and `nudge_y` were ignored by
