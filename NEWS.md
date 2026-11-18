@@ -10,6 +10,10 @@ R >= 4.3; without them, their LaTeX source is written, with a warning.
 - `element_md()` can be used for all texts of a plot: axis tick labels,
 labels of colour bars, polar axes, and the whole theme with
 `theme(text = element_md())`.
+- `as_paragraph_md()` is vectorised, as `flextable::as_paragraph()`: each
+element gives the paragraph of a row, so that a column of markdown can be
+used in `flextable::mk_par()`. A vector gave one paragraph with all its
+elements.
 - `default_text_props()` has new arguments `bold` and `italic`.
 
 ## Changes
@@ -66,7 +70,9 @@ refused. An image that can not be read is now dropped with a warning.
 
 ## Dependencies
 
-- 'ggplot2' >= 4.0.4, 'S7' and 'gdtools' >= 0.6.0 are required.
+- 'ggplot2' >= 4.0.4, 'flextable' >= 0.10.5, 'S7' and 'gdtools' >= 0.6.0 are
+required. 'flextable' 0.10.5 sizes the equations of `as_paragraph_md()` and
+draws them in `flextable::gen_grob()`, used with 'patchwork'.
 - 'equatags' >= 0.4.0 is suggested, to draw equations.
 
 # munch 0.0.3

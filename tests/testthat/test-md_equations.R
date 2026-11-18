@@ -103,3 +103,16 @@ test_that("as_paragraph_md() gives equations to flextable", {
   ft <- flextable::mk_par(ft, j = "a", value = p)
   expect_s3_class(ft, "flextable")
 })
+
+test_that("a table with markdown equations is drawn by gen_grob()", {
+  skip_if_not(munch:::can_draw_equations())
+  ft <- flextable::mk_par(
+    flextable::flextable(data.frame(a = c("x", "y"))),
+    j = "a",
+    value = as_paragraph_md(c("a $x^2$ b", "$\\frac{1}{x}$"))
+  )
+  gr <- flextable::gen_grob(ft)
+  ragg::agg_capture(width = 300, height = 200, units = "px")
+  on.exit(grDevices::dev.off())
+  expect_no_error(grid::grid.draw(gr))
+})

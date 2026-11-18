@@ -1,15 +1,20 @@
 #' @title Convert Markdown to a Paragraph Object
 #' @description
-#' Converts a markdown string to a paragraph object compatible
+#' Converts markdown strings to a paragraph object compatible
 #' with flextable. This allows using markdown syntax to format
 #' text in flextable cells.
 #'
-#' @param x A character string containing markdown.
+#' As [flextable::as_paragraph()], it is vectorised: each element of `x`
+#' gives the paragraph of a row, so that a column of markdown can be used
+#' with [flextable::mk_par()] (`value = as_paragraph_md(col)`).
+#'
+#' @param x A character vector of markdown, one element per paragraph.
 #' @param font_family_mono Font family to use for inline code.
 #'   Defaults to `"mono"`.
 #'
-#' @return A paragraph object (class `"paragraph"`) that can be used
-#'   with [flextable::mk_par()] or [flextable::as_flextable()].
+#' @return A paragraph object (class `"paragraph"`), with one paragraph per
+#'   element of `x`, that can be used with [flextable::mk_par()] or
+#'   [flextable::as_flextable()].
 #'
 #' @details
 #' Supported markdown syntax:
@@ -32,14 +37,19 @@
 #' @example inst/examples/as_paragraph_md.R
 as_paragraph_md <- function(x, font_family_mono = "mono") {
   props <- default_text_props(code_font_family = font_family_mono)
-  chunks <- md_to_chunks(x, text_props = props)
-  # flextable chooses the style of equations itself (display when they are
-  # alone in their paragraph) and refuses unknown columns
-  chunks$eq_display <- NULL
-  chunks <- images_for_flextable(chunks)
-  # Add .chunk_index for flextable ordering
-  chunks$.chunk_index <- seq_len(nrow(chunks))
-  structure(list(chunks), class = "paragraph")
+  x <- as.character(x)
+  x[is.na(x)] <- ""
+  paragraphs <- lapply(x, function(text) {
+    chunks <- md_to_chunks(text, text_props = props)
+    # flextable chooses the style of equations itself (display when they
+    # are alone in their paragraph) and refuses unknown columns
+    chunks$eq_display <- NULL
+    chunks <- images_for_flextable(chunks)
+    # Add .chunk_index for flextable ordering
+    chunks$.chunk_index <- seq_len(nrow(chunks))
+    chunks
+  })
+  structure(paragraphs, class = "paragraph")
 }
 
 # Images of markdown as flextable wants them: the file in `img_data`, with

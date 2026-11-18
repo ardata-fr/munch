@@ -103,3 +103,26 @@ test_that("as_paragraph_md() drops images that can not be read", {
   expect_true(all(vapply(ch$img_data, is.null, NA)))
   expect_equal(paste(ch$txt, collapse = ""), "A  image")
 })
+
+test_that("as_paragraph_md() gives one paragraph per element", {
+  p <- as_paragraph_md(c("**a**", "*b*", NA))
+  expect_s3_class(p, "paragraph")
+  expect_length(p, 3)
+
+  # a column of markdown in mk_par(), as with flextable::as_paragraph()
+  dat <- data.frame(md = c("**a**", "*b*", "c"))
+  ft <- flextable::mk_par(
+    flextable::flextable(dat),
+    j = "md",
+    value = as_paragraph_md(md)
+  )
+  content <- ft$body$content$data
+  texts <- vapply(
+    seq_len(nrow(dat)),
+    function(i) paste(content[[i, 1]]$txt, collapse = ""),
+    character(1)
+  )
+  expect_identical(texts, c("a", "b", "c"))
+  expect_true(content[[1, 1]]$bold)
+  expect_true(content[[2, 1]]$italic)
+})

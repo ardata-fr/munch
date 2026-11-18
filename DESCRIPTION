@@ -1,6 +1,6 @@
 Package: munch
 Title: Rich Inline Text for 'grid' Graphics and 'flextable'
-Version: 0.0.4.028
+Version: 0.0.4.029
 Authors@R: c(
     person("David", "Gohel", , "david.gohel@ardata.fr", role = c("aut", "cre")),
     person("ArData", role = "cph")
@@ -19,7 +19,7 @@ BugReports: https://github.com/ardata-fr/munch/issues
 Imports:
     cli,
     commonmark,
-    flextable (>= 0.10.4),
+    flextable (>= 0.10.5),
     patchwork,
     S7,
     gdtools (>= 0.6.0),
@@ -47,3 +47,5 @@ Config/testthat/edition: 3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 Config/roxygen2/version: 8.1.1
+Remotes:
+    davidgohel/flextable
