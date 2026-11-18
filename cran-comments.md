@@ -1,11 +1,12 @@
 ## R CMD check results
 
-0 errors | 0 warnings | 1 note
-
-* This is a new submission.
+0 errors | 0 warnings | 0 notes
 
 ## Test environments
 
-* local macOS (R 4.5.2)
-* win-builder (R-release and R-older)
-* mac-builder (R-devel)
+* local macOS (R 4.6.1)
+* win-builder (R-devel and R-release)
+
+## Reverse dependencies
+
+There are no reverse dependencies.
