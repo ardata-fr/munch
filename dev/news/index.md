@@ -15,6 +15,13 @@
   can be used for all texts of a plot: axis tick labels, labels of
   colour bars, polar axes, and the whole theme with
   `theme(text = element_md())`.
+- [`as_paragraph_md()`](https://ardata-fr.github.io/munch/dev/reference/as_paragraph_md.md)
+  is vectorised, as
+  [`flextable::as_paragraph()`](https://davidgohel.github.io/flextable/reference/as_paragraph.html):
+  each element gives the paragraph of a row, so that a column of
+  markdown can be used in
+  [`flextable::mk_par()`](https://davidgohel.github.io/flextable/reference/compose.html).
+  A vector gave one paragraph with all its elements.
 - [`default_text_props()`](https://ardata-fr.github.io/munch/dev/reference/default_text_props.md)
   has new arguments `bold` and `italic`.
 
@@ -97,7 +104,12 @@ Other fixes:
 
 ### Dependencies
 
-- ‘ggplot2’ \>= 4.0.4, ‘S7’ and ‘gdtools’ \>= 0.6.0 are required.
+- ‘ggplot2’ \>= 4.0.4, ‘flextable’ \>= 0.10.5, ‘S7’ and ‘gdtools’ \>=
+  0.6.0 are required. ‘flextable’ 0.10.5 sizes the equations of
+  [`as_paragraph_md()`](https://ardata-fr.github.io/munch/dev/reference/as_paragraph_md.md)
+  and draws them in
+  [`flextable::gen_grob()`](https://davidgohel.github.io/flextable/reference/gen_grob.html),
+  used with ‘patchwork’.
 - ‘equatags’ \>= 0.4.0 is suggested, to draw equations.
 
 ## munch 0.0.3

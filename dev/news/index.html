@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">munch</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.4.028</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.4.029</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,6 +50,8 @@
 <li>
 <code><a href="../reference/element_md.html">element_md()</a></code> can be used for all texts of a plot: axis tick labels, labels of colour bars, polar axes, and the whole theme with <code>theme(text = element_md())</code>.</li>
 <li>
+<code><a href="../reference/as_paragraph_md.html">as_paragraph_md()</a></code> is vectorised, as <code><a href="https://davidgohel.github.io/flextable/reference/as_paragraph.html" class="external-link">flextable::as_paragraph()</a></code>: each element gives the paragraph of a row, so that a column of markdown can be used in <code><a href="https://davidgohel.github.io/flextable/reference/compose.html" class="external-link">flextable::mk_par()</a></code>. A vector gave one paragraph with all its elements.</li>
+<li>
 <code><a href="../reference/default_text_props.html">default_text_props()</a></code> has new arguments <code>bold</code> and <code>italic</code>.</li>
 </ul></div>
 <div class="section level3">
@@ -89,7 +91,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="dependencies-0-0-4">Dependencies<a class="anchor" aria-label="anchor" href="#dependencies-0-0-4"></a></h3>
-<ul><li>‘ggplot2’ &gt;= 4.0.4, ‘S7’ and ‘gdtools’ &gt;= 0.6.0 are required.</li>
+<ul><li>‘ggplot2’ &gt;= 4.0.4, ‘flextable’ &gt;= 0.10.5, ‘S7’ and ‘gdtools’ &gt;= 0.6.0 are required. ‘flextable’ 0.10.5 sizes the equations of <code><a href="../reference/as_paragraph_md.html">as_paragraph_md()</a></code> and draws them in <code><a href="https://davidgohel.github.io/flextable/reference/gen_grob.html" class="external-link">flextable::gen_grob()</a></code>, used with ‘patchwork’.</li>
 <li>‘equatags’ &gt;= 0.4.0 is suggested, to draw equations.</li>
 </ul></div>
 </div>
