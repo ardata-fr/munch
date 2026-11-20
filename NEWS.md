@@ -1,3 +1,11 @@
+# munch 0.0.5
+
+## Bug fixes
+
+- `as_paragraph_md()`: an image was written as "character(0)" in the
+HTML output of 'flextable'. The image now has the alternative text of its
+markdown (`![alt](path)`), as images made by `flextable::as_image()`.
+
 # munch 0.0.4
 
 ## New features

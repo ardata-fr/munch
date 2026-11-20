@@ -53,8 +53,9 @@ as_paragraph_md <- function(x, font_family_mono = "mono") {
 }
 
 # Images of markdown as flextable wants them: the file in `img_data`, with
-# its size in `width` and `height` (as flextable::as_image() does), and no
-# column `img_path`, which flextable refuses. The size is the default size
+# its size in `width` and `height` and its alternative text in `alt` (as
+# flextable::as_image() does: the HTML output needs `alt`), and no column
+# `img_path`, which flextable refuses. The size is the default size
 # of images in munch (default_image_size()). An image that can not be read
 # is dropped (get_image_info() warns).
 images_for_flextable <- function(chunks) {
@@ -62,6 +63,7 @@ images_for_flextable <- function(chunks) {
     return(chunks)
   }
   is_img <- which(!is.na(chunks$img_path))
+  chunks$alt <- NA_character_
   drop <- integer(0)
   for (k in is_img) {
     info <- get_image_info(chunks$img_path[k])
@@ -73,8 +75,10 @@ images_for_flextable <- function(chunks) {
     chunks$width[k] <- size$width
     chunks$height[k] <- size$height
     chunks$img_data[k] <- list(chunks$img_path[k])
+    chunks$alt[k] <- chunks$img_alt[k]
   }
   chunks$img_path <- NULL
+  chunks$img_alt <- NULL
   if (length(drop) > 0) {
     chunks <- chunks[-drop, , drop = FALSE]
     rownames(chunks) <- NULL

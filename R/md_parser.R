@@ -162,6 +162,7 @@ parse_md_node <- function(node, props, ns) {
       font.size = new_props$font.size
     )
     chunk$img_path <- dest
+    chunk$img_alt <- xml2::xml_text(node)
     return(chunk)
   }
 

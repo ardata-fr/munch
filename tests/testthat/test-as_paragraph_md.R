@@ -88,9 +88,14 @@ test_that("as_paragraph_md() gives images to flextable", {
     ch$width[img] / ch$height[img],
     unname(dims[["width"]] / dims[["height"]])
   )
+  expect_equal(ch$alt[img], "R")
   ft <- flextable::flextable(data.frame(a = 1))
   ft <- flextable::mk_par(ft, j = "a", value = p)
   expect_s3_class(ft, "flextable")
+  # the HTML output needs the alternative text of the image
+  html <- flextable:::gen_raw_html(ft)
+  expect_match(html, "<img [^>]*alt=\"R\"")
+  expect_no_match(html, "character(0)", fixed = TRUE)
 })
 
 test_that("as_paragraph_md() drops images that can not be read", {
