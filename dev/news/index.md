@@ -1,5 +1,15 @@
 # Changelog
 
+## munch 0.0.5
+
+### Bug fixes
+
+- [`as_paragraph_md()`](https://ardata-fr.github.io/munch/dev/reference/as_paragraph_md.md):
+  an image was written as “character(0)” in the HTML output of
+  ‘flextable’. The image now has the alternative text of its markdown
+  (`![alt](path)`), as images made by
+  [`flextable::as_image()`](https://davidgohel.github.io/flextable/reference/as_image.html).
+
 ## munch 0.0.4
 
 ### New features
