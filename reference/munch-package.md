@@ -1,8 +1,8 @@
 # munch: Rich Inline Text for Grid Graphics and Flextable
 
 The 'munch' package renders rich inline text (bold, italic, code, links,
-images) in grid graphics and 'ggplot2', from markdown or 'flextable'
-chunks.
+images, equations) in grid graphics and 'ggplot2', from markdown or
+'flextable' chunks.
 
 For 'ggplot2' integration, use
 [`element_md()`](https://ardata-fr.github.io/munch/reference/element_md.md)
@@ -28,8 +28,10 @@ and custom colors not available in markdown).
 Only graphics devices that support 'systemfonts' are compatible: 'ragg',
 'svglite', or 'ggiraph'. The
 [`cairo_pdf()`](https://rdrr.io/r/grDevices/cairo.html) device is also
-supported when fonts are installed at the system level. Standard R
-devices ([`pdf()`](https://rdrr.io/r/grDevices/pdf.html),
+supported when fonts are installed at the system level, except on
+Windows, where it does not apply the kerning of the fonts: words are
+drawn wider than measured. Standard R devices
+([`pdf()`](https://rdrr.io/r/grDevices/pdf.html),
 [`png()`](https://rdrr.io/r/grDevices/png.html),
 [`jpeg()`](https://rdrr.io/r/grDevices/png.html)) are not compatible but
 can still produce correct output if fonts are made available to the
@@ -37,16 +39,35 @@ device (e.g. via 'extrafont'). See
 [`vignette("font-recipes")`](https://ardata-fr.github.io/munch/articles/font-recipes.md)
 for details.
 
-LaTeX and MathJax equations are not supported. For simple scientific
-notation, use
+Equations, written `$...$` and `$$...$$` in markdown (as in Pandoc) or
+created with
+[`flextable::as_equation()`](https://davidgohel.github.io/flextable/reference/as_equation.html),
+are drawn with the package 'equatags' (R \>= 4.3); without it, their
+LaTeX source is written as text. A `$$...$$` equation is alone on its
+line, in display style. For simple scientific notation,
 [`as_sup()`](https://davidgohel.github.io/flextable/reference/as_sup.html)
 and
 [`as_sub()`](https://davidgohel.github.io/flextable/reference/as_sub.html)
-from 'flextable'.
+from 'flextable' are enough.
 
 Only inline formatting is supported: bold, italic, code, strikethrough,
-links, and images. Block elements such as headings, bullet lists, and
+links, images, superscripts (`^2^`), subscripts (`~2~`) and equations.
+Superscripts, subscripts and equations follow the markdown of Pandoc (R
+Markdown, Quarto). Block elements such as headings, bullet lists, and
 numbered lists are not available.
+
+## Text format
+
+The format of a text (size, font family, colour, bold, italic) comes
+from its chunk or its markdown, then from the element or the aesthetic
+and the 'ggplot2' theme, then from
+[`flextable::set_flextable_defaults()`](https://davidgohel.github.io/flextable/reference/set_flextable_defaults.html).
+An empty font family, the default of the themes, does not set the font:
+the font of the flextable defaults is used. Texts drawn by 'ggplot2'
+itself, such as axis labels, then use the default font of the device;
+give a font to the theme, for example
+`theme_minimal(base_family = "Liberation Sans")`, so that all texts of
+the plot use the same font.
 
 ## Options
 

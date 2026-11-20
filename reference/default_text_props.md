@@ -15,7 +15,9 @@ default_text_props(
   font_color = NULL,
   code_font_family = NULL,
   line_spacing = NULL,
-  img_baseline_ratio = NULL
+  img_baseline_ratio = NULL,
+  bold = NULL,
+  italic = NULL
 )
 ```
 
@@ -39,7 +41,10 @@ default_text_props(
 
 - line_spacing:
 
-  Line height multiplier.
+  Line spacing, a multiple of the single line spacing of the font, as in
+  Word: the distance between the baselines of two lines is
+  `line_spacing` times the line height of the font
+  ([`gdtools::font_line_metrics()`](https://davidgohel.github.io/gdtools/reference/font_line_metrics.html)).
 
 - img_baseline_ratio:
 
@@ -53,6 +58,11 @@ default_text_props(
   - `0.35`: image centered on text vertical center
 
   - `0.5`: image centered on baseline
+
+- bold, italic:
+
+  If `TRUE`, the text is bold or italic by default; markdown emphasis
+  adds to it. Default `FALSE`.
 
 ## Value
 
@@ -69,6 +79,8 @@ A list of class `"text_props"` with elements:
 - `line_spacing`: Line height multiplier
 
 - `img_baseline_ratio`: Image baseline alignment ratio
+
+- `bold`, `italic`: default font face of the text
 
 Some element names use dot separators (`font.size`, `font.family`, etc.)
 for compatibility with 'flextable' conventions. Function parameters and
@@ -105,8 +117,10 @@ default_text_props()
 #> • font_family: "DejaVu Sans"
 #> • font_color: "black"
 #> • code_font_family: "mono"
-#> • line_spacing: 1.2
+#> • line_spacing: 1
 #> • img_baseline_ratio: 0.15
+#> • bold: FALSE
+#> • italic: FALSE
 
 # Override specific properties
 default_text_props(font_size = 14, font_color = "navy")
@@ -116,8 +130,10 @@ default_text_props(font_size = 14, font_color = "navy")
 #> • font_family: "DejaVu Sans"
 #> • font_color: "navy"
 #> • code_font_family: "mono"
-#> • line_spacing: 1.2
+#> • line_spacing: 1
 #> • img_baseline_ratio: 0.15
+#> • bold: FALSE
+#> • italic: FALSE
 
 library(gdtools)
 font_set_liberation()

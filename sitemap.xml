@@ -1,5 +1,6 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://ardata-fr.github.io/munch/404.html</loc></url>
+<url><loc>https://ardata-fr.github.io/munch/CONTRIBUTING.html</loc></url>
 <url><loc>https://ardata-fr.github.io/munch/LICENSE-text.html</loc></url>
 <url><loc>https://ardata-fr.github.io/munch/articles/advanced-usage.html</loc></url>
 <url><loc>https://ardata-fr.github.io/munch/articles/font-recipes.html</loc></url>
@@ -18,8 +19,6 @@
 <url><loc>https://ardata-fr.github.io/munch/reference/geom_text_md.html</loc></url>
 <url><loc>https://ardata-fr.github.io/munch/reference/index.html</loc></url>
 <url><loc>https://ardata-fr.github.io/munch/reference/md_grob.html</loc></url>
-<url><loc>https://ardata-fr.github.io/munch/reference/merge_element.element_chunks.html</loc></url>
-<url><loc>https://ardata-fr.github.io/munch/reference/merge_element.element_md.html</loc></url>
 <url><loc>https://ardata-fr.github.io/munch/reference/munch-package.html</loc></url>
 <url><loc>https://ardata-fr.github.io/munch/reference/munch_annotation.html</loc></url>
 <url><loc>https://ardata-fr.github.io/munch/reference/plot.mdGrob.html</loc></url>

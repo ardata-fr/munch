@@ -49,7 +49,8 @@ pak::pak("ardata-fr/munch")
 [‘ragg’](https://ragg.r-lib.org/),
 [‘svglite’](https://svglite.r-lib.org/), or
 [‘ggiraph’](https://davidgohel.github.io/ggiraph/). ‘cairo’ devices are
-also supported when fonts are installed at the system level. See
+also supported when fonts are installed at the system level, except on
+Windows, where they draw words without kerning, wider than measured. See
 [`vignette("font-recipes")`](https://ardata-fr.github.io/munch/articles/font-recipes.md)
 for font configuration, alternative devices, and troubleshooting.
 
@@ -273,8 +274,8 @@ more markdown features (headings, lists, code blocks, custom spans).
 advanced formatting not available in markdown.
 
 - ‘munch’ works with ‘ragg’, ‘svglite’, ‘ggiraph’,
-  [`cairo_pdf()`](https://rdrr.io/r/grDevices/cairo.html),
-  `png(type = "cairo")`, and possibly
+  [`cairo_pdf()`](https://rdrr.io/r/grDevices/cairo.html) and
+  `png(type = "cairo")` (except on Windows), and possibly
   [`pdf()`](https://rdrr.io/r/grDevices/pdf.html) with some care (see
   [`vignette("font-recipes")`](https://ardata-fr.github.io/munch/articles/font-recipes.md)).
 - ‘marquee’ works on a wide range of R devices but not yet with
